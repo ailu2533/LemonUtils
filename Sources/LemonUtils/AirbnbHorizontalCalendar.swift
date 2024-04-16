@@ -46,13 +46,13 @@ struct SwiftUIDayView_Previews: PreviewProvider {
 }
 
 @available(macOS 10.15, *)
-struct CalendarView: View {
+public struct CalendarView: View {
     // MARK: Lifecycle
 
     @State private var selectedDate: DayComponents?
     var markedDates: Set<DayComponents> = Set()
 
-    init(calendar: Calendar, monthsLayout: MonthsLayout) {
+    public init(calendar: Calendar, monthsLayout: MonthsLayout) {
         self.calendar = calendar
         self.monthsLayout = monthsLayout
 
@@ -71,7 +71,7 @@ struct CalendarView: View {
 
     // MARK: Internal
 
-    var body: some View {
+    public var body: some View {
         CalendarViewRepresentable(
             calendar: calendar,
             visibleDateRange: visibleDateRange,

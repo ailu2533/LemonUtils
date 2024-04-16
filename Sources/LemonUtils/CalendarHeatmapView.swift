@@ -8,7 +8,7 @@
 import DateHelper
 import SwiftUI
 
-struct CalendarHeatmapView: View {
+public struct CalendarHeatmapView: View {
     private var color: Color = Color(.systemGreen)
     private let horizontalSpacing: CGFloat = 2
     private let verticalSpacing: CGFloat = 2
@@ -18,7 +18,7 @@ struct CalendarHeatmapView: View {
     private var shift: Int
     private var data: [Double] = []
 
-    init(shift: Int, data: [Double]) {
+    public init(shift: Int, data: [Double]) {
         self.shift = shift
         let header: [Double] = Array(repeating: 0, count: shift)
 
@@ -26,9 +26,9 @@ struct CalendarHeatmapView: View {
         self.data.append(contentsOf: data)
     }
 
-    var columns: [GridItem] = []
+//    var columns: [GridItem] = []
 
-    var body: some View {
+    public var body: some View {
         let arr = data.chunked(into: numOfColumns)
 
         Grid(horizontalSpacing: horizontalSpacing, verticalSpacing: verticalSpacing) {

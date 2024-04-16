@@ -7,10 +7,14 @@
 
 import SwiftUI
 
-struct DotLineShape: Shape {
-    var lineWidth = 1.5
+public struct DotLineShape: Shape {
+    var lineWidth: CGFloat
 
-    func path(in rect: CGRect) -> Path {
+    public init(lineWidth: Double = 1.5) {
+        self.lineWidth = lineWidth
+    }
+
+    public func path(in rect: CGRect) -> Path {
         var rectPath = Path()
         rectPath.move(to: .init(x: rect.midX - lineWidth / 2, y: rect.minY))
         rectPath.addRect(.init(x: rect.midX - lineWidth / 2, y: rect.minY, width: lineWidth, height: rect.height))
@@ -33,18 +37,16 @@ struct DotLineShape: Shape {
     VStack(spacing: 0) {
         ForEach(1 ..< 5, id: \.self) {
             _ in
-            HStack() {
+            HStack {
                 DotLineShape()
                     .fill(Color(.systemGray))
                     .frame(width: 50, height: 100)
                 Text("00:45")
-                
-                HStack{
+
+                HStack {
                     Text("hhhh")
                 }
-                
             }
-           
         }
     }
 }

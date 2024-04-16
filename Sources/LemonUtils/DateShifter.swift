@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-enum DateShiftType: String, CaseIterable, Identifiable {
-    var id: Self {
+public enum DateShiftType: String, CaseIterable, Identifiable {
+    public var id: Self {
         self
     }
 
@@ -17,17 +17,17 @@ enum DateShiftType: String, CaseIterable, Identifiable {
     case month
 }
 
-struct DateShifter: View {
+public struct DateShifter: View {
     @Binding private var inputDate: Date
 
     private let shiftType: DateShiftType
 
-    init(inputDate: Binding<Date>, shiftType: DateShiftType = .day) {
+    public init(inputDate: Binding<Date>, shiftType: DateShiftType = .day) {
         _inputDate = inputDate
         self.shiftType = shiftType
     }
 
-    var body: some View {
+    public var body: some View {
         HStack {
             DateShiftButton(direction: .backward, shiftType: shiftType, inputDate: $inputDate)
 

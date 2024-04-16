@@ -22,19 +22,17 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
                 if isSelected {
                     RoundedRectangle(cornerRadius: 9)
                         .fill(MyColor.buttonBgBlue)
-
-//                        .fill(Color("buttonBgBlue", bundle: .module))
                         .matchedGeometryEffect(id: groupID, in: animationNamespace)
                 }
             }
     }
 }
 
-struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View {
+public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View {
     var items: [ItemType]
     @Binding private var selectedItem: ItemType
 
-    var backgroundColor: Color = Color(.systemGray)
+    var backgroundColor: Color
 
     @ViewBuilder var itemViewBuilder: (ItemType) -> Content
 
@@ -43,15 +41,20 @@ struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View {
     private var uniqueID = UUID().uuidString
     private var isEmbeddedInScrollView = true
 
-    init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = .clear, isEmbeddedInScrollView: Bool = true, itemViewBuilder: @escaping (ItemType) -> Content) {
+    // MARK:
+
+    public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), isEmbeddedInScrollView: Bool = true,
+                groupId: String = "picker",
+                itemViewBuilder: @escaping (ItemType) -> Content) {
         self.items = items
+        uniqueID = groupId
         _selectedItem = selectedItem
         self.backgroundColor = backgroundColor
         self.itemViewBuilder = itemViewBuilder
         self.isEmbeddedInScrollView = isEmbeddedInScrollView
     }
 
-    var body: some View {
+    public var body: some View {
         if isEmbeddedInScrollView {
             ScrollView(.horizontal) {
                 itemsStackView()

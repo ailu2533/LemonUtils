@@ -7,17 +7,22 @@
 
 import SwiftUI
 
-struct MultiComponentPickerView: UIViewRepresentable {
+public struct MultiComponentPickerView: UIViewRepresentable {
     var data: [[String]]
     @Binding var selections: [Int]
 
+    public init(data: [[String]], selections: Binding<[Int]>) {
+        self.data = data
+        _selections = selections
+    }
+
     // makeCoordinator()
-    func makeCoordinator() -> MultiComponentPickerView.Coordinator {
+    public func makeCoordinator() -> MultiComponentPickerView.Coordinator {
         Coordinator(self)
     }
 
     // makeUIView(context:)
-    func makeUIView(context: UIViewRepresentableContext<MultiComponentPickerView>) -> UIPickerView {
+    public func makeUIView(context: UIViewRepresentableContext<MultiComponentPickerView>) -> UIPickerView {
         let picker = UIPickerView(frame: .zero)
 
         picker.dataSource = context.coordinator
@@ -27,14 +32,14 @@ struct MultiComponentPickerView: UIViewRepresentable {
     }
 
     // updateUIView(_:context:)
-    func updateUIView(_ view: UIPickerView, context: UIViewRepresentableContext<MultiComponentPickerView>) {
+    public func updateUIView(_ view: UIPickerView, context: UIViewRepresentableContext<MultiComponentPickerView>) {
         for i in 0 ... (selections.count - 1) {
             view.selectRow(selections[i], inComponent: i, animated: false)
         }
         context.coordinator.parent = self // fix
     }
 
-    class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
+    public class Coordinator: NSObject, UIPickerViewDataSource, UIPickerViewDelegate {
         var parent: MultiComponentPickerView
 
         // init(_:)
@@ -43,22 +48,22 @@ struct MultiComponentPickerView: UIViewRepresentable {
         }
 
         // numberOfComponents(in:)
-        func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        public func numberOfComponents(in pickerView: UIPickerView) -> Int {
             return parent.data.count
         }
 
         // pickerView(_:numberOfRowsInComponent:)
-        func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
             return parent.data[component].count
         }
 
         // pickerView(_:titleForRow:forComponent:)
-        func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        public func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
             return parent.data[component][row]
         }
 
         // pickerView(_:didSelectRow:inComponent:)
-        func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
             parent.selections[component] = row
         }
     }

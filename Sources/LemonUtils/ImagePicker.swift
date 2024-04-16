@@ -52,7 +52,7 @@ struct ImagePicker: View {
     }
 }
 
-struct IconPickerView: View {
+public struct IconPickerView: View {
     @Environment(\.dismiss) private var dismiss
 
     @Binding var selectedImage: String
@@ -67,7 +67,7 @@ struct IconPickerView: View {
     // 当前选择的图片集名称
     @State private var iconSetName: String
 
-    init(selectedImage: Binding<String>, imageSets: OrderedDictionary<String, [String]>) {
+    public init(selectedImage: Binding<String>, imageSets: OrderedDictionary<String, [String]>) {
         if selectedImage.wrappedValue == "" {
             selectedImage.wrappedValue = defaultPic
         }
@@ -80,7 +80,7 @@ struct IconPickerView: View {
         select = selectedImage.wrappedValue
     }
 
-    var body: some View {
+    public var body: some View {
         VStack {
             ImageView(imageName: select)
 
