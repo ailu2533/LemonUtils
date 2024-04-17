@@ -9,11 +9,19 @@ import DateHelper
 import Foundation
 import HorizonCalendar
 
-public struct YearMonthDay: Hashable {
+public struct YearMonthDay: Hashable, Equatable {
     let year: Int
     let month: Int
     let day: Int
     public let weekday: Int
+
+    public init(date: Date) {
+        let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .weekday], from: date)
+        year = dateComponents.year!
+        month = dateComponents.month!
+        day = dateComponents.day!
+        weekday = dateComponents.weekday!
+    }
 
     public init(year: Int, month: Int, day: Int, weekday: Int) {
         self.year = year
@@ -27,12 +35,32 @@ public struct YearMonthDay: Hashable {
         hasher.combine(month)
         hasher.combine(day)
     }
+
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.year == rhs.year && lhs.month == rhs.month && lhs.day == rhs.day
+    }
 }
 
 extension YearMonthDay {
     public static func fromDate(_ date: Date) -> YearMonthDay {
         let components = Calendar.current.dateComponents([.year, .month, .day, .weekday], from: date)
         return .init(year: components.year!, month: components.month!, day: components.day!, weekday: components.weekday!)
+    }
+
+    public static func fromDayComponents(_ date: DayComponents) -> YearMonthDay {
+        let year = date.month.year
+        let month = date.month.month
+        let day = date.day
+
+        date.components
+
+        return .init(year: year, month: month, day: day, weekday: 0)
+    }
+
+    public func date() -> Date {
+        let components = DateComponents(year: year, month: month, day: day)
+
+        return Calendar.current.date(from: components)!
     }
 }
 

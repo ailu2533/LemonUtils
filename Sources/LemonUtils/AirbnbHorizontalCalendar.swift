@@ -49,10 +49,16 @@ struct SwiftUIDayView_Previews: PreviewProvider {
 public struct CalendarView: View {
     // MARK: Lifecycle
 
-    @State private var selectedDate: DayComponents?
-    var markedDates: Set<DayComponents> = Set()
+    @Binding private var selectedDate: YearMonthDay
 
-    public init(calendar: Calendar, monthsLayout: MonthsLayout) {
+    @Binding private var visibleFirstDay: YearMonthDay
+
+    var markedDates: Set<YearMonthDay> = Set()
+
+    // 双击日期回调
+    var doubleTapCallback: (DayComponents) -> Void
+
+    public init(calendar: Calendar, monthsLayout: MonthsLayout, callback: @escaping (DayComponents) -> Void = { _ in }) {
         self.calendar = calendar
         self.monthsLayout = monthsLayout
 
@@ -67,6 +73,16 @@ public struct CalendarView: View {
             fromTemplate: "MMMM yyyy",
             options: 0,
             locale: calendar.locale ?? Locale.current)
+
+        doubleTapCallback = callback
+        _selectedDate = .constant(YearMonthDay.fromDate(.now))
+        _visibleFirstDay = .constant(YearMonthDay.fromDate(.now))
+    }
+
+    public init(calendar: Calendar, monthsLayout: MonthsLayout, markedDates: Set<YearMonthDay>, selectedDate: Binding<YearMonthDay>, callback: @escaping (DayComponents) -> Void = { _ in }) {
+        self.init(calendar: calendar, monthsLayout: monthsLayout, callback: callback)
+        self.markedDates = markedDates
+        _selectedDate = selectedDate
     }
 
     // MARK: Internal
@@ -83,7 +99,17 @@ public struct CalendarView: View {
             .verticalDayMargin(8)
             .horizontalDayMargin(8)
 
+//            // TODO:
+//            .onDragEnd({ visibleDayRange, willDecelerate in
+//                print("dragEnd \(visibleDayRange.lowerBound) \(willDecelerate)")
+//            })
+//            .onDeceleratingEnd({ visibleDayRange in
+//                visibleFirstDay = YearMonthDay.fromDayComponents(visibleDayRange.lowerBound)
+//                print(visibleDayRange.lowerBound)
+//            })
+
             .monthHeaders { month in
+
                 let monthHeaderText = monthDateFormatter.string(from: calendar.date(from: month.components)!)
                 Group {
                     if case .vertical = monthsLayout {
@@ -104,18 +130,17 @@ public struct CalendarView: View {
 
             .days { day in
                 SwiftUIDayView(dayNumber: day.day, isSelected: isDaySelected(day), isMarked: isDayMarked(day))
+                    .onTapGesture(count: 2, perform: {
+                        doubleTapCallback(day)
+                    })
             }
 
             .onDaySelection { day in
-
-                selectedDate = day
+                selectedDate = YearMonthDay.fromDayComponents(day)
             }
 
             .onAppear {
-                calendarViewProxy.scrollToDay(
-                    containing: calendar.date(from: DateComponents(year: 2023, month: 07, day: 19))!,
-                    scrollPosition: .centered,
-                    animated: false)
+                calendarViewProxy.scrollToMonth(containing: .now, scrollPosition: .centered, animated: false)
             }
 
             .frame(maxWidth: 375, maxHeight: .infinity)
@@ -138,12 +163,12 @@ public struct CalendarView: View {
         if let selectedDayRange {
             return day == selectedDayRange.lowerBound || day == selectedDayRange.upperBound
         } else {
-            return day == selectedDate
+            return YearMonthDay.fromDayComponents(day) == selectedDate
         }
     }
 
     private func isDayMarked(_ day: DayComponents) -> Bool {
-        return markedDates.contains(day)
+        return markedDates.contains(YearMonthDay.fromDayComponents(day))
     }
 }
 
@@ -154,5 +179,7 @@ public struct CalendarView: View {
 }
 
 #Preview("horizontal") {
-    CalendarView(calendar: Calendar.current, monthsLayout: .horizontal)
+    CalendarView(calendar: Calendar.current, monthsLayout: .horizontal, markedDates: [.init(year: 2024, month: 4, day: 2, weekday: 0), .init(year: 2024, month: 4, day: 3, weekday: 0), .init(year: 2024, month: 4, day: 4, weekday: 0),
+                 ], selectedDate: .constant(YearMonthDay.fromDate(.now))
+    )
 }

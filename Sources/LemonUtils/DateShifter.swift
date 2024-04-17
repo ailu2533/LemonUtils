@@ -36,7 +36,10 @@ public struct DateShifter: View {
             }
 
             DateShiftButton(direction: .forward, shiftType: shiftType, inputDate: $inputDate)
-        }
+        }.padding()
+            .background(.yellow)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .padding()
     }
 }
 
