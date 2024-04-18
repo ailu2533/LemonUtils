@@ -52,8 +52,6 @@ extension YearMonthDay {
         let month = date.month.month
         let day = date.day
 
-        date.components
-
         return .init(year: year, month: month, day: day, weekday: 0)
     }
 

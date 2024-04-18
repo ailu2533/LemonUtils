@@ -126,7 +126,3 @@ private struct ImageView: View {
     }
 }
 
-// #Preview {
-//    IconPickerView(selectedImage: .constant(""), imageSets: iconMap)
-// }
-//

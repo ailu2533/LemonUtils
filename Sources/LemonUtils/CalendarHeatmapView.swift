@@ -26,8 +26,6 @@ public struct CalendarHeatmapView: View {
         self.data.append(contentsOf: data)
     }
 
-//    var columns: [GridItem] = []
-
     public var body: some View {
         let arr = data.chunked(into: numOfColumns)
 
@@ -36,13 +34,14 @@ public struct CalendarHeatmapView: View {
                 GridRow {
                     ForEach(0 ..< arr[i].count, id: \.self) { j in
                         let n = i * numOfColumns + j
+                        let op: Double = data[n]
                         if n < shift {
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(Color(.systemBackground))
                                 .frame(width: width, height: width)
                         } else {
                             RoundedRectangle(cornerRadius: 4)
-                                .fill(color.opacity(Double.random(in: 0.5 ... 1)))
+                                .fill(color.opacity(op))
                                 .frame(width: width, height: width)
                         }
                     }
