@@ -28,10 +28,13 @@ struct MyButtonStyle: ButtonStyle {
     }
 }
 
-struct BigButtonStyle: ButtonStyle {
+public struct BigButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) var isEnabled
 
-    func makeBody(configuration: Self.Configuration) -> some View {
+    public init() {
+    }
+
+    public func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .padding(.horizontal, 8)
             .padding(.vertical, 4)

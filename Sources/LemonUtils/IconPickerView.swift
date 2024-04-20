@@ -31,18 +31,18 @@ struct SingleIconSetIconPickerView: View {
                         IconView(iconName: image)
                             .overlay(content: {
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(selectedIcon == image ? .red : .clear, lineWidth: 2)
+                                    .stroke(selectedIcon == image ? .blue.opacity(0.4) : .clear, style: StrokeStyle(lineWidth: 2, dash: [3]))
                                     .aspectRatio(contentMode: .fill)
                                     .padding(2)
                             })
                             .onTapGesture {
-                                withAnimation(.snappy) {
+//                                withAnimation(.snappy) {
                                     selectedIcon = image
-                                }
+//                                }
                             }
                     }
                 })
-            }.padding()
+            }
         }
     }
 }
@@ -101,6 +101,57 @@ public struct IconPickerView: View {
         })
     }
 }
+
+
+public struct IconPickerViewNew: View {
+    
+    @Environment(\.dismiss) private var dismiss
+
+    // 只有点保存的时候，才修改这个
+    @Binding var selectedIcon: String
+
+    // 当前选择的icon集名称
+    @State private var selectedIconSetName: String = ""
+
+    // icon set
+    let iconSets: OrderedDictionary<String, [String]>
+
+    public init(selectedIcon: Binding<String>, iconSets: OrderedDictionary<String, [String]>) {
+        self.iconSets = iconSets
+        _selectedIcon = selectedIcon
+    }
+
+    public var body: some View {
+        VStack {
+
+            HorizontalSelectionPicker(items: iconSets.keys.elements, selectedItem: $selectedIconSetName) {
+                Text($0)
+            }.padding(.horizontal)
+            
+            SingleIconSetIconPickerView(selectedImg: _selectedIcon, icons: iconSets[selectedIconSetName] ?? [])
+        }
+        .onAppear {
+            if selectedIconSetName.isEmpty && !iconSets.isEmpty {
+                selectedIconSetName = iconSets.keys.first!
+            }
+
+            if selectedIcon.isEmpty && !selectedIconSetName.isEmpty {
+                selectedIcon = iconSets[selectedIconSetName]?.first ?? ""
+            }
+        }
+        .toolbar(content: {
+            ToolbarItem {
+                Button(action: {
+                    dismiss()
+                }, label: {
+                    Label("关闭", systemImage: "xmark.circle")
+                })
+            }
+        })
+    }
+}
+
+
 
 private struct IconView: View {
     private let iconName: String

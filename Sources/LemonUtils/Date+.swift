@@ -62,7 +62,7 @@ extension YearMonthDay {
     }
 }
 
-extension Date {
+public extension Date {
     public var startOfWeek: Date? {
         let t = adjust(for: .startOfWeek)?.adjust(for: .startOfDay)
         return Calendar.current.date(byAdding: .day, value: 1, to: t!)
@@ -122,5 +122,15 @@ extension Date {
         // 2. sunday 是 1，要修改为 monday 是 1
 
         return weekday! - 2
+    }
+}
+
+public extension Calendar {
+    func numberOfDaysBetween(_ from: Date, and to: Date) -> Int {
+        let fromDate = startOfDay(for: from) // <1>
+        let toDate = startOfDay(for: to) // <2>
+        let numberOfDays = dateComponents([.day], from: fromDate, to: toDate) // <3>
+
+        return numberOfDays.day!
     }
 }
