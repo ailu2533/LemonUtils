@@ -37,7 +37,7 @@ struct SingleIconSetIconPickerView: View {
                             })
                             .onTapGesture {
 //                                withAnimation(.snappy) {
-                                    selectedIcon = image
+                                selectedIcon = image
 //                                }
                             }
                     }
@@ -73,7 +73,7 @@ public struct IconPickerView: View {
             HorizontalSelectionPicker(items: iconSets.keys.elements, selectedItem: $selectedIconSetName) {
                 Text($0)
             }.padding()
-            
+
             SingleIconSetIconPickerView(selectedImg: $select, icons: iconSets[selectedIconSetName] ?? [])
         }
         .onAppear {
@@ -102,9 +102,7 @@ public struct IconPickerView: View {
     }
 }
 
-
 public struct IconPickerViewNew: View {
-    
     @Environment(\.dismiss) private var dismiss
 
     // 只有点保存的时候，才修改这个
@@ -150,8 +148,6 @@ public struct IconPickerViewNew: View {
         })
     }
 }
-
-
 
 private struct IconView: View {
     private let iconName: String
