@@ -49,49 +49,78 @@ struct ThreePanelCardShape: Shape {
     }
 }
 
+struct ImageHeightPreferenceKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: View {
     var header: () -> Header
     var content: () -> Content
     var footer: () -> Footer
 
     private let headerColor: Color
+    private let bottomColor: Color
+
     private let headerHeight: CGFloat = 50
-    private let contentHeight: CGFloat = 150
+   @State private var contentHeight: CGFloat = 150
     private let footerHeight: CGFloat = 50
 
-    public init(headerColor: Color, header: @escaping () -> Header, content: @escaping () -> Content, footer: @escaping () -> Footer) {
+    public init(headerColor: Color, bottomColor: Color, header: @escaping () -> Header, content: @escaping () -> Content, footer: @escaping () -> Footer) {
         self.headerColor = headerColor
+        self.bottomColor = bottomColor
         self.header = header
         self.content = content
         self.footer = footer
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            Rectangle()
-                .frame(height: headerHeight)
-                .foregroundStyle(headerColor)
-                .overlay {
-                    header()
-                }
-            Rectangle()
-                .frame(height: contentHeight)
-                .foregroundStyle(.white)
-                .overlay {
-                    content()
-                }
-            Rectangle()
-                .frame(height: footerHeight)
-                .foregroundStyle(.white)
-                .overlay {
-                    footer()
-                }
-        }
-        .frame(width: 300)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .mask {
+        ZStack {
             ThreePanelCardShape(radius: 5, first: headerHeight, second: contentHeight)
+                .fill(.background)
+                .frame(width: 300)
+                .frame(height: headerHeight + contentHeight + footerHeight)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .shadow(radius: 8)
+                .blur(radius: 1)
+
+            VStack(spacing: 0) {
+                Rectangle()
+                    .frame(height: headerHeight)
+                    .foregroundStyle(headerColor)
+                    .overlay {
+                        header()
+                    }
+                Rectangle()
+                    .frame(height: contentHeight)
+                    .foregroundStyle(bottomColor)
+                    .overlay {
+                        content().overlay {
+                            GeometryReader(content: { proxy in
+                                Color.clear.preference(key: ImageHeightPreferenceKey.self, value: proxy.size.height)
+                            })
+                        }
+                    }
+                Rectangle()
+                    .frame(height: footerHeight)
+                    .foregroundStyle(bottomColor)
+                    .overlay {
+                        footer()
+                    }
+            }
+            .frame(width: 300)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .mask {
+                ThreePanelCardShape(radius: 5, first: headerHeight, second: contentHeight)
+            }
+            .onPreferenceChange(ImageHeightPreferenceKey.self, perform: { value in
+                contentHeight = value
+            })
         }
+
         .overlay(alignment: .top, content: {
             Line().stroke(style: StrokeStyle(lineWidth: 1, dash: [3])).frame(width: 285, height: 1)
                 .foregroundStyle(Color(.black))
@@ -101,7 +130,8 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
 }
 
 #Preview {
-    ThreePanelCardView(headerColor: .blue.opacity(0.3)) {
+    ThreePanelCardView(headerColor: .blue.opacity(0.3), bottomColor: .red.opacity(0.3)
+    ) {
         Text("生日")
     } content: {
         Text("还有3天")

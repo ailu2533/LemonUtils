@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// 线
 struct Line: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -15,3 +16,8 @@ struct Line: Shape {
         return path
     }
 }
+
+// 虚线
+//  Line().stroke(style: StrokeStyle(lineWidth: 1, dash: [3])).frame(width: 285, height: 1)
+//    .foregroundStyle(Color(.black))
+//    .offset(y: headerHeight + contentHeight)
