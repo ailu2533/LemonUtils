@@ -66,7 +66,7 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
     private let bottomColor: Color
 
     private let headerHeight: CGFloat = 50
-   @State private var contentHeight: CGFloat = 150
+    @State private var contentHeight: CGFloat = 150
     private let footerHeight: CGFloat = 50
 
     public init(headerColor: Color, bottomColor: Color, header: @escaping () -> Header, content: @escaping () -> Content, footer: @escaping () -> Footer) {
@@ -78,8 +78,10 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
     }
 
     public var body: some View {
+        let shape = ThreePanelCardShape(radius: 8, first: headerHeight, second: contentHeight)
+
         ZStack {
-            ThreePanelCardShape(radius: 5, first: headerHeight, second: contentHeight)
+            shape
                 .fill(.background)
                 .frame(width: 300)
                 .frame(height: headerHeight + contentHeight + footerHeight)
@@ -114,7 +116,7 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
             .frame(width: 300)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .mask {
-                ThreePanelCardShape(radius: 5, first: headerHeight, second: contentHeight)
+                shape
             }
             .onPreferenceChange(ImageHeightPreferenceKey.self, perform: { value in
                 contentHeight = value
@@ -137,6 +139,7 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
         Text("还有3天")
             .font(.title)
             .fontWeight(.heavy)
+            .frame(height: 205)
     } footer: {
         Text(Date().formatted(date: .abbreviated, time: .omitted))
             .font(.caption)
