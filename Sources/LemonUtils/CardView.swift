@@ -49,6 +49,22 @@ struct ThreePanelCardShape: Shape {
     }
 }
 
+struct HeaderHeightPreferenceKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+struct FooterHeightPreferenceKey: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 struct ImageHeightPreferenceKey: PreferenceKey {
     static let defaultValue: CGFloat = 0
 
@@ -62,16 +78,11 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
     var content: () -> Content
     var footer: () -> Footer
 
-    private let headerColor: Color
-    private let bottomColor: Color
+    @State private var headerHeight: CGFloat = 0
+    @State private var contentHeight: CGFloat = 0
+    @State private var footerHeight: CGFloat = 0
 
-    private let headerHeight: CGFloat = 50
-    @State private var contentHeight: CGFloat = 150
-    private let footerHeight: CGFloat = 50
-
-    public init(headerColor: Color, bottomColor: Color, header: @escaping () -> Header, content: @escaping () -> Content, footer: @escaping () -> Footer) {
-        self.headerColor = headerColor
-        self.bottomColor = bottomColor
+    public init(header: @escaping () -> Header, content: @escaping () -> Content, footer: @escaping () -> Footer) {
         self.header = header
         self.content = content
         self.footer = footer
@@ -90,37 +101,40 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
                 .blur(radius: 1)
 
             VStack(spacing: 0) {
-                Rectangle()
-                    .frame(height: headerHeight)
-                    .foregroundStyle(headerColor)
+                header()
                     .overlay {
-                        header()
+                        GeometryReader(content: { proxy in
+                            Color.clear.preference(key: HeaderHeightPreferenceKey.self, value: proxy.size.height)
+                        })
                     }
-                Rectangle()
-                    .frame(height: contentHeight)
-                    .foregroundStyle(bottomColor)
+                    .onPreferenceChange(HeaderHeightPreferenceKey.self, perform: { value in
+                        headerHeight = value
+                    })
+
+                content().overlay {
+                    GeometryReader(content: { proxy in
+                        Color.clear.preference(key: ImageHeightPreferenceKey.self, value: proxy.size.height)
+                    })
+                }
+                .onPreferenceChange(ImageHeightPreferenceKey.self, perform: { value in
+                    contentHeight = value
+                })
+
+                footer()
                     .overlay {
-                        content().overlay {
-                            GeometryReader(content: { proxy in
-                                Color.clear.preference(key: ImageHeightPreferenceKey.self, value: proxy.size.height)
-                            })
-                        }
+                        GeometryReader(content: { proxy in
+                            Color.clear.preference(key: FooterHeightPreferenceKey.self, value: proxy.size.height)
+                        })
                     }
-                Rectangle()
-                    .frame(height: footerHeight)
-                    .foregroundStyle(bottomColor)
-                    .overlay {
-                        footer()
-                    }
+                    .onPreferenceChange(FooterHeightPreferenceKey.self, perform: { value in
+                        footerHeight = value
+                    })
             }
             .frame(width: 300)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .mask {
                 shape
             }
-            .onPreferenceChange(ImageHeightPreferenceKey.self, perform: { value in
-                contentHeight = value
-            })
         }
 
         .overlay(alignment: .top, content: {
@@ -131,9 +145,26 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
     }
 }
 
+#Preview("Card") {
+    ThreePanelCardView {
+        Text("hello").frame(height: 150)
+            .background(.blue)
+    } content: {
+        Rectangle()
+            .fill(.yellow.opacity(0.2))
+            .frame(height: 350)
+
+    } footer: {
+        Text("hello").frame(height: 50)
+            .background(.blue)
+    }
+    .overlay {
+        TextItemView(textItem: .init(text: "hello"), selected: true)
+    }
+}
+
 #Preview {
-    ThreePanelCardView(headerColor: .blue.opacity(0.3), bottomColor: .red.opacity(0.3)
-    ) {
+    ThreePanelCardView {
         Text("生日")
     } content: {
         Text("还有3天")

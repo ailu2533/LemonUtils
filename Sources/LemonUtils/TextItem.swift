@@ -65,20 +65,17 @@ public struct TextItemView: View {
                     .opacity(selected ? 0.3 : 0)
                     .overlay(alignment: .topTrailing) {
                         Image(systemName: "pencil.tip")
-                            .frame(width: 16,height: 16)
+                            .frame(width: 16, height: 16)
                             .offset(x: 16, y: -16)
                             .opacity(selected ? 1 : 0)
                     }
                     .overlay(alignment: .topLeading) {
                         Image(systemName: "xmark")
                             .foregroundStyle(Color(.systemRed))
-                            .frame(width: 16,height: 16)
+                            .frame(width: 16, height: 16)
                             .offset(x: -16, y: -16)
                             .opacity(selected ? 1 : 0)
-                            
                     }
-
-                
             }
             .position(x: textItem.pos.x, y: textItem.pos.y)
             .offset(x: textItem.offset.x, y: textItem.offset.y)
@@ -93,5 +90,12 @@ public struct TextItemView: View {
 }
 
 #Preview {
-    TextItemView(textItem: .init(text: "hello"), selected: true, editable: false)
+    RoundedRectangle(cornerRadius: 8)
+        .fill(.blue.opacity(0.3))
+        .frame(height: 400)
+        .overlay {
+            TextItemView(textItem: .init(text: "hello"), selected: true, editable: false)
+        }
 }
+
+
