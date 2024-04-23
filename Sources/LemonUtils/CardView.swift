@@ -9,12 +9,12 @@ import SwiftUI
 
 // 三段式卡片视图
 
-struct ThreePanelCardShape: Shape {
+public struct ThreePanelCardShape: Shape {
     private let radius: CGFloat
     var first: CGFloat
     var second: CGFloat
 
-    init(radius: CGFloat, first: CGFloat, second: CGFloat) {
+    public init(radius: CGFloat, first: CGFloat, second: CGFloat) {
         self.radius = radius
         self.first = first
         self.second = second
@@ -29,7 +29,7 @@ struct ThreePanelCardShape: Shape {
         return path
     }
 
-    func path(in rect: CGRect) -> Path {
+    public func path(in rect: CGRect) -> Path {
         var path = Path()
 
         path.addRect(rect)
@@ -49,27 +49,24 @@ struct ThreePanelCardShape: Shape {
     }
 }
 
-struct HeaderHeightPreferenceKey: PreferenceKey {
-    static let defaultValue: CGFloat = 0
+public struct HeaderHeightPreferenceKey: PreferenceKey {
+    public static let defaultValue: CGFloat = 0
 
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
+    public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
     }
 }
 
-struct FooterHeightPreferenceKey: PreferenceKey {
-    static let defaultValue: CGFloat = 0
+public struct FooterHeightPreferenceKey: PreferenceKey {
+    public static let defaultValue: CGFloat = 0
 
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
+    public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
     }
 }
 
-struct ImageHeightPreferenceKey: PreferenceKey {
-    static let defaultValue: CGFloat = 0
+public struct ImageHeightPreferenceKey: PreferenceKey {
+    public static let defaultValue: CGFloat = 0
 
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
+    public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
     }
 }
 
@@ -77,6 +74,8 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
     var header: () -> Header
     var content: () -> Content
     var footer: () -> Footer
+
+    @Environment(\.displayScale) private var displayScale
 
     @State private var headerHeight: CGFloat = 0
     @State private var contentHeight: CGFloat = 0
@@ -88,21 +87,21 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
         self.footer = footer
     }
 
-    public var body: some View {
+    var card: some View {
         let shape = ThreePanelCardShape(radius: 8, first: headerHeight, second: contentHeight)
 
-        ZStack {
+        return ZStack {
             shape
                 .fill(.background)
                 .frame(width: 300)
                 .frame(height: headerHeight + contentHeight + footerHeight)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .shadow(radius: 8)
-                .blur(radius: 1)
+                .blur(radius: 0.1)
 
             VStack(spacing: 0) {
                 header()
-                    .overlay {
+                    .background {
                         GeometryReader(content: { proxy in
                             Color.clear.preference(key: HeaderHeightPreferenceKey.self, value: proxy.size.height)
                         })
@@ -111,7 +110,7 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
                         headerHeight = value
                     })
 
-                content().overlay {
+                content().background {
                     GeometryReader(content: { proxy in
                         Color.clear.preference(key: ImageHeightPreferenceKey.self, value: proxy.size.height)
                     })
@@ -121,7 +120,7 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
                 })
 
                 footer()
-                    .overlay {
+                    .background {
                         GeometryReader(content: { proxy in
                             Color.clear.preference(key: FooterHeightPreferenceKey.self, value: proxy.size.height)
                         })
@@ -136,48 +135,63 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
                 shape
             }
         }
-
         .overlay(alignment: .top, content: {
             Line().stroke(style: StrokeStyle(lineWidth: 1, dash: [3])).frame(width: 285, height: 1)
                 .foregroundStyle(Color(.black))
                 .offset(y: headerHeight + contentHeight)
         })
+//        .padding()
+    }
+
+    @State private var renderedImage: Image?
+
+    @MainActor public func gen() -> UIImage? {
+        let renderer = ImageRenderer(content: card)
+        renderer.scale = displayScale
+        let img = renderer.uiImage
+        if let img {
+            renderedImage = Image(uiImage: img)
+        }
+
+        return img
+    }
+
+    public var body: some View {
+        card
+            .toolbar(content: {
+                ToolbarItem {
+                    Button(action: {
+                        if let img = gen() {
+                            renderedImage = Image(uiImage: img)
+                        }
+                    }, label: {
+                        Text("分享")
+                    })
+                }
+            })
     }
 }
 
 #Preview("Card") {
-    ThreePanelCardView {
-        Text("hello").frame(height: 150)
-            .background(.blue)
-    } content: {
-        Rectangle()
-            .fill(.yellow.opacity(0.2))
-            .frame(height: 350)
+    NavigationStack {
+        ThreePanelCardView {
+            Rectangle().fill(.blue.opacity(0.4)).frame(height: 50)
+                .overlay {
+                    Text("hello")
+                }
+        } content: {
+            Rectangle()
+                .fill(.yellow.opacity(0.2))
+                .frame(height: 150)
+            //            .overlay {
+            //                TextItemView(textItem: .init(text: "test"), selected: true)
+            //            }
 
-    } footer: {
-        Text("hello").frame(height: 50)
-            .background(.blue)
-    }
-    .overlay {
-        TextItemView(textItem: .init(text: "hello"), selected: true) {
-            print("delete \($0.id)")
-        } editCallback: {
-            print("edit \($0.id)")
+        } footer: {
+            Rectangle().fill(.blue.opacity(0.4)).frame(height: 50)
+                .overlay {
+                    Text("world")
+                }
         }
-    }
-}
-
-#Preview {
-    ThreePanelCardView {
-        Text("生日")
-    } content: {
-        Text("还有3天")
-            .font(.title)
-            .fontWeight(.heavy)
-            .frame(height: 205)
-    } footer: {
-        Text(Date().formatted(date: .abbreviated, time: .omitted))
-            .font(.caption)
-            .foregroundStyle(.secondary)
     }
 }

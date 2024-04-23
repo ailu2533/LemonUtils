@@ -47,6 +47,12 @@ public class TextItem: Identifiable, Equatable {
     }
 }
 
+extension TextItem: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
 public struct TextItemView: View {
     @Bindable var textItem: TextItem
     private var selected: Bool

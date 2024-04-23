@@ -30,20 +30,54 @@ public struct TextStyleEditView: View {
                 .padding()
 
             Form {
-                Slider(value: $textItem.fontSize, in: 10 ... 60, step: 1)
-                Slider(value: $textItem.rotationDegree, in: -180 ... 180, step: 1)
-                ColorPicker("颜色", selection: $textItem.color)
-                TextField("文字", text: $textItem.text)
+                LabeledContent {
+                    TextField("文字", text: $textItem.text)
+                } label: {
+                    Text("文字")
+                }
 
-                Picker(selection: $textItem.fontName) {
-                    ForEach(fontNames, id: \.self) { fontName in
-                        Text(fontName).tag(fontName)
+                LabeledContent {
+                    HStack(spacing: 0) {
+                        Slider(value: $textItem.fontSize, in: 10 ... 60, step: 1)
+                        Text("\(Int(textItem.fontSize))")
+                            .frame(width: 40)
                     }
 
                 } label: {
                     Text("字体")
-                }.pickerStyle(.wheel)
+                }
+
+                LabeledContent {
+                    HStack(spacing: 0) {
+                        Slider(value: $textItem.rotationDegree, in: -180 ... 180, step: 1)
+                        Text("\(Int(textItem.rotationDegree))")
+                            .frame(width: 40)
+                    }
+
+                } label: {
+                    Text("旋转")
+                }
+
+                ColorPicker("颜色", selection: $textItem.color)
+
+                DisclosureGroup(
+                    content: {
+                        Picker(selection: $textItem.fontName) {
+                            ForEach(fontNames, id: \.self) { fontName in
+                                Text(fontName).tag(fontName)
+                            }
+
+                        } label: {
+                            Text("字体")
+                        }.pickerStyle(.wheel)
+                    },
+                    label: { Text("字体") }
+                )
             }
         }
     }
+}
+
+#Preview {
+    TextStyleEditView(textItem: .init(text: "hello"))
 }
