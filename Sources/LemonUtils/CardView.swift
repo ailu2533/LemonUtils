@@ -159,7 +159,11 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
             .background(.blue)
     }
     .overlay {
-        TextItemView(textItem: .init(text: "hello"), selected: true)
+        TextItemView(textItem: .init(text: "hello"), selected: true) {
+            print("delete \($0.id)")
+        } editCallback: {
+            print("edit \($0.id)")
+        }
     }
 }
 

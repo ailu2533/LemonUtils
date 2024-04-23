@@ -50,10 +50,21 @@ public class TextItem: Identifiable, Equatable {
 public struct TextItemView: View {
     @Bindable var textItem: TextItem
     private var selected: Bool
+    private var deleteCallback: (TextItem) -> Void
+    private var editCallback: (TextItem) -> Void
 
-    public init(textItem: TextItem, selected: Bool = false, editable: Bool = false) {
+    public init(textItem: TextItem, selected: Bool, deleteCallback: @escaping (TextItem) -> Void, editCallback: @escaping (TextItem) -> Void) {
         self.textItem = textItem
         self.selected = selected
+        self.deleteCallback = deleteCallback
+        self.editCallback = editCallback
+    }
+
+    public init(textItem: TextItem, selected: Bool) {
+        self.textItem = textItem
+        self.selected = selected
+        deleteCallback = { _ in }
+        editCallback = { _ in }
     }
 
     public var body: some View {
@@ -64,17 +75,27 @@ public struct TextItemView: View {
                     .stroke(style: StrokeStyle(lineWidth: 2, dash: [5]))
                     .opacity(selected ? 0.3 : 0)
                     .overlay(alignment: .topTrailing) {
-                        Image(systemName: "pencil.tip")
-                            .frame(width: 16, height: 16)
-                            .offset(x: 16, y: -16)
-                            .opacity(selected ? 1 : 0)
+                        Button(action: {
+                            editCallback(textItem)
+                        }, label: {
+                            Image(systemName: "pencil.tip")
+                        })
+                        .frame(width: 16, height: 16)
+                        .offset(x: 16, y: -16)
+                        .opacity(selected ? 1 : 0)
+                        .buttonStyle(BigButtonStyle())
                     }
                     .overlay(alignment: .topLeading) {
-                        Image(systemName: "xmark")
-                            .foregroundStyle(Color(.systemRed))
-                            .frame(width: 16, height: 16)
-                            .offset(x: -16, y: -16)
-                            .opacity(selected ? 1 : 0)
+                        Button(role: .destructive, action: {
+                            deleteCallback(textItem)
+                        }, label: {
+                            Image(systemName: "xmark")
+                        })
+                        .frame(width: 16, height: 16)
+                        .offset(x: -16, y: -16)
+
+                        .opacity(selected ? 1 : 0)
+                        .buttonStyle(BigButtonStyle())
                     }
             }
             .position(x: textItem.pos.x, y: textItem.pos.y)
@@ -94,8 +115,10 @@ public struct TextItemView: View {
         .fill(.blue.opacity(0.3))
         .frame(height: 400)
         .overlay {
-            TextItemView(textItem: .init(text: "hello"), selected: true, editable: false)
+            TextItemView(textItem: .init(text: "hello"), selected: true) {
+                print("delete \($0.id)")
+            } editCallback: {
+                print("edit \($0.id)")
+            }
         }
 }
-
-

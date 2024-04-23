@@ -39,7 +39,7 @@ public struct BigButtonStyle: ButtonStyle {
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(MyColor.buttonButtonBigBlue)
-            .foregroundStyle(MyColor.buttonFontBlue)
+            .foregroundStyle(configuration.role == .destructive ? Color(.systemRed) : MyColor.buttonFontBlue)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .saturation(isEnabled ? 1 : 0)
             .opacity(configuration.isPressed ? 0.5 : 1)
