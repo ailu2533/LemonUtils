@@ -161,11 +161,8 @@ private struct IconView: View {
     }
 
     var body: some View {
-        Image(iconName)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: heigth, height: heigth)
-            .scaledToFit()
+        Image.thumbnailImageFixHeight(iconName, height: Int(heigth))
+
             .padding(6)
     }
 }

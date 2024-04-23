@@ -22,11 +22,13 @@ public extension Image {
     }
 
     static func thumbnailImageFixWidth(_ imageName: String, width: Int = 300) -> Image {
+        print(imageName)
         let uiImage = UIImage(named: imageName)!
         return Image(uiImage: thumbnailImage(uiImage, sizeMax: width))
     }
 
     static func thumbnailImageFixHeight(_ imageName: String, height: Int = 300) -> Image {
+        print("fix height \(imageName)")
         let uiImage = UIImage(named: imageName)!
         return Image(uiImage: thumbnailImage2(uiImage, sizeMax: height))
     }

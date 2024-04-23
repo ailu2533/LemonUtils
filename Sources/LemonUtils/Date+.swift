@@ -63,59 +63,59 @@ extension YearMonthDay {
 }
 
 public extension Date {
-    public var startOfWeek: Date? {
+    var startOfWeek: Date? {
         let t = adjust(for: .startOfWeek)?.adjust(for: .startOfDay)
         return Calendar.current.date(byAdding: .day, value: 1, to: t!)
     }
 
-    public var endOfWeek: Date? {
+    var endOfWeek: Date? {
         let t = adjust(for: .endOfWeek)?.adjust(for: .endOfDay)
         return Calendar.current.date(byAdding: .day, value: 1, to: t!)
     }
 
-    public var startOfMonth: Date? {
+    var startOfMonth: Date? {
         return adjust(for: .startOfMonth)?.adjust(for: .startOfDay)
     }
 
-    public var endOfMonth: Date? {
+    var endOfMonth: Date? {
         return adjust(for: .endOfMonth)?.adjust(for: .endOfDay)
     }
 
     // 获取前一天日期
-    public var prevDay: Date? {
+    var prevDay: Date? {
         return Calendar.current.date(byAdding: .day, value: -1, to: self)
     }
 
     // 获取后一天日期
-    public var nextDay: Date? {
+    var nextDay: Date? {
         return Calendar.current.date(byAdding: .day, value: 1, to: self)
     }
 
     // 获取上个月日期
-    public var prevMonth: Date? {
+    var prevMonth: Date? {
         let calendar = Calendar.current
         return calendar.date(byAdding: .month, value: -1, to: self)
     }
 
     // 获取下个月日期
-    public var nextMonth: Date? {
+    var nextMonth: Date? {
         let calendar = Calendar.current
         return calendar.date(byAdding: .month, value: 1, to: self)
     }
 
     // 获取上周日期
-    public var prevWeek: Date? {
+    var prevWeek: Date? {
         let calendar = Calendar.current
         return calendar.date(byAdding: .weekOfYear, value: -1, to: self)!
     }
 
     // 获取下周日期
-    public var nextWeek: Date? {
+    var nextWeek: Date? {
         let calendar = Calendar.current
         return calendar.date(byAdding: .weekOfYear, value: 1, to: self)
     }
 
-    public var weekdayOfMonthStart: Int {
+    var weekdayOfMonthStart: Int {
         let weekday = adjust(for: .startOfMonth)?.component(.weekday)
         // 减二的原因是
         // 1. weekday 是 1到 7，
