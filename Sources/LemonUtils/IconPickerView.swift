@@ -15,7 +15,7 @@ struct SingleIconSetIconPickerView: View {
     // icon名称数组，从这里面选择icon
     private let icons: [String]
 
-    private let columns = Array(repeating: GridItem(.flexible(minimum: 40, maximum: 70)), count: 4)
+    private let columns = [GridItem(.adaptive(minimum: 70))]
 
     init(selectedImg: Binding<String>, icons: [String]) {
         _selectedIcon = selectedImg
@@ -25,7 +25,7 @@ struct SingleIconSetIconPickerView: View {
     var body: some View {
         VStack {
             ScrollView {
-                LazyVGrid(columns: columns, content: {
+                LazyVGrid(columns: columns, spacing: 20, content: {
                     ForEach(icons, id: \.self) {
                         image in
                         IconView(iconName: image)
@@ -75,6 +75,7 @@ public struct IconPickerView: View {
             }.padding()
 
             SingleIconSetIconPickerView(selectedImg: $select, icons: iconSets[selectedIconSetName] ?? [])
+                .padding(.horizontal)
         }
         .onAppear {
             if selectedIconSetName.isEmpty && !iconSets.isEmpty {
@@ -121,12 +122,12 @@ public struct IconPickerViewNew: View {
 
     public var body: some View {
         VStack {
-
             HorizontalSelectionPicker(items: iconSets.keys.elements, selectedItem: $selectedIconSetName) {
                 Text($0)
             }.padding(.horizontal)
-            
+
             SingleIconSetIconPickerView(selectedImg: _selectedIcon, icons: iconSets[selectedIconSetName] ?? [])
+                .padding(.horizontal)
         }
         .onAppear {
             if selectedIconSetName.isEmpty && !iconSets.isEmpty {

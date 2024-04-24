@@ -13,10 +13,10 @@ public class TextItem: Identifiable, Equatable {
     public var text: String
     public var color: Color
     // TODO: 默认字体名
-    public var fontName: String = "Milky-Coffee"
-    public var fontSize: CGFloat = 30.0
+    public var fontName: String = CustomFont.fonts.first?.postscriptName ?? ""
+    public var fontSize: CGFloat = 20.0
     public var rotationDegree: CGFloat = 0.0
-    var pos: CGPoint
+    public var pos: CGPoint
 
     var offset: CGPoint = .zero
 
