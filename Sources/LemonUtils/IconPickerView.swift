@@ -162,8 +162,9 @@ private struct IconView: View {
     }
 
     var body: some View {
-        Image.thumbnailImageFixHeight(iconName, height: Int(heigth))
-
+        Image(iconName)
+            .resizable()
+            .frame(width: 60, height: 60)
             .padding(6)
     }
 }

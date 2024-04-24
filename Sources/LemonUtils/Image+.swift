@@ -29,8 +29,10 @@ public extension Image {
 
     static func thumbnailImageFixHeight(_ imageName: String, height: Int = 300) -> Image {
         print("fix height \(imageName)")
-        let uiImage = UIImage(named: imageName)!
-        return Image(uiImage: thumbnailImage2(uiImage, sizeMax: height))
+        if let uiImage = UIImage(named: imageName) {
+            return Image(uiImage: thumbnailImage2(uiImage, sizeMax: height))
+        }
+        return Image(systemName: "xmark")
     }
 }
 
