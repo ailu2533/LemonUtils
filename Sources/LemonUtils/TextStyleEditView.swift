@@ -12,7 +12,7 @@ public struct TextStyleEditView: View {
     private var fontNames: [String]
 
     public init(textItem: TextItem, fontNames: [String] = [
-        "Milky-Coffee", "RestaDisplayFont",
+        "Milky-Coffee", "RestaDisplayFont", "SmileySans-Oblique","cjkFonts-Regular"
     ]) {
         self.textItem = textItem
         self.fontNames = fontNames
