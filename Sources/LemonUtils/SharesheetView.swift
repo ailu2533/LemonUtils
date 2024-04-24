@@ -38,6 +38,10 @@ extension ItemDetailSource: UIActivityItemSource {
 public struct Sharesheet: UIViewControllerRepresentable {
     var items: [Any]
 
+    public init(items: [Any]) {
+        self.items = items
+    }
+
     public func makeUIViewController(context: Context) -> UIActivityViewController {
         let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
         return controller
