@@ -8,42 +8,23 @@
 import SwiftUI
 
 @Observable
-public class TextItem: Identifiable, Equatable {
+public class TextItem: MovableObject, Identifiable, Equatable {
     @ObservationIgnored public let id = UUID()
     public var text: String
     public var color: Color
     // TODO: 默认字体名
     public var fontName: String = CustomFont.fonts.first?.postscriptName ?? ""
     public var fontSize: CGFloat = 20.0
-    public var rotationDegree: CGFloat = 0.0
-    public var pos: CGPoint
-
-    var offset: CGPoint = .zero
 
     public init(text: String, pos: CGPoint = .zero, color: Color = .primary) {
         self.text = text
-        self.pos = pos
         self.color = color
+        super.init()
+        super.pos = pos
     }
 
     public static func == (lhs: TextItem, rhs: TextItem) -> Bool {
         return lhs.id == rhs.id
-    }
-
-    func onDragChanged(translation: CGSize) {
-        offset = .init(x: translation.width, y: translation.height)
-    }
-
-    func onDragEnd() {
-        pos = .init(x: pos.x + offset.x, y: pos.y + offset.y)
-        offset = .zero
-    }
-
-    public func view() -> some View {
-        return Text(text)
-            .foregroundStyle(Color(color))
-            .font(.custom(fontName, size: fontSize))
-            .rotationEffect(.degrees(rotationDegree))
     }
 }
 
@@ -53,28 +34,32 @@ extension TextItem: Hashable {
     }
 }
 
-public struct TextItemView: View {
-    @Bindable var textItem: TextItem
-    private var selected: Bool
-    private var deleteCallback: (TextItem) -> Void
-    private var editCallback: (TextItem) -> Void
+public struct ItemView<Item: MovableObject, Content: View>: View {
+    @Bindable var item: Item
 
-    public init(textItem: TextItem, selected: Bool, deleteCallback: @escaping (TextItem) -> Void, editCallback: @escaping (TextItem) -> Void) {
-        self.textItem = textItem
+    private var content: (Item) -> Content
+    private var selected: Bool
+    private var deleteCallback: (Item) -> Void
+    private var editCallback: (Item) -> Void
+
+    public init(textItem: Item, selected: Bool, deleteCallback: @escaping (Item) -> Void, editCallback: @escaping (Item) -> Void, content: @escaping (Item) -> Content) {
+        item = textItem
         self.selected = selected
         self.deleteCallback = deleteCallback
         self.editCallback = editCallback
+        self.content = content
     }
 
-    public init(textItem: TextItem, selected: Bool) {
-        self.textItem = textItem
+    public init(textItem: Item, selected: Bool, content: @escaping (Item) -> Content) {
+        item = textItem
         self.selected = selected
         deleteCallback = { _ in }
         editCallback = { _ in }
+        self.content = content
     }
 
     public var body: some View {
-        textItem.view()
+        content(item)
             .padding(8)
             .background {
                 Rectangle()
@@ -82,7 +67,7 @@ public struct TextItemView: View {
                     .opacity(selected ? 0.3 : 0)
                     .overlay(alignment: .topTrailing) {
                         Button(action: {
-                            editCallback(textItem)
+                            editCallback(item)
                         }, label: {
                             Image(systemName: "pencil.tip")
                         })
@@ -93,7 +78,7 @@ public struct TextItemView: View {
                     }
                     .overlay(alignment: .topLeading) {
                         Button(role: .destructive, action: {
-                            deleteCallback(textItem)
+                            deleteCallback(item)
                         }, label: {
                             Image(systemName: "xmark")
                         })
@@ -104,27 +89,40 @@ public struct TextItemView: View {
                         .buttonStyle(BigButtonStyle())
                     }
             }
-            .position(x: textItem.pos.x, y: textItem.pos.y)
-            .offset(x: textItem.offset.x, y: textItem.offset.y)
+            .position(x: item.pos.x, y: item.pos.y)
+            .offset(x: item.offset.x, y: item.offset.y)
             .gesture(DragGesture()
                 .onChanged({ value in
-                    textItem.onDragChanged(translation: value.translation)
+                    item.onDragChanged(translation: value.translation)
                 }).onEnded({ _ in
-                    textItem.onDragEnd()
+                    item.onDragEnd()
                 })
             )
     }
 }
 
-#Preview {
+#Preview("2") {
     RoundedRectangle(cornerRadius: 8)
         .fill(.blue.opacity(0.3))
         .frame(height: 400)
         .overlay {
-            TextItemView(textItem: .init(text: "hello"), selected: true) {
-                print("delete \($0.id)")
-            } editCallback: {
-                print("edit \($0.id)")
+            ItemView(textItem: TextItem(text: "hello world"), selected: true) { item in
+                Text(item.text)
+            }
+        }
+}
+
+class MovableImage: MovableObject {
+    var imageName: String = "plus"
+}
+
+#Preview("3") {
+    RoundedRectangle(cornerRadius: 8)
+        .fill(.blue.opacity(0.3))
+        .frame(height: 400)
+        .overlay {
+            ItemView(textItem: MovableImage(), selected: true) { item in
+                Image(systemName: item.imageName)
             }
         }
 }

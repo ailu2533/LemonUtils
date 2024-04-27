@@ -54,7 +54,8 @@ public struct TextStyleEditView: View {
                 .frame(height: 200)
 
                 .overlay {
-                    textItem.view()
+//                    textItem.view()
+                    Text("TODO")
                 }
                 .padding()
 
