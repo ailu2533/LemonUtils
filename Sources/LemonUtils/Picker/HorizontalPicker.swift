@@ -12,15 +12,15 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .padding(.horizontal, 8)
-            .padding(.vertical, 5)
+            .padding(.vertical, 4)
             .background(backgroundColor)
             .foregroundStyle(Color(.systemGray))
-            .clipShape(RoundedRectangle(cornerRadius: 9))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
             .saturation(isEnabled ? 1 : 0)
             .opacity(configuration.isPressed ? 0.5 : 1)
             .background {
                 if isSelected {
-                    RoundedRectangle(cornerRadius: 9)
+                    RoundedRectangle(cornerRadius: 8)
                         .fill(MyColor.buttonBgBlue)
                         .matchedGeometryEffect(id: groupID, in: animationNamespace)
                 }
@@ -73,6 +73,7 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
                     }
                 }, label: {
                     itemViewBuilder(dataItem)
+                        .frame(minWidth: 30)
                 }).buttonStyle(HorizontalPickerButtonStyle(animationNamespace: animationNamespace, groupID: uniqueID, isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
             }
         }
@@ -80,14 +81,14 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 }
 
 struct WeekdaySelectionView: View {
-    let weekdays = [
+    static let weekdays = [
         "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日",
     ]
 
-    @State private var selectedWeekday = "星期一"
+    @State private var selectedWeekday = WeekdaySelectionView.weekdays.first!
 
     var body: some View {
-        HorizontalSelectionPicker(items: weekdays, selectedItem: $selectedWeekday, backgroundColor: .gray.opacity(0.1)) { weekday in
+        HorizontalSelectionPicker(items: WeekdaySelectionView.weekdays, selectedItem: $selectedWeekday, backgroundColor: .gray.opacity(0.1)) { weekday in
             Text("\(weekday)")
         }
     }
