@@ -1,20 +1,19 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by ailu on 2024/4/27.
 //
 
 import Foundation
 
-
 @Observable
-public class MovableObject {
+open class MovableObject {
     var rotationDegree: CGFloat = .zero
     var offset: CGPoint = .zero
     var pos: CGPoint = .zero
 
-    init() {
+    public init() {
     }
 
     func onDragChanged(translation: CGSize) {
