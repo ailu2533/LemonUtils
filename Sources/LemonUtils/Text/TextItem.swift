@@ -19,8 +19,8 @@ public class TextItem: MovableObject, Identifiable, Equatable {
     public init(text: String, pos: CGPoint = .zero, color: Color = .primary) {
         self.text = text
         self.color = color
-        super.init()
-        super.pos = pos
+
+        super.init(pos: pos)
     }
 
     public static func == (lhs: TextItem, rhs: TextItem) -> Bool {
@@ -58,7 +58,7 @@ class MovableImage: MovableObject {
         .fill(.blue.opacity(0.3))
         .frame(height: 400)
         .overlay {
-            MovableObjectView(textItem: MovableImage(), selected: true) { item in
+            MovableObjectView(textItem: MovableImage(pos: .init(x: 100, y: 100)), selected: true) { item in
                 Image(systemName: item.imageName)
             }
         }
