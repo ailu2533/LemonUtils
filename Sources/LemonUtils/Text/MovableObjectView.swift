@@ -42,12 +42,12 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
                         Button(action: {
                             editCallback(item)
                         }, label: {
-                            Image(systemName: "pencil.tip")
+                            Image(systemName: "pencil")
                         })
                         .frame(width: 16, height: 16)
                         .offset(x: 16, y: -16)
                         .opacity(selected ? 1 : 0)
-                        .buttonStyle(BigButtonStyle())
+                        .buttonStyle(CircleButtonStyle())
                     }
                     .overlay(alignment: .topLeading) {
                         Button(role: .destructive, action: {
@@ -59,7 +59,7 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
                         .offset(x: -16, y: -16)
 
                         .opacity(selected ? 1 : 0)
-                        .buttonStyle(BigButtonStyle())
+                        .buttonStyle(CircleButtonStyle())
                     }
             }
             .position(x: item.pos.x, y: item.pos.y)
