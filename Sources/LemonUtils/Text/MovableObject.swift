@@ -9,12 +9,13 @@ import Foundation
 
 @Observable
 open class MovableObject {
-    public var rotationDegree: CGFloat = .zero
     var offset: CGPoint = .zero
     public var pos: CGPoint = .zero
+    public var rotationDegree: CGFloat = .zero
 
-    public init(pos: CGPoint) {
+    public init(pos: CGPoint, rotationDegree: CGFloat = .zero) {
         self.pos = pos
+        self.rotationDegree = rotationDegree
     }
 
     func onDragChanged(translation: CGSize) {
@@ -26,4 +27,3 @@ open class MovableObject {
         offset = .zero
     }
 }
-
