@@ -49,17 +49,3 @@ extension TextItem: Hashable {
         }
 }
 
-class MovableImage: MovableObject {
-    var imageName: String = "plus"
-}
-
-#Preview("3") {
-    RoundedRectangle(cornerRadius: 8)
-        .fill(.blue.opacity(0.3))
-        .frame(height: 400)
-        .overlay {
-            MovableObjectView(textItem: MovableImage(pos: .init(x: 100, y: 100)), selected: true) { item in
-                Image(systemName: item.imageName)
-            }
-        }
-}
