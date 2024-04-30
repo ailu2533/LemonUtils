@@ -34,7 +34,6 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
 
     @State private var viewSize: CGSize = .zero
     @GestureState private var angle: Angle = .zero
-    @State private var rotation: Angle = .zero
 
     public init(textItem: Item, selected: Bool, deleteCallback: @escaping (Item) -> Void, editCallback: @escaping (Item) -> Void, content: @escaping (Item) -> Content) {
         item = textItem
@@ -82,6 +81,7 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
                 }, label: {
                     Image(systemName: "pencil.tip")
                         .resizable()
+                        .aspectRatio(contentMode: .fit)
                         .frame(width: 12, height: 12)
                 })
                 .offset(x: 16, y: -16)
@@ -94,7 +94,8 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
                 }, label: {
                     Image(systemName: "xmark")
                         .resizable()
-                        .frame(width: 10, height: 10)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 12, height: 12)
                 })
                 .offset(x: -16, y: -16)
 
@@ -104,8 +105,14 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
 
             .background(alignment: .center) {
                 Image(systemName: "arrow.triangle.2.circlepath")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 12, height: 12)
+                    .padding(5)
+                    .background(Color.white)
                     .clipShape(Circle())
                     .shadow(radius: 1)
+
                     .opacity(selected ? 1 : 0)
 
                     .offset(x: viewSize.width / 2 + 10, y: viewSize.height / 2 + 10)
@@ -117,7 +124,7 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
                                 state = calculateRotation(value: value)
                             })
                             .onEnded({ value in
-                                rotation = rotation + calculateRotation(value: value)
+                                item.rotationDegree = item.rotationDegree + calculateRotation(value: value).degrees
                             })
                     )
             }
@@ -130,10 +137,8 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
             .background {
                 topCorner
             }
-
-            .rotationEffect(angle + rotation)
+            .rotationEffect(angle + Angle(degrees: item.rotationDegree))
             .coordinateSpace(name: id)
-
             .position(x: item.pos.x, y: item.pos.y)
             .offset(x: item.offset.x, y: item.offset.y)
             .gesture(DragGesture()
