@@ -75,7 +75,7 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
                 viewSize = $0
             })
 
-            .overlay(alignment: .topTrailing) {
+            .overlay(alignment: .center) {
                 Button(action: {
                     editCallback(item)
                 }, label: {
@@ -84,11 +84,11 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 12, height: 12)
                 })
-                .offset(x: 16, y: -16)
+                .offset(x: viewSize.width / 2 + 10, y: -viewSize.height / 2 - 10)
                 .opacity(selected ? 1 : 0)
                 .buttonStyle(CircleButtonStyle2())
             }
-            .overlay(alignment: .topLeading) {
+            .overlay(alignment: .center) {
                 Button(role: .destructive, action: {
                     deleteCallback(item)
                 }, label: {
@@ -97,7 +97,7 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 12, height: 12)
                 })
-                .offset(x: -16, y: -16)
+                .offset(x: -viewSize.width / 2 - 10, y: -viewSize.height / 2 - 10)
 
                 .opacity(selected ? 1 : 0)
                 .buttonStyle(CircleButtonStyle2())
