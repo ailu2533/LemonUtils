@@ -7,13 +7,6 @@
 
 import SwiftUI
 
-struct SizePreferenceKey: PreferenceKey {
-    static var defaultValue: CGSize = .zero
-
-    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
-    }
-}
-
 public struct CircleButtonStyle2: ButtonStyle {
     @Environment(\.isEnabled) var isEnabled
 
@@ -67,7 +60,7 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
         let startVector = CGVector(dx: value.startLocation.x - centerX, dy: value.startLocation.y - centerY)
         let endVector = CGVector(dx: value.location.x - centerX, dy: value.location.y - centerY)
         let angleDifference = atan2(endVector.dy, endVector.dx) - atan2(startVector.dy, startVector.dx)
-        var rotation = Angle(radians: Double(angleDifference))
+        let rotation = Angle(radians: Double(angleDifference))
 
         return rotation
     }
@@ -79,6 +72,10 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
             .foregroundStyle(Color(.systemBackground))
             .shadow(radius: 10)
             .opacity(selected ? 1 : 0)
+            .readSize(callback: {
+                viewSize = $0
+            })
+
             .overlay(alignment: .topTrailing) {
                 Button(action: {
                     editCallback(item)
@@ -104,16 +101,6 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
                 .opacity(selected ? 1 : 0)
                 .buttonStyle(CircleButtonStyle2())
             }
-            .background(content: {
-                GeometryReader(content: { geometry in
-                    Color.clear.onAppear(perform: {
-                        viewSize = geometry.size
-                    }).preference(key: SizePreferenceKey.self, value: geometry.size)
-                        .onPreferenceChange(SizePreferenceKey.self, perform: { _ in
-                            viewSize = geometry.size
-                        })
-                })
-            })
 
             .background(alignment: .center) {
                 Image(systemName: "arrow.triangle.2.circlepath")
@@ -164,12 +151,20 @@ class MovableImage: MovableObject {
 }
 
 #Preview("3") {
-    RoundedRectangle(cornerRadius: 8)
-        .fill(.blue.opacity(0.2))
-        .frame(height: 400)
-        .overlay {
-            MovableObjectView(textItem: MovableImage(pos: .init(x: 100, y: 100)), selected: true) { item in
-                Image(systemName: item.imageName)
+    VStack {
+        RoundedRectangle(cornerRadius: 8)
+            .fill(.blue.opacity(0.2))
+            .frame(height: 400)
+            .overlay {
+                MovableObjectView(textItem: MovableImage(pos: .init(x: 100, y: 100)), selected: true) { item in
+                    Image(systemName: item.imageName)
+                }
             }
+
+        MovableObjectView(textItem: MovableImage(pos: .init(x: 100, y: 100)), selected: true) { item in
+            Image(systemName: item.imageName)
+                .resizable()
+                .frame(width: 50, height: 50)
         }
+    }
 }
