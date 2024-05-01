@@ -165,7 +165,7 @@ public struct ThreePanelCardView<Header: View, Content: View, Footer: View>: Vie
                             renderedImage = Image(uiImage: img)
                         }
                     }, label: {
-                        Text("分享")
+                        Text(String(localized: "share", bundle: .module))
                     })
                 }
             })
