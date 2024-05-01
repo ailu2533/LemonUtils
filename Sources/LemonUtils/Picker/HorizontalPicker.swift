@@ -68,14 +68,12 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
         HStack {
             ForEach(items, id: \.self) { dataItem in
                 Button(action: {
-                    withAnimation(.snappy) {
-                        selectedItem = dataItem
-                    }
+                    selectedItem = dataItem
                 }, label: {
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
                 }).buttonStyle(HorizontalPickerButtonStyle(animationNamespace: animationNamespace, groupID: uniqueID, isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
-            }
+            }.animation(.snappy, value: selectedItem)
         }
     }
 }
