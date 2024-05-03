@@ -58,7 +58,8 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
         if isEmbeddedInScrollView {
             ScrollView(.horizontal) {
                 itemsStackView()
-            }.scrollIndicators(.hidden)
+            }
+            .scrollIndicators(.hidden)
         } else {
             itemsStackView()
         }
@@ -74,6 +75,7 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
                         .frame(minWidth: 30)
                 }).buttonStyle(HorizontalPickerButtonStyle(animationNamespace: animationNamespace, groupID: uniqueID, isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
             }.animation(.snappy, value: selectedItem)
+                .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.5), trigger: selectedItem)
         }
     }
 }

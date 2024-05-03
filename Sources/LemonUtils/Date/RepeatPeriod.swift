@@ -14,10 +14,10 @@ public enum RepeatPeriod: Int, CaseIterable, Identifiable, Codable {
         rawValue
     }
 
-    case day = 1
-    case week = 2
-    case month = 3
-    case year = 4
+    case day = 0
+    case week = 1
+    case month = 2
+    case year = 3
 
     public var text: String {
         switch self {
@@ -139,3 +139,48 @@ public func checkRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: Re
         return year % n == 0
     }
 }
+
+public struct RepeatPeriodPickerView: View {
+    @Binding var repeatPeriod: RepeatPeriod
+    @Binding var repeatN: Int
+
+    @State private var selections: [Int] = [0, 0]
+
+    public init(repeatPeriod: Binding<RepeatPeriod>, repeatN: Binding<Int>) {
+        _repeatPeriod = repeatPeriod
+        _repeatN = repeatN
+    }
+
+    private let data: [[String]] = [
+        Array(1 ..< 30).map {
+            "\($0)"
+        },
+
+        RepeatPeriod.allCases.map {
+            $0.text
+        },
+    ]
+
+    public var body: some View {
+        MultiComponentPickerView(data: self.data, selections: self.$selections)
+            .onChange(of: selections[0], { _, _ in
+                repeatN = selections[0] + 1
+            })
+            .onChange(of: selections[1], { _, _ in
+                repeatPeriod = RepeatPeriod(rawValue: selections[1]) ?? .day
+            })
+    }
+}
+
+struct P: View {
+    @State private var repeatPeriod = RepeatPeriod.day
+    @State private var repeatN = 1
+
+    var body: some View {
+        RepeatPeriodPickerView(repeatPeriod: $repeatPeriod, repeatN: $repeatN)
+    }
+}
+
+#Preview(body: {
+    P()
+})

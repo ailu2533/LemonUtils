@@ -37,7 +37,7 @@ public struct ColorPickerView: View {
                         }
                         .padding(2)
                 }
-            })
+            }).sensoryFeedback(.selection, trigger: selectedColor)
         }
         .scrollIndicators(.hidden)
         .scrollContentBackground(.hidden)

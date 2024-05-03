@@ -41,7 +41,8 @@ struct SingleIconSetIconPickerView: View {
 //                                }
                             }
                     }
-                })
+                }).sensoryFeedback(.selection, trigger: selectedIcon)
+                    .padding(.horizontal)
             }
         }
     }

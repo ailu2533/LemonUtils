@@ -61,6 +61,7 @@ public struct TextStyleEditView: View {
             Form {
                 LabeledContent {
                     TextField("文字", text: $textItem.text)
+                        .submitLabel(.done)
                 } label: {
                     Text("文字")
                 }
@@ -76,16 +77,16 @@ public struct TextStyleEditView: View {
                     Text("字体")
                 }
 
-                LabeledContent {
-                    HStack(spacing: 0) {
-                        Slider(value: $textItem.rotationDegree, in: -180 ... 180, step: 1)
-                        Text("\(Int(textItem.rotationDegree))")
-                            .frame(width: 40)
-                    }
-
-                } label: {
-                    Text("旋转")
-                }
+//                LabeledContent {
+//                    HStack(spacing: 0) {
+//                        Slider(value: $textItem.rotationDegree, in: -180 ... 180, step: 1)
+//                        Text("\(Int(textItem.rotationDegree))")
+//                            .frame(width: 40)
+//                    }
+//
+//                } label: {
+//                    Text("旋转")
+//                }
 
                 ColorPicker("颜色", selection: $textItem.color)
 

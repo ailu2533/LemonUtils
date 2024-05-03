@@ -29,6 +29,8 @@ public class TextItem: MovableObject, Identifiable, Equatable {
 
     public func view() -> some View {
         return Text(text)
+            .foregroundStyle(color)
+            .font(.custom(fontName, size: fontSize))
     }
 }
 
@@ -48,4 +50,3 @@ extension TextItem: Hashable {
             }
         }
 }
-
