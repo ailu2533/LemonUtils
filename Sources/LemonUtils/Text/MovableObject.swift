@@ -8,15 +8,52 @@
 import Foundation
 import SwiftUI
 
+import SwiftUI
+
+import SwiftUI
+
 @Observable
-open class MovableObject {
+open class MovableObject: Identifiable, Codable {
+    @ObservationIgnored public var id: UUID = UUID()
     var offset: CGPoint = .zero
     public var pos: CGPoint = .zero
     public var rotationDegree: CGFloat = .zero
+    public var zIndex: Double = 1.0
+    public var scale: CGFloat = 1.0
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case posX = "posX"
+        case posY = "posY"
+        case rotationDegree
+        case zIndex
+        case scale
+    }
 
     public init(pos: CGPoint, rotationDegree: CGFloat = .zero) {
         self.pos = pos
         self.rotationDegree = rotationDegree
+    }
+
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        let posX = try container.decode(CGFloat.self, forKey: .posX)
+        let posY = try container.decode(CGFloat.self, forKey: .posY)
+        pos = CGPoint(x: posX, y: posY)
+        rotationDegree = try container.decode(CGFloat.self, forKey: .rotationDegree)
+        zIndex = try container.decode(Double.self, forKey: .zIndex)
+        scale = try container.decode(CGFloat.self, forKey: .scale)
+    }
+
+    open func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(pos.x, forKey: .posX)
+        try container.encode(pos.y, forKey: .posY)
+        try container.encode(rotationDegree, forKey: .rotationDegree)
+        try container.encode(zIndex, forKey: .zIndex)
+        try container.encode(scale, forKey: .scale)
     }
 
     func onDragChanged(translation: CGSize) {

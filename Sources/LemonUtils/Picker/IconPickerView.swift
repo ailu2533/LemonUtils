@@ -5,16 +5,12 @@
 //  Created by ailu on 2024/3/25.
 //
 
+import Collections
 import SwiftUI
 
-import Collections
-
 struct SingleIconSetIconPickerView: View {
-    // 被选择的icon
     @Binding private var selectedIcon: String
-    // icon名称数组，从这里面选择icon
     private let icons: [String]
-
     private let columns = [GridItem(.adaptive(minimum: 70))]
 
     init(selectedImg: Binding<String>, icons: [String]) {
@@ -25,24 +21,22 @@ struct SingleIconSetIconPickerView: View {
     var body: some View {
         VStack {
             ScrollView {
-                LazyVGrid(columns: columns, spacing: 20, content: {
-                    ForEach(icons, id: \.self) {
-                        image in
+                LazyVGrid(columns: columns, spacing: 20) {
+                    ForEach(icons, id: \.self) { image in
                         IconView(iconName: image)
-                            .overlay(content: {
+                            .overlay(
                                 RoundedRectangle(cornerRadius: 8)
                                     .stroke(selectedIcon == image ? .blue.opacity(0.4) : .clear, style: StrokeStyle(lineWidth: 2, dash: [3]))
                                     .aspectRatio(contentMode: .fill)
                                     .padding(2)
-                            })
+                            )
                             .onTapGesture {
-//                                withAnimation(.snappy) {
                                 selectedIcon = image
-//                                }
                             }
                     }
-                }).sensoryFeedback(.selection, trigger: selectedIcon)
-                    .padding(.horizontal)
+                }
+                .sensoryFeedback(.selection, trigger: selectedIcon)
+                .padding(.horizontal)
             }
         }
     }
@@ -50,16 +44,10 @@ struct SingleIconSetIconPickerView: View {
 
 public struct IconPickerView: View {
     @Environment(\.dismiss) private var dismiss
-
-    // 只有点保存的时候，才修改这个
     @Binding var selectedIcon: String
-
-    // 当前选择的icon
     @State private var select: String = ""
-    // 当前选择的icon集名称
     @State private var selectedIconSetName: String = ""
 
-    // icon set
     let iconSets: OrderedDictionary<String, [String]>
 
     public init(selectedIcon: Binding<String>, iconSets: OrderedDictionary<String, [String]>) {
@@ -70,50 +58,38 @@ public struct IconPickerView: View {
     public var body: some View {
         VStack {
             IconView(iconName: select)
-
             HorizontalSelectionPicker(items: iconSets.keys.elements, selectedItem: $selectedIconSetName) {
                 Text($0)
-            }.padding()
+            }
+            .padding()
 
             SingleIconSetIconPickerView(selectedImg: $select, icons: iconSets[selectedIconSetName] ?? [])
                 .padding(.horizontal)
         }
         .onAppear {
-            if selectedIconSetName.isEmpty && !iconSets.isEmpty {
-                selectedIconSetName = iconSets.keys.first!
-            }
-
-            if select.isEmpty && !selectedIconSetName.isEmpty {
-                select = iconSets[selectedIconSetName]?.first ?? ""
-            }
+            selectedIconSetName = selectedIconSetName.isEmpty ? iconSets.keys.first ?? "" : selectedIconSetName
+            select = select.isEmpty ? iconSets[selectedIconSetName]?.first ?? "" : select
         }
-        .onChange(of: selectedIconSetName) { _, newIconSetName in
-            select = iconSets[newIconSetName]?.first ?? ""
+        .onChange(of: selectedIconSetName) { _ in
+            select = iconSets[selectedIconSetName]?.first ?? ""
         }
         .navigationTitle("选择图标")
-        .toolbar(content: {
+        .toolbar {
             ToolbarItem {
-                Button(action: {
+                Button("确定") {
                     selectedIcon = select
                     dismiss()
-                }, label: {
-                    Text("确定")
-                })
+                }
             }
-        })
+        }
     }
 }
 
 public struct IconPickerViewNew: View {
     @Environment(\.dismiss) private var dismiss
-
-    // 只有点保存的时候，才修改这个
     @Binding var selectedIcon: String
-
-    // 当前选择的icon集名称
     @State private var selectedIconSetName: String = ""
 
-    // icon set
     let iconSets: OrderedDictionary<String, [String]>
 
     public init(selectedIcon: Binding<String>, iconSets: OrderedDictionary<String, [String]>) {
@@ -125,21 +101,17 @@ public struct IconPickerViewNew: View {
         VStack {
             HorizontalSelectionPicker(items: iconSets.keys.elements, selectedItem: $selectedIconSetName) {
                 Text($0)
-            }.padding(.horizontal)
+            }
+            .padding(.horizontal)
 
             SingleIconSetIconPickerView(selectedImg: _selectedIcon, icons: iconSets[selectedIconSetName] ?? [])
                 .padding(.horizontal)
         }
         .onAppear {
-            if selectedIconSetName.isEmpty && !iconSets.isEmpty {
-                selectedIconSetName = iconSets.keys.first!
-            }
-
-            if selectedIcon.isEmpty && !selectedIconSetName.isEmpty {
-                selectedIcon = iconSets[selectedIconSetName]?.first ?? ""
-            }
+            selectedIconSetName = selectedIconSetName.isEmpty ? iconSets.keys.first ?? "" : selectedIconSetName
+            selectedIcon = selectedIcon.isEmpty ? iconSets[selectedIconSetName]?.first ?? "" : selectedIcon
         }
-        .toolbar(content: {
+        .toolbar {
             ToolbarItem {
                 Button(action: {
                     dismiss()
@@ -147,25 +119,25 @@ public struct IconPickerViewNew: View {
                     Label("关闭", systemImage: "xmark.circle")
                 })
             }
-        })
+        }
     }
 }
 
 private struct IconView: View {
     private let iconName: String
     private let width: CGFloat
-    private let heigth: CGFloat
+    private let height: CGFloat
 
-    init(iconName: String, width: CGFloat = 60, heigth: CGFloat = 60) {
+    init(iconName: String, width: CGFloat = 60, height: CGFloat = 60) {
         self.iconName = iconName
         self.width = width
-        self.heigth = heigth
+        self.height = height
     }
 
     var body: some View {
         Image(iconName)
             .resizable()
-            .frame(width: 60, height: 60)
+            .frame(width: width, height: height)
             .padding(6)
     }
 }

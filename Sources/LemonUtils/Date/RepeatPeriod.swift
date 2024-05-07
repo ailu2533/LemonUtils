@@ -35,108 +35,60 @@ public enum RepeatPeriod: Int, CaseIterable, Identifiable, Codable {
 
 // 计算 距离最近的目标日期还有多少天
 public func calculateNearestRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int) -> Int {
+    let calendar = Calendar.current
     switch repeatPeriod {
     case .day:
-        let diffs = Calendar.current.dateComponents([.day], from: startDate, to: currentDate)
-        let day = diffs.day!
-
-        if day % n == 0 {
-            return 0
-        }
-
-        return n - day % n
+        let days = calendar.dateComponents([.day], from: startDate, to: currentDate).day!
+        return days % n == 0 ? 0 : n - days % n
 
     case .week:
-        let diffs = Calendar.current.dateComponents([.day], from: startDate, to: currentDate)
-
-        let day = diffs.day!
-
-        let nday = n * 7
-
-        if day % nday == 0 {
-            return 0
-        }
-
-        return nday - day % nday
+        let days = calendar.dateComponents([.day], from: startDate, to: currentDate).day!
+        let periodDays = n * 7
+        return days % periodDays == 0 ? 0 : periodDays - days % periodDays
 
     case .month:
-        let diffs = Calendar.current.dateComponents([.month, .day], from: startDate, to: currentDate)
-
-        let day = diffs.day!
-        let month = diffs.month!
-
-        if day == 0 && month % n == 0 {
+        let components = calendar.dateComponents([.month, .day], from: startDate, to: currentDate)
+        let days = components.day!
+        let months = components.month!
+        if days == 0 && months % n == 0 {
             return 0
         }
-
-        let nMonth = n * (month / n) + n
-
-        let nextDate = startDate.offset(.month, value: nMonth)!
-
-        let diffs2 = Calendar.current.dateComponents([.day], from: currentDate, to: nextDate)
-
-        return diffs2.day!
+        let targetMonth = n * ((months / n) + 1)
+        let nextDate = calendar.date(byAdding: .month, value: targetMonth, to: startDate)!
+        return calendar.dateComponents([.day], from: currentDate, to: nextDate).day!
 
     case .year:
-        let diffs = Calendar.current.dateComponents([.year, .day], from: startDate, to: currentDate)
-
-        let day = diffs.day!
-        let year = diffs.year!
-
-        if day == 0 && year % n == 0 {
+        let components = calendar.dateComponents([.year, .day], from: startDate, to: currentDate)
+        let days = components.day!
+        let years = components.year!
+        if days == 0 && years % n == 0 {
             return 0
         }
-
-        let nYear = n * (year / n) + n
-
-        let nextDate = startDate.offset(.year, value: nYear)!
-
-        let diffs2 = Calendar.current.dateComponents([.day], from: currentDate, to: nextDate)
-
-        return diffs2.day!
+        let targetYear = n * ((years / n) + 1)
+        let nextDate = calendar.date(byAdding: .year, value: targetYear, to: startDate)!
+        return calendar.dateComponents([.day], from: currentDate, to: nextDate).day!
     }
 }
 
-//  判断currentDate与 startDate之间是否距离n个周期
+// 判断currentDate与 startDate之间是否距离n个周期
 public func checkRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int) -> Bool {
+    let calendar = Calendar.current
     switch repeatPeriod {
     case .day:
-        let diffs = Calendar.current.dateComponents([.day], from: startDate, to: currentDate)
-        let day = diffs.day!
-        return day % n == 0
+        let days = calendar.dateComponents([.day], from: startDate, to: currentDate).day!
+        return days % n == 0
+
     case .week:
-        let diffs = Calendar.current.dateComponents([.day], from: startDate, to: currentDate)
+        let days = calendar.dateComponents([.day], from: startDate, to: currentDate).day!
+        return days % 7 == 0 && (days / 7) % n == 0
 
-        let day = diffs.day!
-
-        if day % 7 != 0 {
-            return false
-        }
-
-        let week = day / 7
-
-        return week % n == 0
     case .month:
-        let diffs = Calendar.current.dateComponents([.month, .day], from: startDate, to: currentDate)
-
-        let day = diffs.day!
-        if day != 0 {
-            return false
-        }
-
-        let month = diffs.month!
-        return month % n == 0
+        let components = calendar.dateComponents([.month, .day], from: startDate, to: currentDate)
+        return components.day! == 0 && components.month! % n == 0
 
     case .year:
-        let diffs = Calendar.current.dateComponents([.year, .day], from: startDate, to: currentDate)
-
-        let day = diffs.day!
-        if day != 0 {
-            return false
-        }
-
-        let year = diffs.year!
-        return year % n == 0
+        let components = calendar.dateComponents([.year, .day], from: startDate, to: currentDate)
+        return components.day! == 0 && components.year! % n == 0
     }
 }
 
@@ -168,7 +120,7 @@ public struct RepeatPeriodPickerView: View {
             })
             .onChange(of: selections[1], { _, _ in
                 repeatPeriod = RepeatPeriod(rawValue: selections[1]) ?? .day
-            })
+            }).frame(height: 80)
     }
 }
 

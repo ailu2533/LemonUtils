@@ -13,16 +13,18 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
         configuration.label
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .background(backgroundColor)
-            .foregroundStyle(Color(.systemGray))
+            .foregroundStyle(.primary)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .saturation(isEnabled ? 1 : 0)
             .opacity(configuration.isPressed ? 0.5 : 1)
             .background {
                 if isSelected {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(MyColor.buttonBgBlue)
+                        .fill(Color(.systemBlue).opacity(0.6))
                         .matchedGeometryEffect(id: groupID, in: animationNamespace)
+                } else {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color(.systemGray6))
                 }
             }
     }
@@ -40,8 +42,6 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 
     private var uniqueID = UUID().uuidString
     private var isEmbeddedInScrollView = true
-
-    // MARK:
 
     public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), isEmbeddedInScrollView: Bool = true,
                 groupId: String = "picker",
@@ -74,22 +74,23 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
                 }).buttonStyle(HorizontalPickerButtonStyle(animationNamespace: animationNamespace, groupID: uniqueID, isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
-            }.animation(.snappy, value: selectedItem)
-                .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.5), trigger: selectedItem)
+            }
         }
+        .padding(.trailing)
+        .animation(.default, value: items)
     }
 }
 
 struct WeekdaySelectionView: View {
     static let weekdays = [
-        "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日",
+        "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"
     ]
 
     @State private var selectedWeekday = WeekdaySelectionView.weekdays.first!
 
     var body: some View {
         HorizontalSelectionPicker(items: WeekdaySelectionView.weekdays, selectedItem: $selectedWeekday, backgroundColor: .gray.opacity(0.1)) { weekday in
-            Text("\(weekday)")
+            Text(weekday)
         }
     }
 }
