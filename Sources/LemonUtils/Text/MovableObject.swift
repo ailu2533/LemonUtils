@@ -23,8 +23,8 @@ open class MovableObject: Identifiable, Codable {
 
     enum CodingKeys: String, CodingKey {
         case id
-        case posX = "posX"
-        case posY = "posY"
+        case posX
+        case posY
         case rotationDegree
         case zIndex
         case scale
@@ -35,7 +35,7 @@ open class MovableObject: Identifiable, Codable {
         self.rotationDegree = rotationDegree
     }
 
-    required public init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(UUID.self, forKey: .id)
         let posX = try container.decode(CGFloat.self, forKey: .posX)
@@ -65,3 +65,24 @@ open class MovableObject: Identifiable, Codable {
         offset = .zero
     }
 }
+
+extension MovableObject: Hashable {
+    public static func == (lhs: MovableObject, rhs: MovableObject) -> Bool {
+        return lhs.id == rhs.id && lhs.pos == rhs.pos && lhs.rotationDegree == rhs.rotationDegree && lhs.zIndex == rhs.zIndex && lhs.scale == rhs.scale
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(pos.x)
+        hasher.combine(pos.y)
+        hasher.combine(rotationDegree)
+        hasher.combine(zIndex)
+        hasher.combine(scale)
+    }
+}
+
+// var offset: CGPoint = .zero
+// public var pos: CGPoint = .zero
+// public var rotationDegree: CGFloat = .zero
+// public var zIndex: Double = 1.0
+// public var scale: CGFloat = 1.0

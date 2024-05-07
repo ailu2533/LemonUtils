@@ -12,7 +12,7 @@ import SwiftUI
 
 
 @Observable
-public class TextItem: MovableObject, Equatable {
+public class TextItem: MovableObject {
     public var text: String
     public var color: Color
     public var fontName: String = CustomFont.fonts.first?.postscriptName ?? ""
@@ -61,11 +61,11 @@ public class TextItem: MovableObject, Equatable {
     }
 }
 
-extension TextItem: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
+//extension TextItem: Hashable {
+//    public func hash(into hasher: inout Hasher) {
+//        hasher.combine(id)
+//    }
+//}
 
 #Preview("2") {
     RoundedRectangle(cornerRadius: 8)

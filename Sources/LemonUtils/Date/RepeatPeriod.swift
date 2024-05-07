@@ -36,18 +36,20 @@ public enum RepeatPeriod: Int, CaseIterable, Identifiable, Codable {
 // 计算 距离最近的目标日期还有多少天
 public func calculateNearestRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int) -> Int {
     let calendar = Calendar.current
+    let st = startDate.adjust(for: .startOfDay)!
+    let ct = currentDate.adjust(for: .startOfDay)!
     switch repeatPeriod {
     case .day:
-        let days = calendar.dateComponents([.day], from: startDate, to: currentDate).day!
+        let days = calendar.dateComponents([.day], from: st, to: ct).day!
         return days % n == 0 ? 0 : n - days % n
 
     case .week:
-        let days = calendar.dateComponents([.day], from: startDate, to: currentDate).day!
+        let days = calendar.dateComponents([.day], from: st, to: ct).day!
         let periodDays = n * 7
         return days % periodDays == 0 ? 0 : periodDays - days % periodDays
 
     case .month:
-        let components = calendar.dateComponents([.month, .day], from: startDate, to: currentDate)
+        let components = calendar.dateComponents([.month, .day], from: st, to: ct)
         let days = components.day!
         let months = components.month!
         if days == 0 && months % n == 0 {
@@ -58,7 +60,7 @@ public func calculateNearestRepeatDate(startDate: Date, currentDate: Date, repea
         return calendar.dateComponents([.day], from: currentDate, to: nextDate).day!
 
     case .year:
-        let components = calendar.dateComponents([.year, .day], from: startDate, to: currentDate)
+        let components = calendar.dateComponents([.year, .day], from: st, to: ct)
         let days = components.day!
         let years = components.year!
         if days == 0 && years % n == 0 {
