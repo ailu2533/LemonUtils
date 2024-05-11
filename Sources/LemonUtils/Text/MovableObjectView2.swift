@@ -22,53 +22,43 @@ extension View {
     }
 }
 
+public struct MovableObjectViewConfig {
+    var parentSize: CGSize?
+    var enable: Bool
+    var deleteCallback: (MovableObject) -> Void
+    var editCallback: (MovableObject) -> Void
+    var tapCallback: (MovableObject) -> Void = { _ in }
+
+    public init(parentSize: CGSize? = nil, enable: Bool = true, deleteCallback: @escaping (MovableObject) -> Void = { _ in }, editCallback: @escaping (MovableObject) -> Void = { _ in }) {
+        self.parentSize = parentSize
+        self.enable = enable
+        self.deleteCallback = deleteCallback
+        self.editCallback = editCallback
+    }
+}
+
 public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     var item: Item
-
-    private var content: (Item) -> Content
-
-    private var deleteCallback: (Item) -> Void
-    private var editCallback: (Item) -> Void
-    private var onChangeEndCallback: () -> Void
-
-    public var parentSize: CGSize?
-
     @Binding var selection: MovableObject?
+    private var config: MovableObjectViewConfig
+    var content: (Item) -> Content
+
     @State private var viewSize: CGSize = .zero
     @GestureState private var angle: Angle = .zero
-
-    // 是否允许移动
-    private var enable = true
 
     var selected: Bool {
         selection?.id == item.id
     }
 
     var showControl: Bool {
-        return selected && enable
+        return selected && config.enable
     }
 
-    public init(textItem: Item, selection: Binding<MovableObject?>, parentSize: CGSize? = nil, enable: Bool = true, deleteCallback: @escaping (Item) -> Void, editCallback: @escaping (Item) -> Void, content: @escaping (Item) -> Content) {
-        item = textItem
-        self.deleteCallback = deleteCallback
-        self.editCallback = editCallback
+    public init(item: Item, selection: Binding<MovableObject?>, config: MovableObjectViewConfig, content: @escaping (Item) -> Content) {
+        self.item = item
+        self.config = config
         self.content = content
-        self.parentSize = parentSize
-        self.enable = enable
         _selection = selection
-
-        onChangeEndCallback = {}
-    }
-
-    public init(textItem: Item, selection: Binding<MovableObject?>, parentSize: CGSize? = nil, enable: Bool = true, content: @escaping (Item) -> Content) {
-        item = textItem
-        deleteCallback = { _ in }
-        editCallback = { _ in }
-        self.content = content
-        self.parentSize = parentSize
-        self.enable = enable
-        _selection = selection
-        onChangeEndCallback = {}
     }
 
     private let id = UUID()
@@ -97,7 +87,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
             .overlay(alignment: .center) {
                 Button(action: {
-                    editCallback(item)
+                    config.editCallback(item)
                 }, label: {
                     Image(systemName: "pencil.tip")
                         .resizable()
@@ -110,7 +100,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             }
             .overlay(alignment: .center) {
                 Button(role: .destructive, action: {
-                    deleteCallback(item)
+                    config.deleteCallback(item)
                 }, label: {
                     Image(systemName: "xmark")
                         .resizable()
@@ -141,7 +131,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                     .shadow(radius: 1)
                     .opacity(showControl ? 1 : 0)
                     .offset(x: viewSize.width / 2 + 10, y: viewSize.height / 2 + 10)
-                    .if(enable) { view in
+                    .if(config.enable) { view in
                         view.gesture(dragGesture)
                     }
             }
@@ -152,7 +142,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             .onChanged({ value in
                 let x = value.location.x
                 let y = value.location.y
-                if let parentSize {
+                if let parentSize = config.parentSize {
                     if x < 0 || y < 0 || x > parentSize.width || y > parentSize.height {
                         return
                     }
@@ -173,10 +163,11 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             .coordinateSpace(name: id)
             .position(x: item.pos.x, y: item.pos.y)
             .offset(x: item.offset.x, y: item.offset.y)
-            .if(enable) { view in
+            .if(config.enable) { view in
                 view.gesture(dragDesture)
             }
             .onTapGesture {
+                config.tapCallback(item)
                 selection = item
             }
     }

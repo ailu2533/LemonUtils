@@ -8,17 +8,19 @@
 import Collections
 import SwiftUI
 
-struct SingleIconSetIconPickerView: View {
+public struct SingleIconSetIconPickerView: View {
     @Binding private var selectedIcon: String
     private let icons: [String]
     private let columns = [GridItem(.adaptive(minimum: 70))]
+    var tapCallback: (String) -> Void
 
-    init(selectedImg: Binding<String>, icons: [String]) {
+    public init(selectedImg: Binding<String>, icons: [String], tapCallback: @escaping (String) -> Void = { _ in }) {
         _selectedIcon = selectedImg
         self.icons = icons
+        self.tapCallback = tapCallback
     }
 
-    var body: some View {
+    public var body: some View {
         VStack {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {
@@ -32,6 +34,7 @@ struct SingleIconSetIconPickerView: View {
                             )
                             .onTapGesture {
                                 selectedIcon = image
+                                tapCallback(image)
                             }
                     }
                 }
@@ -139,5 +142,38 @@ private struct IconView: View {
             .resizable()
             .frame(width: width, height: height)
             .padding(6)
+    }
+}
+
+struct GeneralColor: View {
+    let pureColor: String?
+    let gradientColor: [String]?
+
+    /// 初始化一个具有纯色或渐变色的视图
+    /// - Parameters:
+    ///   - pureColor: 单一颜色的十六进制字符串
+    ///   - gradientColor: 渐变颜色的十六进制字符串数组
+    init(pureColor: String? = nil, gradientColor: [String]? = nil) {
+        self.pureColor = pureColor
+        self.gradientColor = gradientColor
+    }
+
+    var body: some View {
+        Circle()
+            .fill(
+                AnyShapeStyle(makeColorFill())
+            )
+    }
+
+    /// 根据提供的颜色信息创建填充样式
+    private func makeColorFill() -> any ShapeStyle {
+        if let pureColor = pureColor {
+            return Color(hex: pureColor) ?? Color.clear
+        } else if let gradientColors = gradientColor {
+            let colors = gradientColors.compactMap { Color(hex: $0) }
+            return LinearGradient(colors: colors, startPoint: .top, endPoint: .bottom)
+        } else {
+            return Color.clear
+        }
     }
 }

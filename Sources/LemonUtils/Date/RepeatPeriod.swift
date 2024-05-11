@@ -98,31 +98,26 @@ public struct RepeatPeriodPickerView: View {
     @Binding var repeatPeriod: RepeatPeriod
     @Binding var repeatN: Int
 
-    @State private var selections: [Int] = [0, 0]
+    @State private var selections: [Int]
+
+    private static let numberData = Array(1..<30).map { "\($0)" }
+    private static let periodData = RepeatPeriod.allCases.map { $0.text }
 
     public init(repeatPeriod: Binding<RepeatPeriod>, repeatN: Binding<Int>) {
         _repeatPeriod = repeatPeriod
         _repeatN = repeatN
+        _selections = State(initialValue: [repeatN.wrappedValue - 1, repeatPeriod.wrappedValue.rawValue])
     }
 
-    private let data: [[String]] = [
-        Array(1 ..< 30).map {
-            "\($0)"
-        },
-
-        RepeatPeriod.allCases.map {
-            $0.text
-        },
-    ]
-
     public var body: some View {
-        MultiComponentPickerView(data: self.data, selections: self.$selections)
-            .onChange(of: selections[0], { _, _ in
-                repeatN = selections[0] + 1
-            })
-            .onChange(of: selections[1], { _, _ in
-                repeatPeriod = RepeatPeriod(rawValue: selections[1]) ?? .day
-            }).frame(height: 80)
+        MultiComponentPickerView(data: [RepeatPeriodPickerView.numberData, RepeatPeriodPickerView.periodData], selections: $selections)
+            .onChange(of: selections[0]) { newValue in
+                repeatN = newValue + 1
+            }
+            .onChange(of: selections[1]) { newValue in
+                repeatPeriod = RepeatPeriod(rawValue: newValue) ?? .day
+            }
+            .frame(height: 80)
     }
 }
 

@@ -4,8 +4,8 @@ import SwiftUI
 struct HorizontalPickerButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) var isEnabled
 
-    var animationNamespace: Namespace.ID
-    var groupID: String
+//    var animationNamespace: Namespace.ID
+//    var groupID: String
     var isSelected = false
     var backgroundColor: Color = Color.clear
 
@@ -21,7 +21,7 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
                 if isSelected {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color(.systemBlue).opacity(0.6))
-                        .matchedGeometryEffect(id: groupID, in: animationNamespace)
+//                        .matchedGeometryEffect(id: groupID, in: animationNamespace)
                 } else {
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color(.systemGray6))
@@ -38,16 +38,16 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 
     @ViewBuilder var itemViewBuilder: (ItemType) -> Content
 
-    @Namespace private var animationNamespace
+//    @Namespace private var animationNamespace
 
-    private var uniqueID = UUID().uuidString
+//    private var uniqueID = UUID().uuidString
     private var isEmbeddedInScrollView = true
 
     public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), isEmbeddedInScrollView: Bool = true,
                 groupId: String = "picker",
                 itemViewBuilder: @escaping (ItemType) -> Content) {
         self.items = items
-        uniqueID = groupId
+//        uniqueID = groupId
         _selectedItem = selectedItem
         self.backgroundColor = backgroundColor
         self.itemViewBuilder = itemViewBuilder
@@ -70,10 +70,12 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
             ForEach(items, id: \.self) { dataItem in
                 Button(action: {
                     selectedItem = dataItem
+                    print("selected \(dataItem)")
                 }, label: {
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
-                }).buttonStyle(HorizontalPickerButtonStyle(animationNamespace: animationNamespace, groupID: uniqueID, isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
+                        .contentShape(Rectangle())
+                }).buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
             }
         }
         .padding(.trailing)
@@ -83,7 +85,7 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 
 struct WeekdaySelectionView: View {
     static let weekdays = [
-        "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日"
+        "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日",
     ]
 
     @State private var selectedWeekday = WeekdaySelectionView.weekdays.first!

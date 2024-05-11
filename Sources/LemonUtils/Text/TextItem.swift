@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-
-
-
-
 @Observable
 public class TextItem: MovableObject {
     public var text: String
@@ -25,9 +21,12 @@ public class TextItem: MovableObject {
         case fontSize
     }
 
-    public init(text: String, pos: CGPoint = .zero, color: Color = .primary) {
+    public init(text: String, pos: CGPoint = .zero, color: Color = .primary, fontName: String? = nil) {
         self.text = text
         self.color = color
+        if let fontName {
+            self.fontName = fontName
+        }
         super.init(pos: pos)
     }
 
@@ -61,11 +60,11 @@ public class TextItem: MovableObject {
     }
 }
 
-//extension TextItem: Hashable {
+// extension TextItem: Hashable {
 //    public func hash(into hasher: inout Hasher) {
 //        hasher.combine(id)
 //    }
-//}
+// }
 
 #Preview("2") {
     RoundedRectangle(cornerRadius: 8)
