@@ -35,6 +35,7 @@ public struct TimeOffsetPickerView: View {
             }
             return values
         }, set: { newValue in
+            timeOffset.isMax = false
             var index = 0
             if units.contains(.year) {
                 timeOffset.year = newValue[index]

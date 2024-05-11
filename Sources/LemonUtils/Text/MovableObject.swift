@@ -8,10 +8,6 @@
 import Foundation
 import SwiftUI
 
-import SwiftUI
-
-import SwiftUI
-
 @Observable
 open class MovableObject: Identifiable, Codable {
     @ObservationIgnored public var id: UUID = UUID()

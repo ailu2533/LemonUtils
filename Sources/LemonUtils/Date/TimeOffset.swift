@@ -15,18 +15,28 @@ public struct TimeOffset: Comparable, Codable {
     var hour: Int = 0
     var week: Int = 0 // Added week field
 
+    // 是否是最大 TimeOffset
+    var isMax: Bool = false
+
     /// Initializes a new `TimeOffset` with specified time components.
-    public init(year: Int = 0, month: Int = 0, day: Int = 0, hour: Int = 0, week: Int = 0) {
+    public init(year: Int = 0, month: Int = 0, day: Int = 0, hour: Int = 0, week: Int = 0, isMax: Bool = false) {
         self.year = year
         self.month = month
         self.day = day
         self.hour = hour
         self.week = week
+        self.isMax = isMax
     }
 
     // MARK: - Comparable
 
     public static func < (lhs: TimeOffset, rhs: TimeOffset) -> Bool {
+        if lhs.isMax && !rhs.isMax {
+            return false
+        } else if !lhs.isMax && rhs.isMax {
+            return true
+        }
+
         if lhs.year != rhs.year {
             return lhs.year < rhs.year
         }
@@ -86,7 +96,7 @@ extension TimeOffset: CustomStringConvertible {
         }
 
         let joinedParts = parts.joined(separator: " ")
-        return "\(joinedParts) 前"
+        return "\(joinedParts)"
     }
 }
 
@@ -100,5 +110,26 @@ extension Date {
         date = Calendar.current.date(byAdding: .day, value: timeOffset.day, to: date)!
         date = Calendar.current.date(byAdding: .hour, value: timeOffset.hour, to: date)!
         return date
+    }
+}
+
+extension TimeOffset: Identifiable {
+    public var id: UUID {
+        UUID()
+    }
+}
+
+extension TimeOffset {
+    // 当 isMax
+
+    public var text: String {
+        if isMax {
+            return "结束时间"
+        }
+        // 如果全为 0， 开始时间
+        if day == 0 && hour == 0 && year == 0 && month == 0 && week == 0 {
+            return "开始时间"
+        }
+        return description
     }
 }
