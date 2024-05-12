@@ -18,6 +18,7 @@ public struct TimeOffset: Comparable, Codable {
     // 是否是最大 TimeOffset
     var isMax: Bool = false
 
+
     /// Initializes a new `TimeOffset` with specified time components.
     public init(year: Int = 0, month: Int = 0, day: Int = 0, hour: Int = 0, week: Int = 0, isMax: Bool = false) {
         self.year = year

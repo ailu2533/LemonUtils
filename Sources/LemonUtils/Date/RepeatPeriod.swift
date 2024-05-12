@@ -19,6 +19,9 @@ public enum RepeatPeriod: Int, CaseIterable, Identifiable, Codable {
     case month = 2
     case year = 3
 
+    // 自定义周一到周日重复
+    case customWeek = 4
+
     public var text: String {
         switch self {
         case .day:
@@ -29,12 +32,14 @@ public enum RepeatPeriod: Int, CaseIterable, Identifiable, Codable {
             return String(localized: "month", bundle: .module)
         case .year:
             return String(localized: "year", bundle: .module)
+        case .customWeek:
+            return String(localized: "custom Week", bundle: .module)
         }
     }
 }
 
 // 计算 距离最近的目标日期还有多少天
-public func calculateNearestRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int) -> Int {
+public func calculateNearestRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int, customWeek: UInt8 = 0) -> Int {
     let calendar = Calendar.current
     let st = startDate.adjust(for: .startOfDay)!
     let ct = currentDate.adjust(for: .startOfDay)!
@@ -69,11 +74,33 @@ public func calculateNearestRepeatDate(startDate: Date, currentDate: Date, repea
         let targetYear = n * ((years / n) + 1)
         let nextDate = calendar.date(byAdding: .year, value: targetYear, to: startDate)!
         return calendar.dateComponents([.day], from: currentDate, to: nextDate).day!
+    case .customWeek:
+        var customCalendar = Calendar(identifier: .gregorian)
+        customCalendar.firstWeekday = 2
+
+        let weekday = calendar.component(.weekday, from: currentDate)
+
+        // customWeek是位数组，1表示周一，2表示周二，4表示周三，8表示周四，16表示周五，32表示周六，64表示周日
+        // 例如，如果 customWeek 是 15，那么表示周一到周四重复
+        var todayPattern = UInt8(1 << (weekday - 1))
+        var i = 0
+        while i < 7 {
+            if todayPattern & customWeek != 0 {
+                break // 找到匹配的重复日，退出循环
+            }
+            i += 1
+            todayPattern = UInt8(todayPattern << 1)
+            if todayPattern == 0 {
+                todayPattern = UInt8(1) // 如果超出位数组范围，重置为周日
+            }
+        }
+
+        return i
     }
 }
 
 // 判断currentDate与 startDate之间是否距离n个周期
-public func checkRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int) -> Bool {
+public func checkRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int, customWeek: UInt8 = 0) -> Bool {
     let calendar = Calendar.current
     switch repeatPeriod {
     case .day:
@@ -91,6 +118,17 @@ public func checkRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: Re
     case .year:
         let components = calendar.dateComponents([.year, .day], from: startDate, to: currentDate)
         return components.day! == 0 && components.year! % n == 0
+    case .customWeek:
+        var customCalendar = Calendar(identifier: .gregorian)
+        customCalendar.firstWeekday = 2
+
+        let weekday = calendar.component(.weekday, from: currentDate)
+
+        // customWeek是位数组，1表示周一，2表示周二，4表示周三，8表示周四，16表示周五，32表示周六，64表示周日
+        // 例如，如果 customWeek 是 15，那么表示周一到周四重复
+        var todayPattern = UInt8(1 << (weekday - 1))
+
+        return (todayPattern & customWeek) > 0
     }
 }
 
@@ -100,7 +138,7 @@ public struct RepeatPeriodPickerView: View {
 
     @State private var selections: [Int]
 
-    private static let numberData = Array(1..<30).map { "\($0)" }
+    private static let numberData = Array(1 ..< 30).map { "\($0)" }
     private static let periodData = RepeatPeriod.allCases.map { $0.text }
 
     public init(repeatPeriod: Binding<RepeatPeriod>, repeatN: Binding<Int>) {
