@@ -158,7 +158,9 @@ public struct RepeatPeriodPickerView: View {
 
     public var body: some View {
         MultiComponentPickerView(data: [RepeatPeriodPickerView.numberData, RepeatPeriodPickerView.periodData], selections: selections)
-            .frame(height: 80)
+//            .frame(height: 80)
+            .background(Color(.systemGray6))
+            .clipShape(RoundedRectangle(cornerRadius: 25.0))
     }
 }
 
