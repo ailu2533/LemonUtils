@@ -47,6 +47,8 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     @GestureState private var angle: Angle = .zero
     let offset: CGFloat = 20
 
+    @GestureState private var isDragging = false
+
     var selected: Bool {
         selection?.id == item.id
     }
@@ -117,6 +119,10 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                     .updating($angle, body: { value, state, _ in
                         state = calculateRotation(value: value)
                     })
+                    .updating($isDragging, body: { _, state, _ in
+                        state = true
+                    })
+
                     .onEnded({ value in
                         item.rotationDegree = item.rotationDegree + calculateRotation(value: value).degrees
                     })
@@ -126,7 +132,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 12, height: 12)
                     .padding(5)
-                    .background(Color.white)
+                    .background(isDragging ? Color.orange : Color.white)
                     .clipShape(Circle())
                     .shadow(radius: 1)
                     .frame(width: 50, height: 50)
