@@ -45,6 +45,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
     @State private var viewSize: CGSize = .zero
     @GestureState private var angle: Angle = .zero
+    let offset: CGFloat = 20
 
     var selected: Bool {
         selection?.id == item.id
@@ -84,8 +85,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             .readSize(callback: {
                 viewSize = $0
             })
-
-            .overlay(alignment: .center) {
+            .overlay(alignment: .topTrailing) {
                 Button(action: {
                     config.editCallback(item)
                 }, label: {
@@ -94,11 +94,11 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 12, height: 12)
                 })
-                .offset(x: viewSize.width / 2 + 10, y: -viewSize.height / 2 - 10)
+                .offset(x: offset, y: -offset)
                 .opacity(showControl ? 1 : 0)
                 .buttonStyle(CircleButtonStyle2())
             }
-            .overlay(alignment: .center) {
+            .overlay(alignment: .topLeading) {
                 Button(role: .destructive, action: {
                     config.deleteCallback(item)
                 }, label: {
@@ -107,12 +107,12 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 12, height: 12)
                 })
-                .offset(x: -viewSize.width / 2 - 10, y: -viewSize.height / 2 - 10)
+                .offset(x: -offset, y: -offset)
                 .opacity(showControl ? 1 : 0)
                 .buttonStyle(CircleButtonStyle2())
             }
 
-            .background(alignment: .center) {
+            .background(alignment: .bottom) {
                 let dragGesture = DragGesture(coordinateSpace: .named(id))
                     .updating($angle, body: { value, state, _ in
                         state = calculateRotation(value: value)
@@ -129,8 +129,10 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                     .background(Color.white)
                     .clipShape(Circle())
                     .shadow(radius: 1)
+                    .frame(width: 50, height: 50)
+                    .contentShape(Rectangle())
                     .opacity(showControl ? 1 : 0)
-                    .offset(x: viewSize.width / 2 + 10, y: viewSize.height / 2 + 10)
+                    .offset(y: 2 * offset)
                     .if(config.enable) { view in
                         view.gesture(dragGesture)
                     }
@@ -156,6 +158,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         content(item)
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
+            .contentShape(Rectangle())
             .background {
                 topCorner
             }

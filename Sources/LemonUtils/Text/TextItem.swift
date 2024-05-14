@@ -8,25 +8,28 @@
 import SwiftUI
 
 @Observable
-public class TextItem: MovableObject {
+open class TextItem: MovableObject {
     public var text: String
     public var color: Color
     public var fontName: String = CustomFont.fonts.first?.postscriptName ?? ""
     public var fontSize: CGFloat = 20.0
+    public var editable: Bool
 
     enum CodingKeys: String, CodingKey {
         case text
         case color
         case fontName
         case fontSize
+        case editable
     }
 
-    public init(text: String, pos: CGPoint = .zero, color: Color = .primary, fontName: String? = nil) {
+    public init(text: String, pos: CGPoint = .zero, color: Color = .primary, fontName: String? = nil, editable: Bool = true) {
         self.text = text
         self.color = color
         if let fontName {
             self.fontName = fontName
         }
+        self.editable = editable
         super.init(pos: pos)
     }
 
@@ -36,21 +39,23 @@ public class TextItem: MovableObject {
         color = try container.decode(Color.self, forKey: .color)
         fontName = try container.decode(String.self, forKey: .fontName)
         fontSize = try container.decode(CGFloat.self, forKey: .fontSize)
+        editable = try container.decode(Bool.self, forKey: .editable)
 //        super.init(pos: .zero) // Assuming `pos` is not part of Codable
         try super.init(from: decoder)
     }
 
-    override public func encode(to encoder: Encoder) throws {
+    override open func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(text, forKey: .text)
         try container.encode(color, forKey: .color)
         try container.encode(fontName, forKey: .fontName)
         try container.encode(fontSize, forKey: .fontSize)
+        try container.encode(editable, forKey: .editable)
         try super.encode(to: encoder)
     }
 
     public static func == (lhs: TextItem, rhs: TextItem) -> Bool {
-        return lhs.text == rhs.text && lhs.color == rhs.color && lhs.fontName == rhs.fontName && lhs.fontSize == rhs.fontSize
+        return lhs.text == rhs.text && lhs.color == rhs.color && lhs.fontName == rhs.fontName && lhs.fontSize == rhs.fontSize && lhs.editable == rhs.editable
     }
 
     public func view() -> some View {
@@ -59,12 +64,6 @@ public class TextItem: MovableObject {
             .font(.custom(fontName, size: fontSize))
     }
 }
-
-// extension TextItem: Hashable {
-//    public func hash(into hasher: inout Hasher) {
-//        hasher.combine(id)
-//    }
-// }
 
 #Preview("2") {
     RoundedRectangle(cornerRadius: 8)

@@ -21,6 +21,8 @@ public struct CircleButtonStyle2: ButtonStyle {
             .shadow(radius: 1)
             .saturation(isEnabled ? 1 : 0)
             .opacity(configuration.isPressed ? 0.5 : 1)
+            .frame(width: 30, height: 30)
+            .contentShape(Rectangle())
     }
 }
 
@@ -120,7 +122,7 @@ public struct MovableObjectView<Item: MovableObject, Content: View>: View {
                     .gesture(
                         DragGesture(coordinateSpace: .named(id))
                             .updating($angle, body: { value, state, _ in
-                                print(value.location)
+//                                print(value.location)
                                 state = calculateRotation(value: value)
                             })
                             .onEnded({ value in

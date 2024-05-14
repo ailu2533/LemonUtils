@@ -48,7 +48,6 @@ public struct SingleIconSetIconPickerView: View {
 public struct IconPickerView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var selectedIcon: String
-    @State private var select: String = ""
     @State private var selectedIconSetName: String = ""
 
     let iconSets: OrderedDictionary<String, [String]>
@@ -60,31 +59,19 @@ public struct IconPickerView: View {
 
     public var body: some View {
         VStack {
-            IconView(iconName: select)
             HorizontalSelectionPicker(items: iconSets.keys.elements, selectedItem: $selectedIconSetName) {
                 Text($0)
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.top, 40)
 
-            SingleIconSetIconPickerView(selectedImg: $select, icons: iconSets[selectedIconSetName] ?? [])
+            SingleIconSetIconPickerView(selectedImg: $selectedIcon, icons: iconSets[selectedIconSetName] ?? [])
                 .padding(.horizontal)
         }
         .onAppear {
             selectedIconSetName = selectedIconSetName.isEmpty ? iconSets.keys.first ?? "" : selectedIconSetName
-            select = select.isEmpty ? iconSets[selectedIconSetName]?.first ?? "" : select
-        }
-        .onChange(of: selectedIconSetName) { _ in
-            select = iconSets[selectedIconSetName]?.first ?? ""
         }
         .navigationTitle("选择图标")
-        .toolbar {
-            ToolbarItem {
-                Button("确定") {
-                    selectedIcon = select
-                    dismiss()
-                }
-            }
-        }
     }
 }
 
