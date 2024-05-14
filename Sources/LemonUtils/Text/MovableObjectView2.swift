@@ -48,6 +48,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     let offset: CGFloat = 20
 
     @GestureState private var isDragging = false
+    private let id = UUID()
 
     var selected: Bool {
         selection?.id == item.id
@@ -64,8 +65,6 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         _selection = selection
     }
 
-    private let id = UUID()
-
     public func calculateRotation(value: DragGesture.Value) -> Angle {
         let centerX = viewSize.width / 2
         let centerY = viewSize.height / 2
@@ -75,6 +74,64 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         let rotation = Angle(radians: Double(angleDifference))
 
         return rotation
+    }
+
+    var editButton: some View {
+        Button(action: {
+            config.editCallback(item)
+        }, label: {
+            Image(systemName: "pencil.tip")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 12, height: 12)
+        })
+        .offset(x: offset, y: -offset)
+        .opacity(showControl ? 1 : 0)
+        .buttonStyle(CircleButtonStyle2())
+    }
+
+    var deleteButton: some View {
+        Button(role: .destructive, action: {
+            config.deleteCallback(item)
+        }, label: {
+            Image(systemName: "xmark")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 12, height: 12)
+        })
+        .offset(x: -offset, y: -offset)
+        .opacity(showControl ? 1 : 0)
+        .buttonStyle(CircleButtonStyle2())
+    }
+
+    var rotationHandler: some View {
+        let dragGesture = DragGesture(coordinateSpace: .named(id))
+            .updating($angle, body: { value, state, _ in
+                state = calculateRotation(value: value)
+            })
+            .updating($isDragging, body: { _, state, _ in
+                state = true
+            })
+
+            .onEnded({ value in
+                item.rotationDegree = item.rotationDegree + calculateRotation(value: value).degrees
+            })
+
+        return Image(systemName: "arrow.triangle.2.circlepath")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 12, height: 12)
+            .padding(5)
+            .background(isDragging ? Color.orange : Color.white)
+            .clipShape(Circle())
+            .shadow(radius: 1)
+            .frame(width: 50, height: 50)
+            .contentShape(Rectangle())
+            .opacity(showControl ? 1 : 0)
+            .offset(y: 2 * offset)
+            .if(config.enable) { view in
+                view.gesture(dragGesture)
+            }
     }
 
     var topCorner: some View {
@@ -88,65 +145,18 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                 viewSize = $0
             })
             .overlay(alignment: .topTrailing) {
-                Button(action: {
-                    config.editCallback(item)
-                }, label: {
-                    Image(systemName: "pencil.tip")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 12, height: 12)
-                })
-                .offset(x: offset, y: -offset)
-                .opacity(showControl ? 1 : 0)
-                .buttonStyle(CircleButtonStyle2())
+                editButton
             }
             .overlay(alignment: .topLeading) {
-                Button(role: .destructive, action: {
-                    config.deleteCallback(item)
-                }, label: {
-                    Image(systemName: "xmark")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 12, height: 12)
-                })
-                .offset(x: -offset, y: -offset)
-                .opacity(showControl ? 1 : 0)
-                .buttonStyle(CircleButtonStyle2())
+                deleteButton
             }
-
             .background(alignment: .bottom) {
-                let dragGesture = DragGesture(coordinateSpace: .named(id))
-                    .updating($angle, body: { value, state, _ in
-                        state = calculateRotation(value: value)
-                    })
-                    .updating($isDragging, body: { _, state, _ in
-                        state = true
-                    })
-
-                    .onEnded({ value in
-                        item.rotationDegree = item.rotationDegree + calculateRotation(value: value).degrees
-                    })
-
-                Image(systemName: "arrow.triangle.2.circlepath")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 12, height: 12)
-                    .padding(5)
-                    .background(isDragging ? Color.orange : Color.white)
-                    .clipShape(Circle())
-                    .shadow(radius: 1)
-                    .frame(width: 50, height: 50)
-                    .contentShape(Rectangle())
-                    .opacity(showControl ? 1 : 0)
-                    .offset(y: 2 * offset)
-                    .if(config.enable) { view in
-                        view.gesture(dragGesture)
-                    }
+                rotationHandler
             }
     }
 
-    public var body: some View {
-        let dragDesture = DragGesture()
+    private var dragGesture: some Gesture {
+        DragGesture()
             .onChanged({ value in
                 let x = value.location.x
                 let y = value.location.y
@@ -160,7 +170,9 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             }).onEnded({ _ in
                 item.onDragEnd()
             })
+    }
 
+    public var body: some View {
         content(item)
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
@@ -173,7 +185,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             .position(x: item.pos.x, y: item.pos.y)
             .offset(x: item.offset.x, y: item.offset.y)
             .if(config.enable) { view in
-                view.gesture(dragDesture)
+                view.gesture(dragGesture)
             }
             .onTapGesture {
                 config.tapCallback(item)
