@@ -9,6 +9,12 @@ import DateHelper
 import Foundation
 import SwiftUI
 
+// 重复类型
+public enum RecurrenceType: Int, Codable {
+    case singleCycle = 1 // 周期性重复，一个周期只重复一次
+    case customWeekly = 2 // 自定义每周重复，一周可以重复多次
+}
+
 public enum RepeatPeriod: Int, CaseIterable, Identifiable, Codable {
     public var id: Int {
         rawValue
@@ -33,102 +39,99 @@ public enum RepeatPeriod: Int, CaseIterable, Identifiable, Codable {
     }
 }
 
-// 计算 距离最近的目标日期还有多少天
-public func calculateNearestRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int, customWeek: UInt8 = 0) -> Int {
-    if customWeek > 0 {
-        var customCalendar = Calendar(identifier: .gregorian)
-        customCalendar.firstWeekday = 2
+import Foundation
 
-        let weekday = customCalendar.component(.weekday, from: currentDate)
-
-        // customWeek是位数组，1表示周一，2表示周二，4表示周三，8表示周四，16表示周五，32表示周六，64表示周日
-        // 例如，如果 customWeek 是 15，那么表示周一到周四重复
-        var todayPattern = UInt8(1 << (weekday - 1))
-        var i = 0
-        while i < 7 {
-            if todayPattern & customWeek != 0 {
-                break // 找到匹配的重复日，退出循环
-            }
-            i += 1
-            todayPattern = UInt8(todayPattern << 1)
-            if todayPattern == 0 {
-                todayPattern = UInt8(1) // 如果超出位数组范围，重置为周日
-            }
-        }
-
-        return i
-    }
-
-    let calendar = Calendar.current
-    let st = startDate.adjust(for: .startOfDay)!
-    let ct = currentDate.adjust(for: .startOfDay)!
-    switch repeatPeriod {
-    case .day:
-        let days = calendar.dateComponents([.day], from: st, to: ct).day!
-        return days % n == 0 ? 0 : n - days % n
-
-    case .week:
-        let days = calendar.dateComponents([.day], from: st, to: ct).day!
-        let periodDays = n * 7
-        return days % periodDays == 0 ? 0 : periodDays - days % periodDays
-
-    case .month:
-        let components = calendar.dateComponents([.month, .day], from: st, to: ct)
-        let days = components.day!
-        let months = components.month!
-        if days == 0 && months % n == 0 {
-            return 0
-        }
-        let targetMonth = n * ((months / n) + 1)
-        let nextDate = calendar.date(byAdding: .month, value: targetMonth, to: startDate)!
-        return calendar.dateComponents([.day], from: currentDate, to: nextDate).day!
-
-    case .year:
-        let components = calendar.dateComponents([.year, .day], from: st, to: ct)
-        let days = components.day!
-        let years = components.year!
-        if days == 0 && years % n == 0 {
-            return 0
-        }
-        let targetYear = n * ((years / n) + 1)
-        let nextDate = calendar.date(byAdding: .year, value: targetYear, to: startDate)!
-        return calendar.dateComponents([.day], from: currentDate, to: nextDate).day!
+// 计算距离最近的目标日期还有多少天
+public func calculateNearestRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int, recurrenceType: RecurrenceType, customWeek: UInt8) -> Int {
+    switch recurrenceType {
+    case .customWeekly:
+        return calculateCustomWeeklyRepeatDate(currentDate: currentDate, customWeek: customWeek)
+    default:
+        return calculateStandardRepeatDate(startDate: startDate, currentDate: currentDate, repeatPeriod: repeatPeriod, n: n)
     }
 }
 
-// 判断currentDate与 startDate之间是否距离n个周期
-public func checkRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int, customWeek: UInt8 = 0) -> Bool {
-    if customWeek > 0 {
-        var customCalendar = Calendar(identifier: .gregorian)
-        customCalendar.firstWeekday = 2
+// 计算自定义周重复的日期
+private func calculateCustomWeeklyRepeatDate(currentDate: Date, customWeek: UInt8) -> Int {
+    var customCalendar = Calendar(identifier: .gregorian)
+    customCalendar.firstWeekday = 2  // 周一为一周的第一天
 
-        let weekday = customCalendar.component(.weekday, from: currentDate)
+    let weekday = customCalendar.component(.weekday, from: currentDate)
+    var todayPattern = UInt8(1 << (weekday - 1))
+    var daysUntilNextRepeat = 0
 
-        // customWeek是位数组，1表示周一，2表示周二，4表示周三，8表示周四，16表示周五，32表示周六，64表示周日
-        // 例如，如果 customWeek 是 15，那么表示周一到周四重复
-        var todayPattern = UInt8(1 << (weekday - 1))
-
-        return (todayPattern & customWeek) > 0
+    while daysUntilNextRepeat < 7 {
+        if todayPattern & customWeek != 0 {
+            break
+        }
+        daysUntilNextRepeat += 1
+        todayPattern = UInt8(todayPattern << 1)
+        if todayPattern == 0 {
+            todayPattern = UInt8(1)  // 重置为周日
+        }
     }
 
+    return daysUntilNextRepeat
+}
+
+// 计算标准周期重复的日期
+private func calculateStandardRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int) -> Int {
     let calendar = Calendar.current
+    let st = startDate.adjust(for: .startOfDay)!
+    let ct = currentDate.adjust(for: .startOfDay)!
+
     switch repeatPeriod {
     case .day:
-        let days = calendar.dateComponents([.day], from: startDate, to: currentDate).day!
-        return days % n == 0
-
+        return calculateDaysDifference(st: st, ct: ct, periodDays: n)
     case .week:
-        let days = calendar.dateComponents([.day], from: startDate, to: currentDate).day!
-        return days % 7 == 0 && (days / 7) % n == 0
-
+        return calculateDaysDifference(st: st, ct: ct, periodDays: n * 7)
     case .month:
-        let components = calendar.dateComponents([.month, .day], from: startDate, to: currentDate)
-        return components.day! == 0 && components.month! % n == 0
-
+        return calculateMonthsDifference(st: st, ct: ct, n: n, calendar: calendar)
     case .year:
-        let components = calendar.dateComponents([.year, .day], from: startDate, to: currentDate)
-        return components.day! == 0 && components.year! % n == 0
+        return calculateYearsDifference(st: st, ct: ct, n: n, calendar: calendar)
     }
+}
+
+// 计算天数差
+private func calculateDaysDifference(st: Date, ct: Date, periodDays: Int) -> Int {
+    let days = Calendar.current.dateComponents([.day], from: st, to: ct).day!
+    return days % periodDays == 0 ? 0 : periodDays - days % periodDays
+}
+
+// 计算月份差
+private func calculateMonthsDifference(st: Date, ct: Date, n: Int, calendar: Calendar) -> Int {
+    // 获取开始日期和当前日期之间的月份和天数差异
+    let components = calendar.dateComponents([.month, .day], from: st, to: ct)
+    let days = components.day!  // 从开始日期到当前日期的天数差
+    let months = components.month!  // 从开始日期到当前日期的月份差
+
+    // 如果当前日期正好是周期的结束日，并且月份差是周期数的整数倍，则返回0
+    if days == 0 && months % n == 0 {
+        return 0
+    }
+
+    // 计算下一个周期的目标月份
+    // 如果月份差不是周期数的整数倍，计算下一个周期的开始月份
+    let targetMonth = n * ((months / n) + 1)
+
+    // 计算目标月份的具体日期
+    let nextDate = calendar.date(byAdding: .month, value: targetMonth, to: st)!
+
+    // 返回当前日期到下一个周期开始日期的天数差
+    return calendar.dateComponents([.day], from: ct, to: nextDate).day!
+}
+
+// 计算年份差
+private func calculateYearsDifference(st: Date, ct: Date, n: Int, calendar: Calendar) -> Int {
+    let components = calendar.dateComponents([.year, .day], from: st, to: ct)
+    let days = components.day!
+    let years = components.year!
+    if days == 0 && years % n == 0 {
+        return 0
+    }
+    let targetYear = n * ((years / n) + 1)
+    let nextDate = calendar.date(byAdding: .year, value: targetYear, to: st)!
+    return calendar.dateComponents([.day], from: ct, to: nextDate).day!
 }
 
 public struct RepeatPeriodPickerView: View {
@@ -159,8 +162,8 @@ public struct RepeatPeriodPickerView: View {
     public var body: some View {
         MultiComponentPickerView(data: [RepeatPeriodPickerView.numberData, RepeatPeriodPickerView.periodData], selections: selections)
 //            .frame(height: 80)
-            .background(Color(.systemGray6))
-            .clipShape(RoundedRectangle(cornerRadius: 25.0))
+//            .background(Color(.systemGray6))
+//            .clipShape(RoundedRectangle(cornerRadius: 25.0))
     }
 }
 

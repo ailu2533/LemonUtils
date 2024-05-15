@@ -7,12 +7,14 @@
 
 import Foundation
 
-/// Represents a time offset with components for years, months, days, hours, and weeks.
+/// Represents a time offset with components for years, months, days, hours, minutes, seconds, and weeks.
 public struct TimeOffset: Comparable, Codable {
     var year: Int = 0
     var month: Int = 0
     var day: Int = 0
     var hour: Int = 0
+    var minute: Int = 0  // Added minute field
+    var second: Int = 0  // Added second field
     var week: Int = 0 // Added week field
 
     // 是否是最大 TimeOffset
@@ -20,11 +22,13 @@ public struct TimeOffset: Comparable, Codable {
 
 
     /// Initializes a new `TimeOffset` with specified time components.
-    public init(year: Int = 0, month: Int = 0, day: Int = 0, hour: Int = 0, week: Int = 0, isMax: Bool = false) {
+    public init(year: Int = 0, month: Int = 0, day: Int = 0, hour: Int = 0, minute: Int = 0, second: Int = 0, week: Int = 0, isMax: Bool = false) {
         self.year = year
         self.month = month
         self.day = day
         self.hour = hour
+        self.minute = minute
+        self.second = second
         self.week = week
         self.isMax = isMax
     }
@@ -50,7 +54,13 @@ public struct TimeOffset: Comparable, Codable {
         if lhs.day != rhs.day {
             return lhs.day < rhs.day
         }
-        return lhs.hour < rhs.hour
+        if lhs.hour != rhs.hour {
+            return lhs.hour < rhs.hour
+        }
+        if lhs.minute != rhs.minute {
+            return lhs.minute < rhs.minute
+        }
+        return lhs.second < rhs.second
     }
 
     public static func == (lhs: TimeOffset, rhs: TimeOffset) -> Bool {
@@ -59,12 +69,13 @@ public struct TimeOffset: Comparable, Codable {
             lhs.week == rhs.week &&
             lhs.day == rhs.day &&
             lhs.hour == rhs.hour &&
-            lhs.week == rhs.week
+            lhs.minute == rhs.minute &&
+            lhs.second == rhs.second
     }
 
     // 转换成 TimeInterval
     public func toTimeInterval() -> TimeInterval {
-        return TimeInterval(year * 365 * 24 * 3600 + month * 30 * 24 * 3600 + day * 24 * 3600 + hour * 3600 + week * 7 * 24 * 3600)
+        return TimeInterval(year * 365 * 24 * 3600 + month * 30 * 24 * 3600 + day * 24 * 3600 + hour * 3600 + minute * 60 + second + week * 7 * 24 * 3600)
     }
 }
 
@@ -74,6 +85,8 @@ extension TimeOffset: Hashable {
         hasher.combine(month)
         hasher.combine(day)
         hasher.combine(hour)
+        hasher.combine(minute)
+        hasher.combine(second)
         hasher.combine(week)
     }
 }
@@ -91,9 +104,11 @@ extension TimeOffset: CustomStringConvertible {
         if week != 0 { parts.append("\(abs(week)) 周") }
         if day != 0 { parts.append("\(abs(day)) 天") }
         if hour != 0 { parts.append("\(abs(hour)) 小时") }
+        if minute != 0 { parts.append("\(abs(minute)) 分钟") }
+        if second != 0 { parts.append("\(abs(second)) 秒") }
 
         if parts.isEmpty {
-            return "0 小时"
+            return "0 秒"
         }
 
         let joinedParts = parts.joined(separator: " ")
@@ -110,6 +125,8 @@ extension Date {
         date = Calendar.current.date(byAdding: .month, value: timeOffset.month, to: date)!
         date = Calendar.current.date(byAdding: .day, value: timeOffset.day, to: date)!
         date = Calendar.current.date(byAdding: .hour, value: timeOffset.hour, to: date)!
+        date = Calendar.current.date(byAdding: .minute, value: timeOffset.minute, to: date)!
+        date = Calendar.current.date(byAdding: .second, value: timeOffset.second, to: date)!
         return date
     }
 }
@@ -128,7 +145,7 @@ extension TimeOffset {
             return "结束时间"
         }
         // 如果全为 0， 开始时间
-        if day == 0 && hour == 0 && year == 0 && month == 0 && week == 0 {
+        if day == 0 && hour == 0 && year == 0 && month == 0 && week == 0 && minute == 0 && second == 0 {
             return "开始时间"
         }
         return description

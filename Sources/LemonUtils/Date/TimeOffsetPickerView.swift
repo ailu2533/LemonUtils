@@ -1,7 +1,7 @@
 import SwiftUI
 
 public enum TimeUnit {
-    case year, month, day, hour
+    case year, month, day, hour, minute, second
 }
 
 public struct TimeOffsetPickerView: View {
@@ -12,6 +12,8 @@ public struct TimeOffsetPickerView: View {
     private let monthData = Array(0 ..< 100).map { "\($0) 月" }
     private let dayData = Array(0 ..< 100).map { "\($0) 天" }
     private let hourData = Array(0 ..< 24).map { "\($0) 时" }
+    private let minuteData = Array(0 ..< 60).map { "\($0) 分" }
+    private let secondData = Array(0 ..< 60).map { "\($0) 秒" }
 
     public init(timeOffset: Binding<TimeOffset>, units: Set<TimeUnit>) {
         _timeOffset = timeOffset
@@ -33,6 +35,12 @@ public struct TimeOffsetPickerView: View {
             if units.contains(.hour) {
                 values.append(timeOffset.hour)
             }
+            if units.contains(.minute) {
+                values.append(timeOffset.minute)
+            }
+            if units.contains(.second) {
+                values.append(timeOffset.second)
+            }
             return values
         }, set: { newValue in
             timeOffset.isMax = false
@@ -51,6 +59,14 @@ public struct TimeOffsetPickerView: View {
             }
             if units.contains(.hour) {
                 timeOffset.hour = newValue[index]
+                index += 1
+            }
+            if units.contains(.minute) {
+                timeOffset.minute = newValue[index]
+                index += 1
+            }
+            if units.contains(.second) {
+                timeOffset.second = newValue[index]
             }
         })
 
@@ -74,6 +90,12 @@ public struct TimeOffsetPickerView: View {
         if units.contains(.hour) {
             data.append(hourData)
         }
+        if units.contains(.minute) {
+            data.append(minuteData)
+        }
+        if units.contains(.second) {
+            data.append(secondData)
+        }
         return data
     }
 }
@@ -82,6 +104,6 @@ struct TimeOffsetPickerView_Previews: PreviewProvider {
     @State static var timeOffset = TimeOffset()
 
     static var previews: some View {
-        TimeOffsetPickerView(timeOffset: $timeOffset, units: [.year, .month, .day, .hour])
+        TimeOffsetPickerView(timeOffset: $timeOffset, units: [.year, .month, .day, .hour, .minute, .second])
     }
 }

@@ -23,14 +23,14 @@ open class TextItem: MovableObject {
         case editable
     }
 
-    public init(text: String, pos: CGPoint = .zero, color: Color = .primary, fontName: String? = nil, editable: Bool = true) {
+    public init(text: String, pos: CGPoint = .zero, color: Color = .primary, fontName: String? = nil, rotationDegree: CGFloat = .zero, editable: Bool = true) {
         self.text = text
         self.color = color
         if let fontName {
             self.fontName = fontName
         }
         self.editable = editable
-        super.init(pos: pos)
+        super.init(pos: pos, rotationDegree: rotationDegree)
     }
 
     public required init(from decoder: Decoder) throws {
@@ -58,8 +58,12 @@ open class TextItem: MovableObject {
         return lhs.text == rhs.text && lhs.color == rhs.color && lhs.fontName == rhs.fontName && lhs.fontSize == rhs.fontSize && lhs.editable == rhs.editable
     }
 
-    public func view() -> some View {
+    open func textView() -> Text {
         return Text(text)
+    }
+
+    open func view() -> some View {
+        return textView()
             .foregroundStyle(color)
             .font(.custom(fontName, size: fontSize))
     }

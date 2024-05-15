@@ -13,19 +13,14 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
         configuration.label
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
+            .frame(minWidth: 40)
             .foregroundStyle(.primary)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .saturation(isEnabled ? 1 : 0)
             .opacity(configuration.isPressed ? 0.5 : 1)
             .background {
-                if isSelected {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(.systemBlue).opacity(0.6))
-//                        .matchedGeometryEffect(id: groupID, in: animationNamespace)
-                } else {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(.systemGray6))
-                }
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isSelected ? Color(Color.accentColor) : Color(.systemGray6))
             }
     }
 }

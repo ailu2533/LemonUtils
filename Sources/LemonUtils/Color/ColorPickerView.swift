@@ -72,7 +72,7 @@ public struct ColorPickerView2: View {
             .scrollIndicators(.hidden)
             .scrollContentBackground(.hidden)
         }.padding(.horizontal)
-            .padding(.top)
+//            .padding(.top)
     }
 }
 
