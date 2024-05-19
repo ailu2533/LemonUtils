@@ -20,21 +20,21 @@ public enum RepeatPeriod: Int, CaseIterable, Identifiable, Codable {
         rawValue
     }
 
-    case day = 0
-    case week = 1
-    case month = 2
-    case year = 3
+    case daily = 0
+    case weekly = 1
+    case monthly = 2
+    case yearly = 3
 
     public var text: String {
         switch self {
-        case .day:
-            return String(localized: "day", bundle: .module)
-        case .week:
-            return String(localized: "week", bundle: .module)
-        case .month:
-            return String(localized: "month", bundle: .module)
-        case .year:
-            return String(localized: "year", bundle: .module)
+        case .daily:
+            return String(localized: "daily", bundle: .module)
+        case .weekly:
+            return String(localized: "weekly", bundle: .module)
+        case .monthly:
+            return String(localized: "monthly", bundle: .module)
+        case .yearly:
+            return String(localized: "yearly", bundle: .module)
         }
     }
 }
@@ -83,13 +83,13 @@ private func calculateStandardRepeatDate(startDate: Date, currentDate: Date, rep
     let ct = currentDate.adjust(for: .startOfDay)!
 
     switch repeatPeriod {
-    case .day:
+    case .daily:
         return calculateDaysDifference(st: st, ct: ct, periodDays: n)
-    case .week:
+    case .weekly:
         return calculateDaysDifference(st: st, ct: ct, periodDays: n * 7)
-    case .month:
+    case .monthly:
         return calculateMonthsDifference(st: st, ct: ct, n: n, calendar: calendar)
-    case .year:
+    case .yearly:
         return calculateYearsDifference(st: st, ct: ct, n: n, calendar: calendar)
     }
 }
@@ -151,7 +151,7 @@ public struct RepeatPeriodPickerView: View {
             },
             set: {
                 repeatN = $0[0] + 1
-                repeatPeriod = RepeatPeriod(rawValue: $0[1]) ?? .day
+                repeatPeriod = RepeatPeriod(rawValue: $0[1]) ?? .daily
             }
         )
     }
@@ -168,7 +168,7 @@ public struct RepeatPeriodPickerView: View {
 }
 
 struct P: View {
-    @State private var repeatPeriod = RepeatPeriod.day
+    @State private var repeatPeriod = RepeatPeriod.daily
     @State private var repeatN = 1
 
     var body: some View {
