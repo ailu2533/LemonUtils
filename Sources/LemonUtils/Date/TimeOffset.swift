@@ -9,17 +9,16 @@ import Foundation
 
 /// Represents a time offset with components for years, months, days, hours, minutes, seconds, and weeks.
 public struct TimeOffset: Comparable, Codable {
-    var year: Int = 0
-    var month: Int = 0
-    var day: Int = 0
-    var hour: Int = 0
-    var minute: Int = 0  // Added minute field
-    var second: Int = 0  // Added second field
-    var week: Int = 0 // Added week field
+    public var year: Int = 0
+    public var month: Int = 0
+    public var day: Int = 0
+    public var hour: Int = 0
+    public var minute: Int = 0 // Added minute field
+    public var second: Int = 0 // Added second field
+    public var week: Int = 0 // Added week field
 
     // 是否是最大 TimeOffset
-    var isMax: Bool = false
-
+    public var isMax: Bool = false
 
     /// Initializes a new `TimeOffset` with specified time components.
     public init(year: Int = 0, month: Int = 0, day: Int = 0, hour: Int = 0, minute: Int = 0, second: Int = 0, week: Int = 0, isMax: Bool = false) {
@@ -134,20 +133,5 @@ extension Date {
 extension TimeOffset: Identifiable {
     public var id: UUID {
         UUID()
-    }
-}
-
-extension TimeOffset {
-    // 当 isMax
-
-    public var text: String {
-        if isMax {
-            return "结束时间"
-        }
-        // 如果全为 0， 开始时间
-        if day == 0 && hour == 0 && year == 0 && month == 0 && week == 0 && minute == 0 && second == 0 {
-            return "开始时间"
-        }
-        return description
     }
 }

@@ -54,10 +54,12 @@ public func calculateNearestRepeatDate(startDate: Date, currentDate: Date, repea
 // 计算自定义周重复的日期
 private func calculateCustomWeeklyRepeatDate(currentDate: Date, customWeek: UInt8) -> Int {
     var customCalendar = Calendar(identifier: .gregorian)
-    customCalendar.firstWeekday = 2  // 周一为一周的第一天
+    customCalendar.firstWeekday = 2 // 设置周一为一周的第一天
 
     let weekday = customCalendar.component(.weekday, from: currentDate)
-    var todayPattern = UInt8(1 << (weekday - 1))
+    let adjustedWeekday = (weekday + 5) % 7 + 1 // 调整weekday的值，使周一为1，周日为7
+
+    var todayPattern = UInt8(1 << (adjustedWeekday - 1))
     var daysUntilNextRepeat = 0
 
     while daysUntilNextRepeat < 7 {
@@ -67,7 +69,7 @@ private func calculateCustomWeeklyRepeatDate(currentDate: Date, customWeek: UInt
         daysUntilNextRepeat += 1
         todayPattern = UInt8(todayPattern << 1)
         if todayPattern == 0 {
-            todayPattern = UInt8(1)  // 重置为周日
+            todayPattern = UInt8(1) // 重置为周日
         }
     }
 
@@ -102,8 +104,8 @@ private func calculateDaysDifference(st: Date, ct: Date, periodDays: Int) -> Int
 private func calculateMonthsDifference(st: Date, ct: Date, n: Int, calendar: Calendar) -> Int {
     // 获取开始日期和当前日期之间的月份和天数差异
     let components = calendar.dateComponents([.month, .day], from: st, to: ct)
-    let days = components.day!  // 从开始日期到当前日期的天数差
-    let months = components.month!  // 从开始日期到当前日期的月份差
+    let days = components.day! // 从开始日期到当前日期的天数差
+    let months = components.month! // 从开始日期到当前日期的月份差
 
     // 如果当前日期正好是周期的结束日，并且月份差是周期数的整数倍，则返回0
     if days == 0 && months % n == 0 {
@@ -161,9 +163,7 @@ public struct RepeatPeriodPickerView: View {
 
     public var body: some View {
         MultiComponentPickerView(data: [RepeatPeriodPickerView.numberData, RepeatPeriodPickerView.periodData], selections: selections)
-//            .frame(height: 80)
-//            .background(Color(.systemGray6))
-//            .clipShape(RoundedRectangle(cornerRadius: 25.0))
+
     }
 }
 
