@@ -11,7 +11,7 @@ import SwiftUI
 open class TextItem: MovableObject {
     public var text: String
     public var color: Color
-    public var fontName: String = CustomFont.fonts.first?.postscriptName ?? ""
+    public var fontName: String?
     public var fontSize: CGFloat = 20.0
     public var editable: Bool
 
@@ -23,12 +23,13 @@ open class TextItem: MovableObject {
         case editable
     }
 
-    public init(text: String, pos: CGPoint = .zero, color: Color = .primary, fontName: String? = nil, rotationDegree: CGFloat = .zero, editable: Bool = true) {
+    public init(text: String, pos: CGPoint = .zero, color: Color = .primary, fontName: String? = nil, fontSize: CGFloat = 20, rotationDegree: CGFloat = .zero, editable: Bool = true) {
         self.text = text
         self.color = color
         if let fontName {
             self.fontName = fontName
         }
+        self.fontSize = fontSize
         self.editable = editable
         super.init(pos: pos, rotationDegree: rotationDegree)
     }
@@ -37,7 +38,7 @@ open class TextItem: MovableObject {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         text = try container.decode(String.self, forKey: .text)
         color = try container.decode(Color.self, forKey: .color)
-        fontName = try container.decode(String.self, forKey: .fontName)
+        fontName = try container.decode(String?.self, forKey: .fontName)
         fontSize = try container.decode(CGFloat.self, forKey: .fontSize)
         editable = try container.decode(Bool.self, forKey: .editable)
 //        super.init(pos: .zero) // Assuming `pos` is not part of Codable
@@ -65,7 +66,7 @@ open class TextItem: MovableObject {
     open func view() -> some View {
         return textView()
             .foregroundStyle(color)
-            .font(.custom(fontName, size: fontSize))
+            .font(fontName == nil ? .system(size: fontSize) : .custom(fontName!, size: fontSize))
     }
 }
 
