@@ -31,9 +31,10 @@ public struct ColorSets {
 
     // macaron 马卡龙色系
     public static let macaronColors = [
+        "#C4EBF0",
         "#D7D2B4", "#D5B87C",
         "#FB6571", "#EDCFB3",
-        "#F4B0A5", "#C4EBF0",
+        "#F4B0A5",
         "#1FC6B2", "#B8F0D3",
         "#94CCC3", "#A8EFE9",
         "#928AD3", "#E4C994",

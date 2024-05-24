@@ -77,8 +77,8 @@ extension MovableObject: Hashable {
     }
 }
 
-// var offset: CGPoint = .zero
-// public var pos: CGPoint = .zero
-// public var rotationDegree: CGFloat = .zero
-// public var zIndex: Double = 1.0
-// public var scale: CGFloat = 1.0
+extension MovableObject {
+    public var debugText: String {
+        return "MovableObject(id: \(id), position: (\(pos.x), \(pos.y)), rotationDegree: \(rotationDegree), zIndex: \(zIndex), scale: \(scale))"
+    }
+}

@@ -8,8 +8,8 @@
 import SwiftUI
 
 @Observable
-open class TextItem: MovableObject {
-    public var backgroundText: String?
+public final class TextItem: MovableObject {
+//    public var backgroundText: String?
     public var text: String
     public var color: Color
     public var fontName: String?
@@ -25,8 +25,8 @@ open class TextItem: MovableObject {
         case editable
     }
 
-    public init(text: String, backgroundText: String? = nil, pos: CGPoint = .zero, color: Color = .primary, fontName: String? = nil, fontSize: CGFloat = 20, rotationDegree: CGFloat = .zero, editable: Bool = true) {
-        self.backgroundText = backgroundText
+    public init(text: String, pos: CGPoint = .zero, color: Color = .primary, fontName: String? = nil, fontSize: CGFloat = 20, rotationDegree: CGFloat = .zero, editable: Bool = true) {
+//        backgroundText = backgroundText
         self.text = text
         self.color = color
         if let fontName {
@@ -39,7 +39,7 @@ open class TextItem: MovableObject {
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        backgroundText = try container.decodeIfPresent(String.self, forKey: .backgroundText)
+//        backgroundText = try container.decodeIfPresent(String.self, forKey: .backgroundText)
         text = try container.decode(String.self, forKey: .text)
         color = try container.decode(Color.self, forKey: .color)
         fontName = try container.decodeIfPresent(String.self, forKey: .fontName)
@@ -48,9 +48,9 @@ open class TextItem: MovableObject {
         try super.init(from: decoder)
     }
 
-    override open func encode(to encoder: Encoder) throws {
+    public override func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encodeIfPresent(backgroundText, forKey: .backgroundText)
+//        try container.encodeIfPresent(backgroundText, forKey: .backgroundText)
         try container.encode(text, forKey: .text)
         try container.encode(color, forKey: .color)
         try container.encodeIfPresent(fontName, forKey: .fontName)
@@ -63,26 +63,11 @@ open class TextItem: MovableObject {
         return lhs.text == rhs.text && lhs.color == rhs.color && lhs.fontName == rhs.fontName && lhs.fontSize == rhs.fontSize && lhs.editable == rhs.editable
     }
 
-    open func textView() -> Text {
-        return Text(text)
-    }
-
     @ViewBuilder
-    open func view() -> some View {
-        if let backgroundText {
-            Text(backgroundText)
-                .font(fontName == nil ? .system(size: fontSize) : .custom(fontName!, size: fontSize))
-                .hidden()
-                .overlay {
-                    textView()
-                        .foregroundStyle(color)
-                        .font(fontName == nil ? .system(size: fontSize) : .custom(fontName!, size: fontSize))
-                }
-        } else {
-            textView()
-                .foregroundStyle(color)
-                .font(fontName == nil ? .system(size: fontSize) : .custom(fontName!, size: fontSize))
-        }
+    public func view() -> some View {
+        Text(text)
+            .foregroundStyle(color)
+            .font(fontName == nil ? .system(size: fontSize) : .custom(fontName!, size: fontSize))
     }
 }
 
