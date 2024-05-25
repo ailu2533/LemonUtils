@@ -17,6 +17,9 @@ public struct ColorSets {
         "#ffffba",
         "#baffc9",
         "#bae1ff",
+        "#130c0e",
+        "#F8F8FF",
+        "#DC143C"
     ]
 
     // 莫兰迪色

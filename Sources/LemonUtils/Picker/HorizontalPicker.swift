@@ -4,8 +4,6 @@ import SwiftUI
 struct HorizontalPickerButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) var isEnabled
 
-//    var animationNamespace: Namespace.ID
-//    var groupID: String
     var isSelected = false
     var backgroundColor: Color = Color.clear
 
@@ -14,14 +12,24 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .frame(minWidth: 40)
-            .foregroundStyle(.primary)
+            .background(backgroundView(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: 8))
-            .saturation(isEnabled ? 1 : 0)
+            // .shadow(color: .gray, radius: isSelected ? 5 : 2, x: 0, y: 2)
+            .blur(radius: configuration.isPressed ? 3 : 0)
+            .animation(.easeInOut, value: configuration.isPressed)
+            .saturation(isEnabled ? 1 : 0.5)
             .opacity(configuration.isPressed ? 0.5 : 1)
-            .background {
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+    }
+
+    @ViewBuilder
+    private func backgroundView(configuration: Self.Configuration) -> some View {
+        RoundedRectangle(cornerRadius: 8)
+            .fill(isSelected ? Color(Color.accentColor) : Color(.systemGray6))
+            .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(isSelected ? Color(Color.accentColor) : Color(.systemGray6))
-            }
+                    .stroke(Color.gray, lineWidth: isSelected ? 2 : 1)
+            )
     }
 }
 
@@ -33,16 +41,11 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 
     @ViewBuilder var itemViewBuilder: (ItemType) -> Content
 
-//    @Namespace private var animationNamespace
-
-//    private var uniqueID = UUID().uuidString
     private var isEmbeddedInScrollView = true
 
     public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), isEmbeddedInScrollView: Bool = true,
-                groupId: String = "picker",
                 itemViewBuilder: @escaping (ItemType) -> Content) {
         self.items = items
-//        uniqueID = groupId
         _selectedItem = selectedItem
         self.backgroundColor = backgroundColor
         self.itemViewBuilder = itemViewBuilder
@@ -65,7 +68,6 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
             ForEach(items, id: \.self) { dataItem in
                 Button(action: {
                     selectedItem = dataItem
-                    print("selected \(dataItem)")
                 }, label: {
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
