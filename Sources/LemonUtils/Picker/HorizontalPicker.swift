@@ -48,25 +48,23 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 
     @ViewBuilder var itemViewBuilder: (ItemType) -> Content
 
-    @State private var tapCount = 0
-
-    private var isEmbeddedInScrollView = true
+    private var shouldEmbedInScrollView = true
 
     var feedback: SensoryFeedback?
 
-    public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), isEmbeddedInScrollView: Bool = true, feedback: SensoryFeedback? = nil,
+    public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), shouldEmbedInScrollView: Bool = true, feedback: SensoryFeedback? = nil,
                 itemViewBuilder: @escaping (ItemType) -> Content) {
         self.items = items
         _selectedItem = selectedItem
         self.backgroundColor = backgroundColor
         self.itemViewBuilder = itemViewBuilder
-        self.isEmbeddedInScrollView = isEmbeddedInScrollView
+        self.shouldEmbedInScrollView = shouldEmbedInScrollView
         self.feedback = feedback
     }
 
     public var body: some View {
         Group {
-            if isEmbeddedInScrollView {
+            if shouldEmbedInScrollView {
                 ScrollView(.horizontal) {
                     itemsStackView()
                 }
@@ -83,17 +81,17 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
             ForEach(items, id: \.self) { dataItem in
                 Button(action: {
                     selectedItem = dataItem
-//                    tapCount += 1
                 }, label: {
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
                         .contentShape(Rectangle())
-                }).buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
-                    .modifier(FeedbackViewModifier(feedback: feedback, trigger: selectedItem))
+                })
+                .buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
+                .modifier(FeedbackViewModifier(feedback: feedback, trigger: selectedItem))
+                .animation(.default, value: selectedItem)
             }
         }
         .padding(.trailing)
-        .animation(.default, value: items)
     }
 }
 
