@@ -22,6 +22,15 @@ extension View {
     }
 }
 
+public struct ViewSizeKey: PreferenceKey {
+    public typealias Value = Anchor<CGPoint>?
+    public static var defaultValue: Value = nil
+
+    public static func reduce(value: inout Value, nextValue: () -> Value) {
+        value = nextValue()
+    }
+}
+
 public struct MovableObjectViewConfig {
     var parentSize: CGSize?
     var enable: Bool
@@ -157,6 +166,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             }
     }
 
+
     private var dragGesture: some Gesture {
         DragGesture()
             .onChanged({ value in
@@ -177,6 +187,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
     public var body: some View {
         content(item)
+            .anchorPreference(key: ViewSizeKey.self, value: .center, transform: { $0 })
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
             .contentShape(Rectangle())

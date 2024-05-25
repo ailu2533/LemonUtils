@@ -11,7 +11,7 @@ import SwiftUI
 @Observable
 open class MovableObject: Identifiable, Codable {
     @ObservationIgnored public var id: UUID = UUID()
-    var offset: CGPoint = .zero
+    public var offset: CGPoint = .zero
     public var pos: CGPoint = .zero
     public var rotationDegree: CGFloat = .zero
     public var zIndex: Double = 1.0
