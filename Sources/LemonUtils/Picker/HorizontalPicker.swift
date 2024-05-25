@@ -86,7 +86,7 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
                         .frame(minWidth: 30)
                         .contentShape(Rectangle())
                 })
-                .buttonStyle(HorizontalPickerButtonStyle())
+                .buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem))
                 .modifier(FeedbackViewModifier(feedback: feedback, trigger: selectedItem))
                 .animation(.default, value: selectedItem)
             }
@@ -154,6 +154,7 @@ public struct ComparableHorizontalSelectionPicker<ItemType: Hashable, Content: V
                 ScrollView(.horizontal) {
                     itemsStackView()
                 }
+                .scrollTargetBehavior(.paging)
                 .scrollIndicators(.hidden)
             } else {
                 itemsStackView()
@@ -171,7 +172,9 @@ public struct ComparableHorizontalSelectionPicker<ItemType: Hashable, Content: V
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
                         .contentShape(Circle())
-                }).buttonStyle(HorizontalPickerButtonStyle2(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
+                })
+                .scrollTargetLayout()
+                .buttonStyle(HorizontalPickerButtonStyle2(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
             }
         }
         .padding(.trailing)
@@ -193,7 +196,7 @@ struct HorizontalPickerButtonStyle2: ButtonStyle {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .stroke(isSelected ? Color.orange : Color.gray, lineWidth: 2)
+                    .stroke(isSelected ? Color.orange : Color.clear, lineWidth: 2)
                     .shadow(color: isSelected ? Color.orange.opacity(0.5) : Color.clear, radius: 4, x: 0, y: 2)
             )
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
