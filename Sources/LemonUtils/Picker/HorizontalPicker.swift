@@ -47,6 +47,8 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 
     @ViewBuilder var itemViewBuilder: (ItemType) -> Content
 
+    @State private var tapCount = 0
+
     private var isEmbeddedInScrollView = true
 
     public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), isEmbeddedInScrollView: Bool = true,
@@ -77,11 +79,13 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
             ForEach(items, id: \.self) { dataItem in
                 Button(action: {
                     selectedItem = dataItem
+                    tapCount += 1
                 }, label: {
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
                         .contentShape(Rectangle())
                 }).buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
+                    .sensoryFeedback(.impact(flexibility: .soft), trigger: tapCount)
             }
         }
         .padding(.trailing)
@@ -91,7 +95,7 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 
 struct WeekdaySelectionView: View {
     static let weekdays = [
-        "星期一", "星期二", "星期���", "星期四", "星期五", "星期六", "星期日",
+        "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日",
     ]
 
     @State private var selectedWeekday = WeekdaySelectionView.weekdays.first!
@@ -107,5 +111,61 @@ struct WeekdaySelectionView: View {
 struct HorizontalPickerPreview: PreviewProvider {
     static var previews: some View {
         WeekdaySelectionView()
+    }
+}
+
+
+
+public struct ComparableHorizontalSelectionPicker<ItemType: Hashable & Comparable, Content: View>: View {
+    var items: [ItemType]
+    @Binding private var selectedItem: ItemType
+
+    var backgroundColor: Color
+
+    @ViewBuilder var itemViewBuilder: (ItemType) -> Content
+
+    @State private var tapCount = 0
+
+    private var isEmbeddedInScrollView = true
+
+    public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), isEmbeddedInScrollView: Bool = true,
+                itemViewBuilder: @escaping (ItemType) -> Content) {
+        self.items = items
+        _selectedItem = selectedItem
+        self.backgroundColor = backgroundColor
+        self.itemViewBuilder = itemViewBuilder
+        self.isEmbeddedInScrollView = isEmbeddedInScrollView
+    }
+
+    public var body: some View {
+        Group {
+            if isEmbeddedInScrollView {
+                ScrollView(.horizontal) {
+                    itemsStackView()
+                }
+                .scrollIndicators(.hidden)
+            } else {
+                itemsStackView()
+            }
+        }.contentMargins(.vertical, 4)
+            .contentMargins(.horizontal, 12)
+    }
+
+    private func itemsStackView() -> some View {
+        HStack {
+            ForEach(items, id: \.self) { dataItem in
+                Button(action: {
+                    selectedItem = dataItem
+                    tapCount += 1
+                }, label: {
+                    itemViewBuilder(dataItem)
+                        .frame(minWidth: 30)
+                        .contentShape(Rectangle())
+                }).buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
+                    .sensoryFeedback(.impact(flexibility: .soft), trigger: tapCount)
+            }
+        }
+        .padding(.trailing)
+        .animation(.default, value: items)
     }
 }
