@@ -12,7 +12,7 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
             .foregroundStyle(.secondary)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
-            .frame(minWidth: 40)
+//            .frame(minWidth: 40)
             .background(backgroundView(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay(
@@ -26,7 +26,7 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
             .animation(.easeInOut, value: configuration.isPressed)
             .saturation(isEnabled ? 1 : 0.5)
 //            .opacity(configuration.isPressed ? 0.7 : 1)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
     }
 
     @ViewBuilder
@@ -88,7 +88,7 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
                 })
                 .buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
                 .modifier(FeedbackViewModifier(feedback: feedback, trigger: selectedItem))
-                .animation(.default, value: selectedItem)
+//                .animation(.default, value: selectedItem)
             }
         }
         .padding(.trailing)
@@ -129,15 +129,13 @@ struct HorizontalPickerPreview: PreviewProvider {
     }
 }
 
-public struct ComparableHorizontalSelectionPicker<ItemType: Hashable & Comparable, Content: View>: View {
+public struct ComparableHorizontalSelectionPicker<ItemType: Hashable, Content: View>: View {
     var items: [ItemType]
     @Binding private var selectedItem: ItemType
 
     var backgroundColor: Color
 
     @ViewBuilder var itemViewBuilder: (ItemType) -> Content
-
-    @State private var tapCount = 0
 
     private var isEmbeddedInScrollView = true
 
@@ -169,23 +167,35 @@ public struct ComparableHorizontalSelectionPicker<ItemType: Hashable & Comparabl
             ForEach(items, id: \.self) { dataItem in
                 Button(action: {
                     selectedItem = dataItem
-                    tapCount += 1
                 }, label: {
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
                         .contentShape(Rectangle())
-                }).buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
-                    .sensoryFeedback(trigger: selectedItem) { oldValue, newValue in
-                        if newValue > oldValue {
-                            return .increase
-                        } else if newValue < oldValue {
-                            return .decrease
-                        }
-                        return .none
-                    }
+                }).buttonStyle(HorizontalPickerButtonStyle2(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
             }
         }
         .padding(.trailing)
-        .animation(.default, value: items)
+    }
+}
+
+struct HorizontalPickerButtonStyle2: ButtonStyle {
+    @Environment(\.isEnabled) var isEnabled
+
+    var isSelected = false
+    var backgroundColor: Color = Color.clear
+
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .foregroundStyle(.brown)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(isSelected ? Color.white : Color.clear)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isSelected ? Color.gray : Color.clear, lineWidth: isSelected ? 1 : 0)
+                    .shadow(radius: isSelected ? 3 : 0)
+                    .blur(radius: isSelected ? 0.6 : 0)
+            )
     }
 }
