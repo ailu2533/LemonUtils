@@ -14,21 +14,27 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
             .frame(minWidth: 40)
             .background(backgroundView(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: 8))
-            // .shadow(color: .gray, radius: isSelected ? 5 : 2, x: 0, y: 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isSelected ? Color.orange : Color.clear, lineWidth: isSelected ? 2 : 0)
+                    // .fill(Color.clear)
+                    .shadow(color: isSelected ? Color.orange.opacity(0.5) : Color.clear, radius: 3, x: 2, y: 0)
+                    .blur(radius: isSelected ? 1 : 0)
+            )
             .blur(radius: configuration.isPressed ? 3 : 0)
             .animation(.easeInOut, value: configuration.isPressed)
             .saturation(isEnabled ? 1 : 0.5)
-            .opacity(configuration.isPressed ? 0.5 : 1)
+            .opacity(configuration.isPressed ? 0.7 : 1)
             .scaleEffect(configuration.isPressed ? 0.95 : 1)
     }
 
     @ViewBuilder
     private func backgroundView(configuration: Self.Configuration) -> some View {
         RoundedRectangle(cornerRadius: 8)
-            .fill(isSelected ? Color(Color.accentColor) : Color(.systemGray6))
+            .fill(isSelected ? Color.orange : Color(.systemGray6))
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray, lineWidth: isSelected ? 2 : 1)
+                    .stroke(Color.gray, lineWidth: isSelected ? 2 : 0)
             )
     }
 }
@@ -53,14 +59,17 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
     }
 
     public var body: some View {
-        if isEmbeddedInScrollView {
-            ScrollView(.horizontal) {
+        Group {
+            if isEmbeddedInScrollView {
+                ScrollView(.horizontal) {
+                    itemsStackView()
+                }
+                .scrollIndicators(.hidden)
+            } else {
                 itemsStackView()
             }
-            .scrollIndicators(.hidden)
-        } else {
-            itemsStackView()
-        }
+        }.contentMargins(.vertical, 4)
+            .contentMargins(.horizontal, 12)
     }
 
     private func itemsStackView() -> some View {
@@ -82,7 +91,7 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 
 struct WeekdaySelectionView: View {
     static let weekdays = [
-        "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期日",
+        "星期一", "星期二", "星期���", "星期四", "星期五", "星期六", "星期日",
     ]
 
     @State private var selectedWeekday = WeekdaySelectionView.weekdays.first!
