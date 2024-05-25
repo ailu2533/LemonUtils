@@ -9,6 +9,7 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
+            .foregroundStyle(.secondary)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .frame(minWidth: 40)
@@ -24,14 +25,14 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
             .blur(radius: configuration.isPressed ? 3 : 0)
             .animation(.easeInOut, value: configuration.isPressed)
             .saturation(isEnabled ? 1 : 0.5)
-            .opacity(configuration.isPressed ? 0.7 : 1)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+//            .opacity(configuration.isPressed ? 0.7 : 1)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1)
     }
 
     @ViewBuilder
     private func backgroundView(configuration: Self.Configuration) -> some View {
         RoundedRectangle(cornerRadius: 8)
-            .fill(isSelected ? Color.orange : Color(.systemGray6))
+            .fill(isSelected ? Color.orange.opacity(0.4) : Color(.systemGray6))
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(Color.gray, lineWidth: isSelected ? 2 : 0)
@@ -51,13 +52,16 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 
     private var isEmbeddedInScrollView = true
 
-    public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), isEmbeddedInScrollView: Bool = true,
+    var feedback: SensoryFeedback?
+
+    public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), isEmbeddedInScrollView: Bool = true, feedback: SensoryFeedback? = nil,
                 itemViewBuilder: @escaping (ItemType) -> Content) {
         self.items = items
         _selectedItem = selectedItem
         self.backgroundColor = backgroundColor
         self.itemViewBuilder = itemViewBuilder
         self.isEmbeddedInScrollView = isEmbeddedInScrollView
+        self.feedback = feedback
     }
 
     public var body: some View {
@@ -79,17 +83,30 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
             ForEach(items, id: \.self) { dataItem in
                 Button(action: {
                     selectedItem = dataItem
-                    tapCount += 1
+//                    tapCount += 1
                 }, label: {
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
                         .contentShape(Rectangle())
                 }).buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
-                    .sensoryFeedback(.impact(flexibility: .soft), trigger: tapCount)
+                    .modifier(FeedbackViewModifier(feedback: feedback, trigger: selectedItem))
             }
         }
         .padding(.trailing)
         .animation(.default, value: items)
+    }
+}
+
+struct FeedbackViewModifier<Trigger: Equatable>: ViewModifier {
+    var feedback: SensoryFeedback?
+    var trigger: Trigger
+
+    func body(content: Content) -> some View {
+        if let feedback {
+            content.sensoryFeedback(feedback, trigger: trigger)
+        } else {
+            content
+        }
     }
 }
 
