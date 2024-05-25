@@ -47,19 +47,21 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
     var backgroundColor: Color
 
     @ViewBuilder var itemViewBuilder: (ItemType) -> Content
+    var buttonStyleProvider: (ItemType) -> some ButtonStyle
 
     private var shouldEmbedInScrollView = true
 
     var feedback: SensoryFeedback?
 
     public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), shouldEmbedInScrollView: Bool = true, feedback: SensoryFeedback? = nil,
-                itemViewBuilder: @escaping (ItemType) -> Content) {
+                itemViewBuilder: @escaping (ItemType) -> Content, buttonStyleProvider: @escaping (ItemType) -> some ButtonStyle = { _ in HorizontalPickerButtonStyle() as some ButtonStyle }) {
         self.items = items
         _selectedItem = selectedItem
         self.backgroundColor = backgroundColor
         self.itemViewBuilder = itemViewBuilder
         self.shouldEmbedInScrollView = shouldEmbedInScrollView
         self.feedback = feedback
+        self.buttonStyleProvider = buttonStyleProvider
     }
 
     public var body: some View {
@@ -86,9 +88,9 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
                         .frame(minWidth: 30)
                         .contentShape(Rectangle())
                 })
-                .buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
+                .buttonStyle(buttonStyleProvider(dataItem))
                 .modifier(FeedbackViewModifier(feedback: feedback, trigger: selectedItem))
-//                .animation(.default, value: selectedItem)
+                .animation(.default, value: selectedItem)
             }
         }
         .padding(.trailing)
@@ -170,7 +172,7 @@ public struct ComparableHorizontalSelectionPicker<ItemType: Hashable, Content: V
                 }, label: {
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
-                        .contentShape(Rectangle())
+                        .contentShape(Circle())
                 }).buttonStyle(HorizontalPickerButtonStyle2(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
             }
         }
