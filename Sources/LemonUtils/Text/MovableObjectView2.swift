@@ -167,6 +167,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                         return
                     }
                 }
+                print(value.location)
 
                 item.onDragChanged(translation: value.translation)
             }).onEnded({ _ in
@@ -186,12 +187,13 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             .coordinateSpace(name: id)
             .position(x: item.pos.x, y: item.pos.y)
             .offset(x: item.offset.x, y: item.offset.y)
-            .if(config.enable) { view in
+            .if(config.enable && selection == item) { view in
                 view.gesture(dragGesture)
             }
             .onTapGesture {
                 config.tapCallback(item)
                 selection = item
             }
+            .zIndex(selection == item ? 1 : 0)
     }
 }
