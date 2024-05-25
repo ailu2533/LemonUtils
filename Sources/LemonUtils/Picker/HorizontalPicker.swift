@@ -47,21 +47,19 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
     var backgroundColor: Color
 
     @ViewBuilder var itemViewBuilder: (ItemType) -> Content
-    var buttonStyleProvider: (ItemType) -> some ButtonStyle
 
     private var shouldEmbedInScrollView = true
 
     var feedback: SensoryFeedback?
 
     public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), shouldEmbedInScrollView: Bool = true, feedback: SensoryFeedback? = nil,
-                itemViewBuilder: @escaping (ItemType) -> Content, buttonStyleProvider: @escaping (ItemType) -> some ButtonStyle = { _ in HorizontalPickerButtonStyle() as some ButtonStyle }) {
+                itemViewBuilder: @escaping (ItemType) -> Content) {
         self.items = items
         _selectedItem = selectedItem
         self.backgroundColor = backgroundColor
         self.itemViewBuilder = itemViewBuilder
         self.shouldEmbedInScrollView = shouldEmbedInScrollView
         self.feedback = feedback
-        self.buttonStyleProvider = buttonStyleProvider
     }
 
     public var body: some View {
@@ -88,7 +86,7 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
                         .frame(minWidth: 30)
                         .contentShape(Rectangle())
                 })
-                .buttonStyle(buttonStyleProvider(dataItem))
+                .buttonStyle(HorizontalPickerButtonStyle())
                 .modifier(FeedbackViewModifier(feedback: feedback, trigger: selectedItem))
                 .animation(.default, value: selectedItem)
             }
@@ -188,16 +186,18 @@ struct HorizontalPickerButtonStyle2: ButtonStyle {
 
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
-            .foregroundStyle(.brown)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(isSelected ? Color.white : Color.clear)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(isSelected ? Color.white : backgroundColor)
+            .foregroundColor(isSelected ? .black : .gray)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? Color.gray : Color.clear, lineWidth: isSelected ? 1 : 0)
-                    .shadow(radius: isSelected ? 3 : 0)
-                    .blur(radius: isSelected ? 0.6 : 0)
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(isSelected ? Color.orange : Color.gray, lineWidth: 2)
+                    .shadow(color: isSelected ? Color.orange.opacity(0.5) : Color.clear, radius: 4, x: 0, y: 2)
             )
+            .scaleEffect(configuration.isPressed ? 0.96 : 1)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
     }
 }
+
