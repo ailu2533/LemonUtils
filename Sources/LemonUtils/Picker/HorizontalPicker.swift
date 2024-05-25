@@ -114,8 +114,6 @@ struct HorizontalPickerPreview: PreviewProvider {
     }
 }
 
-
-
 public struct ComparableHorizontalSelectionPicker<ItemType: Hashable & Comparable, Content: View>: View {
     var items: [ItemType]
     @Binding private var selectedItem: ItemType
@@ -162,7 +160,14 @@ public struct ComparableHorizontalSelectionPicker<ItemType: Hashable & Comparabl
                         .frame(minWidth: 30)
                         .contentShape(Rectangle())
                 }).buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
-                    .sensoryFeedback(.impact(flexibility: .soft), trigger: tapCount)
+                    .sensoryFeedback(trigger: selectedItem) { oldValue, newValue in
+                        if newValue > oldValue {
+                            return .increase
+                        } else if newValue < oldValue {
+                            return .decrease
+                        }
+                        return .none
+                    }
             }
         }
         .padding(.trailing)
