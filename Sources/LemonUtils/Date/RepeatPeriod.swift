@@ -61,19 +61,21 @@ private func calculateCustomWeeklyRepeatDate(currentDate: Date, customWeek: UInt
 
     var todayPattern = UInt8(1 << (adjustedWeekday - 1))
     var daysUntilNextRepeat = 0
+    var crossWeek = 0
 
-    while daysUntilNextRepeat < 7 {
+    while daysUntilNextRepeat <= 7 {
         if todayPattern & customWeek != 0 {
             break
         }
         daysUntilNextRepeat += 1
         todayPattern = UInt8(todayPattern << 1)
         if todayPattern == 0 {
+            crossWeek = 1
             todayPattern = UInt8(1) // 重置为周日
         }
     }
 
-    return daysUntilNextRepeat
+    return daysUntilNextRepeat - crossWeek
 }
 
 // 计算标准周期重复的日期
