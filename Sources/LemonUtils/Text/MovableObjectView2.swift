@@ -13,7 +13,8 @@ extension View {
     ///   - condition: The condition to evaluate.
     ///   - transform: The transform to apply to the source `View`.
     /// - Returns: Either the original `View` or the modified `View` if the condition is `true`.
-    @ViewBuilder func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+    @ViewBuilder
+    public func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
         if condition {
             transform(self)
         } else {
@@ -32,11 +33,12 @@ public struct ViewSizeKey: PreferenceKey {
 }
 
 public struct MovableObjectViewConfig {
-    var parentSize: CGSize?
-    var enable: Bool
-    var deleteCallback: (MovableObject) -> Void
-    var editCallback: (MovableObject) -> Void
-    var tapCallback: (MovableObject) -> Void = { _ in }
+    public var parentSize: CGSize?
+    public var enable: Bool
+    public var deleteCallback: (MovableObject) -> Void
+    public var editCallback: (MovableObject) -> Void
+    public var tapCallback: (MovableObject) -> Void = { _ in }
+//    public var coordinateSpaceId: UUID
 
     public init(parentSize: CGSize? = nil, enable: Bool = true, deleteCallback: @escaping (MovableObject) -> Void = { _ in }, editCallback: @escaping (MovableObject) -> Void = { _ in }) {
         self.parentSize = parentSize

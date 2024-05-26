@@ -52,11 +52,11 @@ open class MovableObject: Identifiable, Codable {
         try container.encode(scale, forKey: .scale)
     }
 
-    func onDragChanged(translation: CGSize) {
+    public func onDragChanged(translation: CGSize) {
         offset = .init(x: translation.width, y: translation.height)
     }
 
-    func onDragEnd() {
+    public func onDragEnd() {
         pos = .init(x: pos.x + offset.x, y: pos.y + offset.y)
         offset = .zero
     }
