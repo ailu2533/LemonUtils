@@ -25,22 +25,16 @@
     "daily" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "täglich"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "daily"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每天"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每日"
           }
         },
         "ja" : {
@@ -55,10 +49,10 @@
             "value" : "매일"
           }
         },
-        "de" : {
+        "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "täglich"
+            "value" : "ทุกวัน"
           }
         },
         "vi" : {
@@ -67,10 +61,16 @@
             "value" : "hàng ngày"
           }
         },
-        "th" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ทุกวัน"
+            "value" : "每天"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每日"
           }
         }
       }
@@ -78,22 +78,16 @@
     "day" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "day"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "天"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "日"
           }
         },
         "ja" : {
@@ -108,10 +102,10 @@
             "value" : "날"
           }
         },
-        "de" : {
+        "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tag"
+            "value" : "วัน"
           }
         },
         "vi" : {
@@ -120,10 +114,16 @@
             "value" : "ngày"
           }
         },
-        "th" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "วัน"
+            "value" : "天"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "日"
           }
         }
       }
@@ -137,22 +137,16 @@
     "month" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monat"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "month"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "月"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "月"
           }
         },
         "ja" : {
@@ -167,10 +161,10 @@
             "value" : "월"
           }
         },
-        "de" : {
+        "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Monat"
+            "value" : "เดือน"
           }
         },
         "vi" : {
@@ -179,10 +173,16 @@
             "value" : "tháng"
           }
         },
-        "th" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "เดือน"
+            "value" : "月"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "月"
           }
         }
       }
@@ -190,22 +190,16 @@
     "monthly" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "monatlich"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "monthly"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每月"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每月"
           }
         },
         "ja" : {
@@ -220,10 +214,10 @@
             "value" : "월간"
           }
         },
-        "de" : {
+        "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "monatlich"
+            "value" : "รายเดือน"
           }
         },
         "vi" : {
@@ -232,10 +226,16 @@
             "value" : "hàng tháng"
           }
         },
-        "th" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "รายเดือน"
+            "value" : "每月"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每月"
           }
         }
       }
@@ -243,22 +243,16 @@
     "share" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "teilen"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "share"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分享"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "分享"
           }
         },
         "ja" : {
@@ -273,10 +267,10 @@
             "value" : "공유"
           }
         },
-        "de" : {
+        "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "teilen"
+            "value" : "แชร์"
           }
         },
         "vi" : {
@@ -285,10 +279,16 @@
             "value" : "chia sẻ"
           }
         },
-        "th" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "แชร์"
+            "value" : "分享"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分享"
           }
         }
       }
@@ -305,22 +305,16 @@
     "week" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Woche"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "week"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "周"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "週"
           }
         },
         "ja" : {
@@ -335,10 +329,10 @@
             "value" : "주"
           }
         },
-        "de" : {
+        "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Woche"
+            "value" : "สัปดาห์"
           }
         },
         "vi" : {
@@ -347,10 +341,16 @@
             "value" : "tuần"
           }
         },
-        "th" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "สัปดาห์"
+            "value" : "周"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "週"
           }
         }
       }
@@ -358,22 +358,16 @@
     "weekly" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wöchentlich"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "weekly"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每周"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "每週"
           }
         },
         "ja" : {
@@ -388,10 +382,10 @@
             "value" : "주간"
           }
         },
-        "de" : {
+        "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "wöchentlich"
+            "value" : "รายสัปดาห์"
           }
         },
         "vi" : {
@@ -400,10 +394,16 @@
             "value" : "hàng tuần"
           }
         },
-        "th" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "รายสัปดาห์"
+            "value" : "每周"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每週"
           }
         }
       }
@@ -414,22 +414,16 @@
     "year" : {
       "extractionState" : "manual",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jahr"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "year"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "年"
-          }
-        },
-        "zh-Hant" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "年"
           }
         },
         "ja" : {
@@ -444,10 +438,10 @@
             "value" : "년"
           }
         },
-        "de" : {
+        "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jahr"
+            "value" : "ปี"
           }
         },
         "vi" : {
@@ -456,31 +450,31 @@
             "value" : "năm"
           }
         },
-        "th" : {
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ปี"
+            "value" : "年"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "年"
           }
         }
       }
     },
     "yearly" : {
+      "de" : {
+        "stringUnit" : {
+          "state" : "translated",
+          "value" : "jährlich"
+        }
+      },
       "en" : {
         "stringUnit" : {
           "state" : "translated",
           "value" : "yearly"
-        }
-      },
-      "zh-Hans" : {
-        "stringUnit" : {
-          "state" : "translated",
-          "value" : "每年"
-        }
-      },
-      "zh-Hant" : {
-        "stringUnit" : {
-          "state" : "translated",
-          "value" : "每年"
         }
       },
       "ja" : {
@@ -495,10 +489,18 @@
           "value" : "매년"
         }
       },
-      "de" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "每年"
+          }
+        }
+      },
+      "th" : {
         "stringUnit" : {
           "state" : "translated",
-          "value" : "jährlich"
+          "value" : "ทุกปี"
         }
       },
       "vi" : {
@@ -507,10 +509,16 @@
           "value" : "hàng năm"
         }
       },
-      "th" : {
+      "zh-Hans" : {
         "stringUnit" : {
           "state" : "translated",
-          "value" : "ทุกปี"
+          "value" : "每年"
+        }
+      },
+      "zh-Hant" : {
+        "stringUnit" : {
+          "state" : "translated",
+          "value" : "每年"
         }
       }
     },

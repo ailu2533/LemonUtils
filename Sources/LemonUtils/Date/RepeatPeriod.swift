@@ -28,13 +28,13 @@ public enum RepeatPeriod: Int, CaseIterable, Identifiable, Codable {
     public var text: String {
         switch self {
         case .daily:
-            return String(localized: "daily", bundle: .module)
+            return String(localized: "day", bundle: .module)
         case .weekly:
-            return String(localized: "weekly", bundle: .module)
+            return String(localized: "week", bundle: .module)
         case .monthly:
-            return String(localized: "monthly", bundle: .module)
+            return String(localized: "month", bundle: .module)
         case .yearly:
-            return String(localized: "yearly", bundle: .module)
+            return String(localized: "year", bundle: .module)
         }
     }
 }
@@ -165,7 +165,6 @@ public struct RepeatPeriodPickerView: View {
 
     public var body: some View {
         MultiComponentPickerView(data: [RepeatPeriodPickerView.numberData, RepeatPeriodPickerView.periodData], selections: selections)
-
     }
 }
 
@@ -181,3 +180,4 @@ struct P: View {
 #Preview(body: {
     P()
 })
+

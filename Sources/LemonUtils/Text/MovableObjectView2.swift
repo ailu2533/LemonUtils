@@ -75,7 +75,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         self.content = content
         _selection = selection
 
-        LoggingUtils.movable.debug("\(item.debugText)")
+//        LoggingUtils.movable.debug("\(item.debugText)")
     }
 
     public func calculateRotation(value: DragGesture.Value) -> Angle {

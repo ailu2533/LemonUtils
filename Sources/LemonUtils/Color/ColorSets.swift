@@ -23,7 +23,8 @@ public struct ColorSets {
     ]
 
     // 莫兰迪色
-    public static let morandiColors = ["#D3D2D0", "#E6D6D9", "#BFEF9A", "#FEECD8", "#F4D1D7", "#16E6E2", "#72CEDC", "#686789", "#CFD3A9", "#E8D3C0", "#AEA9A6", "#9AA690", "#9FABB9", "#91A0A5", "#88878D", "#99857E", "#7D7465", "#B4746B", "#AB545A", "#676662", "#724E52", "#BCA295", "#CEB797", "#9A7549", "#BCA289", "#D89C7A", "#D6C38B", "#849B91", "#D4BAAD", "#B77F70", "#E1CCAF", "#B0B1B6", "#979771", "#91ADB6", "#A79A89", "#8A95A9", "#B57C82"]
+    public static let morandiColors = [
+        "#FFFDF0","#D3D2D0", "#E6D6D9", "#BFEF9A", "#FEECD8", "#F4D1D7", "#16E6E2", "#72CEDC", "#686789", "#CFD3A9", "#E8D3C0", "#AEA9A6", "#9AA690", "#9FABB9", "#91A0A5", "#88878D", "#99857E", "#7D7465", "#B4746B", "#AB545A", "#676662", "#724E52", "#BCA295", "#CEB797", "#9A7549", "#BCA289", "#D89C7A", "#D6C38B", "#849B91", "#D4BAAD", "#B77F70", "#E1CCAF", "#B0B1B6", "#979771", "#91ADB6", "#A79A89", "#8A95A9", "#B57C82"]
 
     // 24 节气
     // 立春
@@ -49,4 +50,30 @@ public struct ColorSets {
         "#D7B399", "#B2D1D3",
         "#DA949C",
     ]
+    
+    // 彩虹色
+    public static let textColors = [
+//        "#ffb3ba",
+//        "#ffdfba",
+//        "#ffffba",
+//        "#baffc9",
+//        "#bae1ff",
+//        "#130c0e",
+//        "#F8F8FF",
+        
+        
+        
+        "#2f261e",
+        "#ffffff",
+        "#ae2121",
+        "#ffff00",
+        "#00bfff",
+        "#088743",
+        "#876c94",
+        "#ff7e38",
+    ]
+    
 }
+
+
+

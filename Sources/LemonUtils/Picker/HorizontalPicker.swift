@@ -17,10 +17,10 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? Color.orange : Color.clear, lineWidth: isSelected ? 2 : 0)
+                    .stroke(isSelected ? Color.orange : Color.clear, lineWidth: isSelected ? 1 : 0)
                     // .fill(Color.clear)
                     .shadow(color: isSelected ? Color.orange.opacity(0.5) : Color.clear, radius: 3, x: 2, y: 0)
-                    .blur(radius: isSelected ? 1 : 0)
+                    .blur(radius: isSelected ? 0.2 : 0)
             )
             .blur(radius: configuration.isPressed ? 3 : 0)
             .animation(.easeInOut, value: configuration.isPressed)
@@ -32,10 +32,10 @@ struct HorizontalPickerButtonStyle: ButtonStyle {
     @ViewBuilder
     private func backgroundView(configuration: Self.Configuration) -> some View {
         RoundedRectangle(cornerRadius: 8)
-            .fill(isSelected ? Color.orange.opacity(0.4) : Color(.systemGray6))
+            .fill(Color(.systemGray6))
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(Color.gray, lineWidth: isSelected ? 2 : 0)
+                    .stroke(Color(.systemGray3), lineWidth: isSelected ? 2 : 0)
             )
     }
 }
@@ -154,17 +154,18 @@ public struct ComparableHorizontalSelectionPicker<ItemType: Hashable, Content: V
                 ScrollView(.horizontal) {
                     itemsStackView()
                 }
-                .scrollTargetBehavior(.paging)
+                .scrollTargetBehavior(.viewAligned)
                 .scrollIndicators(.hidden)
             } else {
                 itemsStackView()
             }
-        }.contentMargins(.vertical, 4)
-            .contentMargins(.horizontal, 12)
+        }
+        .contentMargins(.vertical, 2)
+            .contentMargins(.horizontal, 10)
     }
 
     private func itemsStackView() -> some View {
-        HStack {
+        HStack(spacing: 10) {
             ForEach(items, id: \.self) { dataItem in
                 Button(action: {
                     selectedItem = dataItem
@@ -176,8 +177,8 @@ public struct ComparableHorizontalSelectionPicker<ItemType: Hashable, Content: V
                 .scrollTargetLayout()
                 .buttonStyle(HorizontalPickerButtonStyle2(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
             }
-        }
-        .padding(.trailing)
+        }.scrollTargetLayout()
+//        .padding(.trailing)
     }
 }
 

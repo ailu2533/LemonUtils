@@ -51,12 +51,12 @@ public struct CalendarView: View {
 
     @Binding private var selectedDate: YearMonthDay
 
-    @Binding private var visibleFirstDay: YearMonthDay
+    @Binding private var visibleFirstDay: YearMonthDay?
 
     var markedDates: Set<YearMonthDay> = Set()
 
-    // 双击日期回调
-    var doubleTapCallback: (DayComponents) -> Void
+    // 点击日期回调
+    var tapCallback: (DayComponents) -> Void
 
     public init(calendar: Calendar, monthsLayout: MonthsLayout, callback: @escaping (DayComponents) -> Void = { _ in }) {
         self.calendar = calendar
@@ -74,15 +74,16 @@ public struct CalendarView: View {
             options: 0,
             locale: calendar.locale ?? Locale.current)
 
-        doubleTapCallback = callback
+        tapCallback = callback
         _selectedDate = .constant(YearMonthDay.fromDate(.now))
         _visibleFirstDay = .constant(YearMonthDay.fromDate(.now))
     }
 
-    public init(calendar: Calendar, monthsLayout: MonthsLayout, markedDates: Set<YearMonthDay>, selectedDate: Binding<YearMonthDay>, callback: @escaping (DayComponents) -> Void = { _ in }) {
+    public init(calendar: Calendar, monthsLayout: MonthsLayout, markedDates: Set<YearMonthDay>, selectedDate: Binding<YearMonthDay>, visibleFirstDay: Binding<YearMonthDay?>, callback: @escaping (DayComponents) -> Void = { _ in }) {
         self.init(calendar: calendar, monthsLayout: monthsLayout, callback: callback)
         self.markedDates = markedDates
         _selectedDate = selectedDate
+        _visibleFirstDay = visibleFirstDay
     }
 
     // MARK: Internal
@@ -103,10 +104,10 @@ public struct CalendarView: View {
 //            .onDragEnd({ visibleDayRange, willDecelerate in
 //                print("dragEnd \(visibleDayRange.lowerBound) \(willDecelerate)")
 //            })
-//            .onDeceleratingEnd({ visibleDayRange in
-//                visibleFirstDay = YearMonthDay.fromDayComponents(visibleDayRange.lowerBound)
-//                print(visibleDayRange.lowerBound)
-//            })
+            .onDeceleratingEnd({ visibleDayRange in
+                visibleFirstDay = YearMonthDay.fromDayComponents(visibleDayRange.lowerBound)
+                print(visibleDayRange.lowerBound)
+            })
 
             .monthHeaders { month in
 
@@ -130,8 +131,8 @@ public struct CalendarView: View {
 
             .days { day in
                 SwiftUIDayView(dayNumber: day.day, isSelected: isDaySelected(day), isMarked: isDayMarked(day))
-                    .onTapGesture(count: 2, perform: {
-                        doubleTapCallback(day)
+                    .onTapGesture(perform: {
+                        tapCallback(day)
                     })
             }
 
@@ -178,8 +179,8 @@ public struct CalendarView: View {
     CalendarView(calendar: Calendar.current, monthsLayout: .vertical)
 }
 
-#Preview("horizontal") {
-    CalendarView(calendar: Calendar.current, monthsLayout: .horizontal, markedDates: [.init(year: 2024, month: 4, day: 2, weekday: 0), .init(year: 2024, month: 4, day: 3, weekday: 0), .init(year: 2024, month: 4, day: 4, weekday: 0),
-                 ], selectedDate: .constant(YearMonthDay.fromDate(.now))
-    )
-}
+//#Preview("horizontal") {
+//    CalendarView(calendar: Calendar.current, monthsLayout: .horizontal, markedDates: [.init(year: 2024, month: 4, day: 2, weekday: 0), .init(year: 2024, month: 4, day: 3, weekday: 0), .init(year: 2024, month: 4, day: 4, weekday: 0),
+//        ], selectedDate: .constant(YearMonthDay.fromDate(.now))
+//    )
+//}
