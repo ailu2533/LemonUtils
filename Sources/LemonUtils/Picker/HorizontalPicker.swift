@@ -1,13 +1,18 @@
 import SwiftUI
 
 @available(iOS 17.0, *)
-struct HorizontalPickerButtonStyle: ButtonStyle {
+public struct HorizontalPickerButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) var isEnabled
 
-    var isSelected = false
-    var backgroundColor: Color = Color.clear
+    var isSelected: Bool
+    var backgroundColor: Color
 
-    func makeBody(configuration: Self.Configuration) -> some View {
+    public init(isSelected: Bool = false, backgroundColor: Color = Color.clear) {
+        self.isSelected = isSelected
+        self.backgroundColor = backgroundColor
+    }
+
+    public func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .foregroundStyle(.secondary)
             .padding(.horizontal, 8)
@@ -161,7 +166,7 @@ public struct ComparableHorizontalSelectionPicker<ItemType: Hashable, Content: V
             }
         }
         .contentMargins(.vertical, 2)
-            .contentMargins(.horizontal, 10)
+        .contentMargins(.horizontal, 10)
     }
 
     private func itemsStackView() -> some View {
@@ -204,4 +209,3 @@ struct HorizontalPickerButtonStyle2: ButtonStyle {
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
     }
 }
-

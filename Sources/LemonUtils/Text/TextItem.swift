@@ -81,3 +81,23 @@ public final class TextItem: MovableObject {
             }
         }
 }
+
+extension TextItem {
+    public func deepCopy() -> TextItem {
+        let copy = TextItem(text: text, pos: pos, rotationDegree: rotationDegree)
+        copy.id = id // UUID 是结构体，自动进行值拷贝
+        copy.pos = pos // CGPoint 是结构体，自动进行值拷贝
+        copy.offset = offset // CGPoint 是结构体，自动进行值拷贝
+        copy.rotationDegree = rotationDegree // CGFloat 是基本数据类型，自动进行值拷贝
+        copy.zIndex = zIndex // Double 是基本数据类型，自动进行值拷贝
+        copy.scale = scale // CGFloat 是基本数据类型，自动进行值拷贝
+
+        // TextItem specific properties
+        copy.text = text // String 是值类型，自动进行值拷贝
+        copy.fontName = fontName // Optional<String> 也是值类型，自动进行值拷贝
+        copy.fontSize = fontSize // CGFloat 是基本数据类型，自动进行值拷贝
+        copy.colorHex = colorHex // String 是值类型，自动进行值拷贝
+
+        return copy
+    }
+}

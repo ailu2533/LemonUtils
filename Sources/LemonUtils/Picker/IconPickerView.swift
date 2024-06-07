@@ -113,25 +113,6 @@ public struct IconPickerViewNew: View {
     }
 }
 
-private struct IconView: View {
-    private let iconName: String
-    private let width: CGFloat
-    private let height: CGFloat
-
-    init(iconName: String, width: CGFloat = 60, height: CGFloat = 60) {
-        self.iconName = iconName
-        self.width = width
-        self.height = height
-    }
-
-    var body: some View {
-        Image(iconName)
-            .resizable()
-            .frame(width: width, height: height)
-            .padding(6)
-    }
-}
-
 struct GeneralColor: View {
     let pureColor: String?
     let gradientColor: [String]?

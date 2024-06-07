@@ -82,3 +82,17 @@ extension MovableObject {
         return "MovableObject(id: \(id), position: (\(pos.x), \(pos.y)), rotationDegree: \(rotationDegree), zIndex: \(zIndex), scale: \(scale))"
     }
 }
+
+
+//extension MovableObject {
+//    func deepCopy() -> MovableObject {
+//        let copy = MovableObject(pos: self.pos, rotationDegree: self.rotationDegree)
+//        copy.id = self.id  // UUID 是结构体，自动进行值拷贝
+//        copy.offset = self.offset  // CGPoint 是结构体，自动进行值拷贝
+//        copy.rotationDegree = self.rotationDegree  // CGFloat 是基本数据类型，自动进行值拷贝
+//        copy.zIndex = self.zIndex  // Double 是基本数据类型，自动进行值拷贝
+//        copy.scale = self.scale  // CGFloat 是基本数据类型，自动进行值拷贝
+//
+//        return copy
+//    }
+//}
