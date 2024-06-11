@@ -138,32 +138,6 @@ private func calculateYearsDifference(st: Date, ct: Date, n: Int, calendar: Cale
     return calendar.dateComponents([.day], from: ct, to: nextDate).day!
 }
 
-// 给定事件开始时间和结束时间和重复模式，直接计算出小于等于结束时间的最后一个重复日期
-public func calculateLastRepeatDateBeforeEndDate(startDate: Date, endDate: Date, repeatPeriod: RepeatPeriod, n: Int) -> Date? {
-    let calendar = Calendar.current
-
-    switch repeatPeriod {
-    case .daily:
-        let daysBetween = calendar.dateComponents([.day], from: startDate, to: endDate).day!
-        let numberOfPeriods = daysBetween / n
-        return calendar.date(byAdding: .day, value: numberOfPeriods * n, to: startDate)
-
-    case .weekly:
-        let daysBetween = calendar.dateComponents([.day], from: startDate, to: endDate).day!
-        let numberOfPeriods = daysBetween / (n * 7)
-        return calendar.date(byAdding: .day, value: numberOfPeriods * n * 7, to: startDate)
-
-    case .monthly:
-        let monthsBetween = calendar.dateComponents([.month], from: startDate, to: endDate).month!
-        let numberOfPeriods = monthsBetween / n
-        return calendar.date(byAdding: .month, value: numberOfPeriods * n, to: startDate)
-
-    case .yearly:
-        let yearsBetween = calendar.dateComponents([.year], from: startDate, to: endDate).year!
-        let numberOfPeriods = yearsBetween / n
-        return calendar.date(byAdding: .year, value: numberOfPeriods * n, to: startDate)
-    }
-}
 
 public struct RepeatPeriodPickerView: View {
     @Binding var repeatPeriod: RepeatPeriod
