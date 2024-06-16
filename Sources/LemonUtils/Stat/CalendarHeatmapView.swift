@@ -70,7 +70,7 @@ public struct CalendarHeatmapView2: View {
             return
         }
 
-        shift = date.weekdayOfMonthStart - 1 // 调整为从0开始计数
+        shift = 0 // 调整为从0开始计数
 
         // 创建一个数组来填充每天的数据，初始化为0
         let daysInMonth = date.daysInMonth // 如果 date 为 nil，默认为30天

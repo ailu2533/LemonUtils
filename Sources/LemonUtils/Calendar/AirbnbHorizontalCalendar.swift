@@ -1,5 +1,4 @@
-
-
+import Combine
 import HorizonCalendar
 import SwiftUI
 
@@ -45,132 +44,115 @@ struct SwiftUIDayView_Previews: PreviewProvider {
     private static let calendar = Calendar.current
 }
 
+public class CalendarConfiguration {
+    public var calendar: Calendar = Calendar.current
+
+    public var monthsLayout: MonthsLayout = .horizontal
+    public var endDate: Date = .now
+    public var startDate: Date = .now.offset(.year, value: -1)!
+
+    public var dateFormatTemplate: String = "MMMM yyyy"
+
+    public var tapCallback: (DayComponents) -> Void = { _ in } // 回调通常不需要被观察
+
+    public var isDayMarkedCallback: (YearMonthDay) -> Bool = { _ in false }
+
+    public init(isDayMarkedCallback: @escaping (YearMonthDay) -> Bool) {
+        self.isDayMarkedCallback = isDayMarkedCallback
+    }
+}
+
 @available(macOS 10.15, *)
 public struct CalendarView: View {
-    // MARK: Lifecycle
+    @Binding public var selectedDate: YearMonthDay
+    @Binding public var visibleFirstDay: YearMonthDay?
+    public var config: CalendarConfiguration
 
-    @Binding private var selectedDate: YearMonthDay
-
-    @Binding private var visibleFirstDay: YearMonthDay?
-
-    var markedDates: Set<YearMonthDay> = Set()
-
-    // 点击日期回调
-    var tapCallback: (DayComponents) -> Void
-
-    public init(calendar: Calendar, monthsLayout: MonthsLayout, callback: @escaping (DayComponents) -> Void = { _ in }) {
-        self.calendar = calendar
-        self.monthsLayout = monthsLayout
-
-        let startDate = calendar.date(from: DateComponents(year: 2023, month: 01, day: 01))!
-        let endDate = calendar.date(from: DateComponents(year: 2026, month: 12, day: 31))!
-        visibleDateRange = startDate ... endDate
+    public init(selectedDate: Binding<YearMonthDay>, visibleFirstDay: Binding<YearMonthDay?>, config: CalendarConfiguration) {
+        _selectedDate = selectedDate
+        _visibleFirstDay = visibleFirstDay
+        self.config = config
 
         monthDateFormatter = DateFormatter()
+        let calendar = config.calendar
         monthDateFormatter.calendar = calendar
         monthDateFormatter.locale = calendar.locale
         monthDateFormatter.dateFormat = DateFormatter.dateFormat(
             fromTemplate: "MMMM yyyy",
             options: 0,
             locale: calendar.locale ?? Locale.current)
-
-        tapCallback = callback
-        _selectedDate = .constant(YearMonthDay.fromDate(.now))
-        _visibleFirstDay = .constant(YearMonthDay.fromDate(.now))
     }
-
-    public init(calendar: Calendar, monthsLayout: MonthsLayout, markedDates: Set<YearMonthDay>, selectedDate: Binding<YearMonthDay>, visibleFirstDay: Binding<YearMonthDay?>, callback: @escaping (DayComponents) -> Void = { _ in }) {
-        self.init(calendar: calendar, monthsLayout: monthsLayout, callback: callback)
-        self.markedDates = markedDates
-        _selectedDate = selectedDate
-        _visibleFirstDay = visibleFirstDay
-    }
-
-    // MARK: Internal
-
-    public var body: some View {
-        CalendarViewRepresentable(
-            calendar: calendar,
-            visibleDateRange: visibleDateRange,
-            monthsLayout: monthsLayout,
-            dataDependency: selectedDayRange,
-            proxy: calendarViewProxy)
-
-            .interMonthSpacing(24)
-            .verticalDayMargin(8)
-            .horizontalDayMargin(8)
-            .backgroundColor(UIColor.clear)
-            .onDeceleratingEnd({ visibleDayRange in
-                visibleFirstDay = YearMonthDay.fromDayComponents(visibleDayRange.lowerBound)
-            })
-
-            .monthHeaders { month in
-
-                let monthHeaderText = monthDateFormatter.string(from: calendar.date(from: month.components)!)
-                Group {
-                    if case .vertical = monthsLayout {
-                        HStack {
-                            Text(monthHeaderText)
-                                .font(.title2)
-                            Spacer()
-                        }
-                        .padding()
-                    } else {
-                        Text(monthHeaderText)
-                            .font(.title2)
-                            .padding()
-                    }
-                }
-                .accessibilityAddTraits(.isHeader)
-            }
-
-            .days { day in
-                SwiftUIDayView(dayNumber: day.day, isSelected: isDaySelected(day), isMarked: isDayMarked(day))
-                    .onTapGesture(perform: {
-                        tapCallback(day)
-                    })
-            }
-
-            .onDaySelection { day in
-                selectedDate = YearMonthDay.fromDayComponents(day)
-            }
-
-            .onAppear {
-                calendarViewProxy.scrollToMonth(containing: selectedDate.date(), scrollPosition: .centered, animated: false)
-            }
-
-    }
-
-    // MARK: Private
-
-    private let calendar: Calendar
-    private let monthsLayout: MonthsLayout
-    private let visibleDateRange: ClosedRange<Date>
 
     private let monthDateFormatter: DateFormatter
 
-    @StateObject private var calendarViewProxy = CalendarViewProxy()
+    private var visibleDateRange: ClosedRange<Date> {
+        config.startDate ... config.endDate
+    }
 
+    @StateObject private var calendarViewProxy = CalendarViewProxy()
     @State private var selectedDayRange: DayComponentsRange?
     @State private var selectedDayRangeAtStartOfDrag: DayComponentsRange?
 
+    public var body: some View {
+        let view = CalendarViewRepresentable(
+            calendar: config.calendar,
+            visibleDateRange: visibleDateRange,
+            monthsLayout: config.monthsLayout,
+            dataDependency: selectedDayRange,
+            proxy: calendarViewProxy
+        )
+
+        configureCalendarView(view)
+            .onAppear {
+                calendarViewProxy.scrollToMonth(containing: selectedDate.date(), scrollPosition: .centered, animated: false)
+            }
+            .frame(maxWidth: 375, maxHeight: .infinity)
+    }
+
+    private func configureCalendarView(_ view: CalendarViewRepresentable) -> CalendarViewRepresentable {
+        view
+            .interMonthSpacing(8)
+            .verticalDayMargin(8)
+            .horizontalDayMargin(8)
+            .backgroundColor(UIColor.clear)
+            .monthHeaders { month in
+                let date = config.calendar.date(from: month.components)!
+                let monthHeaderText = monthDateFormatter.string(from: date)
+                Group {
+                    if case .vertical = config.monthsLayout {
+                        HStack {
+                            Text(monthHeaderText).font(.title2)
+                            Spacer()
+                        }.padding()
+                    } else {
+                        Text(monthHeaderText).font(.title2).padding()
+                    }
+                }.accessibilityAddTraits(.isHeader)
+            }
+            .days { day in
+                SwiftUIDayView(dayNumber: day.day, isSelected: isDaySelected(day), isMarked: isDayMarked(day))
+                    .onTapGesture {
+                        config.tapCallback(day)
+                    }
+            }
+            .onDaySelection { day in
+                selectedDate = YearMonthDay.fromDayComponents(day)
+            }
+            .onDeceleratingEnd { visibleDayRange in
+                let lb = visibleDayRange.lowerBound
+                visibleFirstDay = YearMonthDay(year: lb.month.year, month: lb.month.month, day: lb.day)
+            }
+    }
+
     private func isDaySelected(_ day: DayComponents) -> Bool {
-        if let selectedDayRange {
-            return day == selectedDayRange.lowerBound || day == selectedDayRange.upperBound
+        if let range = selectedDayRange {
+            return day == range.lowerBound || day == range.upperBound
         } else {
             return YearMonthDay.fromDayComponents(day) == selectedDate
         }
     }
 
     private func isDayMarked(_ day: DayComponents) -> Bool {
-        return markedDates.contains(YearMonthDay.fromDayComponents(day))
+        return config.isDayMarkedCallback(YearMonthDay.fromDayComponents(day))
     }
 }
-
-// MARK: - SwiftUIScreenDemo_Previews
-
-#Preview("vertical") {
-    CalendarView(calendar: Calendar.current, monthsLayout: .vertical)
-}
-
-

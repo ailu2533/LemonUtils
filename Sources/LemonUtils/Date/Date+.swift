@@ -13,21 +13,21 @@ public struct YearMonthDay: Hashable, Equatable {
     let year: Int
     let month: Int
     let day: Int
-    public let weekday: Int
+//    public let weekday: Int
 
     public init(date: Date) {
-        let dateComponents = Calendar.current.dateComponents([.year, .month, .day, .weekday], from: date)
+        let dateComponents = Calendar.current.dateComponents([.year, .month, .day], from: date)
         year = dateComponents.year!
         month = dateComponents.month!
         day = dateComponents.day!
-        weekday = dateComponents.weekday!
+//        weekday = dateComponents.weekday!
     }
 
-    public init(year: Int, month: Int, day: Int, weekday: Int) {
+    public init(year: Int, month: Int, day: Int) {
         self.year = year
         self.month = month
         self.day = day
-        self.weekday = weekday
+//        self.weekday = weekday
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -43,8 +43,8 @@ public struct YearMonthDay: Hashable, Equatable {
 
 extension YearMonthDay {
     public static func fromDate(_ date: Date) -> YearMonthDay {
-        let components = Calendar.current.dateComponents([.year, .month, .day, .weekday], from: date)
-        return .init(year: components.year!, month: components.month!, day: components.day!, weekday: components.weekday!)
+        let components = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        return .init(year: components.year!, month: components.month!, day: components.day!)
     }
 
     public static func fromDayComponents(_ date: DayComponents) -> YearMonthDay {
@@ -52,7 +52,7 @@ extension YearMonthDay {
         let month = date.month.month
         let day = date.day
 
-        return .init(year: year, month: month, day: day, weekday: 0)
+        return .init(year: year, month: month, day: day)
     }
 
     public func date() -> Date {
@@ -63,14 +63,32 @@ extension YearMonthDay {
 }
 
 public extension Date {
-    var startOfWeek: Date? {
-        let t = adjust(for: .startOfWeek)?.adjust(for: .startOfDay)
-        return Calendar.current.date(byAdding: .day, value: 1, to: t!)
+    /// Returns the start of the week for the given date.
+    /// - Parameter usingMondayAsFirstDay: A Boolean value indicating whether Monday should be considered the first day of the week.
+    /// - Returns: The date representing the start of the week.
+    func startOfWeek(usingMondayAsFirstDay: Bool = true) -> Date? {
+        let calendar = configuredCalendar(usingMondayAsFirstDay: usingMondayAsFirstDay)
+        return adjust(for: .startOfWeek, calendar: calendar)?.adjust(for: .startOfDay)
     }
 
-    var endOfWeek: Date? {
-        let t = adjust(for: .endOfWeek)?.adjust(for: .endOfDay)
-        return Calendar.current.date(byAdding: .day, value: 1, to: t!)
+    /// Returns the end of the week for the given date.
+    /// - Parameter usingMondayAsFirstDay: A Boolean value indicating whether Monday should be considered the first day of the week.
+    /// - Returns: The date representing the end of the week.
+    func endOfWeek(usingMondayAsFirstDay: Bool = true) -> Date? {
+        let calendar = configuredCalendar(usingMondayAsFirstDay: usingMondayAsFirstDay)
+        return adjust(for: .endOfWeek, calendar: calendar)?.adjust(for: .endOfDay)
+    }
+
+    /// Configures the calendar based on whether Monday is considered the first day of the week.
+    /// - Parameter usingMondayAsFirstDay: A Boolean value indicating whether Monday should be considered the first day of the week.
+    /// - Returns: A configured `Calendar` instance.
+    private func configuredCalendar(usingMondayAsFirstDay: Bool) -> Calendar {
+        var calendar = Calendar.current
+        if usingMondayAsFirstDay {
+            calendar = Calendar(identifier: .gregorian)
+            calendar.firstWeekday = 2 // Monday
+        }
+        return calendar
     }
 
     var startOfMonth: Date? {

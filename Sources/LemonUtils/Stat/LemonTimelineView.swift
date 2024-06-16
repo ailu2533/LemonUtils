@@ -31,16 +31,13 @@ private struct TimelineItemCardView<Data, Card: View>: View {
     var body: some View {
         HStack {
             Text(item.timeString)
-//                .font(.caption)
-                .font(.system(size: 16))
-//                .fontWeight(.bold)
-//                .foregroundStyle(.secondary)
-                .monospaced()
+                .font(.system(size: 14))
+                .fontWeight(.semibold)
                 .frame(width: 50)
 
-            DotLineShape()
+            DotLineShape(lineWidth: 2)
                 .frame(width: 25)
-//                .foregroundStyle(.secondary)
+                .foregroundStyle(Color(.systemGray2))
 
             cardBuilder(item)
 

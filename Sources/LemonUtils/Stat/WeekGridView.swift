@@ -72,7 +72,7 @@ public struct WeekGridView: View {
                         .frame(width: 24, height: 24)
                 } else {
                     RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.gray.opacity(0.2))
+                        .fill(Color(.systemGray6))
                         .frame(width: 24, height: 24)
                 }
             }

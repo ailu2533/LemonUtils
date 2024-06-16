@@ -90,6 +90,6 @@ public struct IconView: View {
     public var body: some View {
         ResizedImage(imageName: iconName, targetSize: .init(width: width, height: height))
             .frame(width: width, height: height)
-//            .padding(6)
+            .id(iconName)
     }
 }
