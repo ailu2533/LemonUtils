@@ -24,9 +24,8 @@ struct ResizedImage: View {
                 ProgressView()  // 显示加载进度指示器
                     .aspectRatio(contentMode: .fit)
             } else {
-                Image(systemName: "photo")  // 提供一个占位符
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                Rectangle()
+                    .fill(Color.clear)// 提供一个占位符
             }
         }
         .onAppear {
@@ -91,6 +90,6 @@ public struct IconView: View {
     public var body: some View {
         ResizedImage(imageName: iconName, targetSize: .init(width: width, height: height))
             .frame(width: width, height: height)
-            .padding(6)
+//            .padding(6)
     }
 }

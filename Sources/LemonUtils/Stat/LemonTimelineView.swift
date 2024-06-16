@@ -31,12 +31,16 @@ private struct TimelineItemCardView<Data, Card: View>: View {
     var body: some View {
         HStack {
             Text(item.timeString)
-                .font(.caption)
-                .frame(width: 35)
+//                .font(.caption)
+                .font(.system(size: 16))
+//                .fontWeight(.bold)
+//                .foregroundStyle(.secondary)
+                .monospaced()
+                .frame(width: 50)
 
             DotLineShape()
                 .frame(width: 25)
-                .foregroundStyle(.secondary)
+//                .foregroundStyle(.secondary)
 
             cardBuilder(item)
 
@@ -56,14 +60,11 @@ public struct LemonTimelineView<Data, Card: View>: View {
     }
 
     public var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                ForEach(items) { habit in
-                    TimelineItemCardView(item: habit, cardBuilder: cardBuilder)
-                }
+        VStack(spacing: 0) {
+            ForEach(items) { habit in
+                TimelineItemCardView(item: habit, cardBuilder: cardBuilder)
             }
-            .box()
-        }
-        .scrollContentBackground(.hidden)
+        } 
+        .box()
     }
 }

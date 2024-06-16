@@ -123,6 +123,13 @@ public extension Date {
 
         return weekday! - 2
     }
+
+    // 计算这个日期所在月份的天数
+    var daysInMonth: Int {
+        let calendar = Calendar.current
+        let range = calendar.range(of: .day, in: .month, for: self)
+        return range?.count ?? 30 // 如果无法获取到天数，默认返回30天
+    }
 }
 
 public extension Calendar {

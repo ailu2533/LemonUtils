@@ -23,21 +23,29 @@ public struct GridViewItem: Identifiable {
     // Unique identifier for each grid item.
     public let id: UUID
     // Title displayed in the grid row.
-    let title: String
+    public let title: String
     // Color used for the filled cells in the grid.
     let color: Color
     // Dictionary mapping day of the week to a statistic value.
+    public let sortValue: Double
     let stat: Dictionary<Int, Double>
+    // 数据的时间。
+    // 如果是周数据，传入的是一周内的任意时间
+    // 如果是月数据，传入的是一个月内的任意时间
+    // 如果是年数据，传入的是一年内的任意时间
+    public var date: Date?
 
-    public init(id: UUID, title: String, color: Color, stat: Dictionary<Int, Double>) {
+    public init(id: UUID, title: String, color: Color, date: Date? = nil, sortValue: Double = 0, stat: Dictionary<Int, Double>) {
         self.id = id
         self.title = title
         self.color = color
         self.stat = stat
+        self.date = date
+        self.sortValue = sortValue
     }
 }
 
-public struct WeekGridView2: View {
+public struct WeekGridView: View {
     // Data array containing all items to be displayed in the grid.
     private var data: [GridViewItem]
 

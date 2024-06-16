@@ -12,7 +12,7 @@ public struct BoxModifier: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .padding(4)
-            .background(Color(.white))
+//            .background(Color(.white))
             .clipShape(RoundedRectangle(cornerRadius: 8))
 
     }

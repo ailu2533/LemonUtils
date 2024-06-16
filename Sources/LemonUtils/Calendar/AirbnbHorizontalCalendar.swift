@@ -37,7 +37,7 @@ struct SwiftUIDayView_Previews: PreviewProvider {
             SwiftUIDayView(dayNumber: 19, isSelected: false, isMarked: true)
             SwiftUIDayView(dayNumber: 27, isSelected: true, isMarked: true)
         }
-        .frame(width: 50, height: 50)
+        .frame(width: 30, height: 30)
     }
 
     // MARK: Private
@@ -99,14 +99,9 @@ public struct CalendarView: View {
             .interMonthSpacing(24)
             .verticalDayMargin(8)
             .horizontalDayMargin(8)
-
-//            // TODO:
-//            .onDragEnd({ visibleDayRange, willDecelerate in
-//                print("dragEnd \(visibleDayRange.lowerBound) \(willDecelerate)")
-//            })
+            .backgroundColor(UIColor.clear)
             .onDeceleratingEnd({ visibleDayRange in
                 visibleFirstDay = YearMonthDay.fromDayComponents(visibleDayRange.lowerBound)
-                print(visibleDayRange.lowerBound)
             })
 
             .monthHeaders { month in
@@ -141,10 +136,9 @@ public struct CalendarView: View {
             }
 
             .onAppear {
-                calendarViewProxy.scrollToMonth(containing: .now, scrollPosition: .centered, animated: false)
+                calendarViewProxy.scrollToMonth(containing: selectedDate.date(), scrollPosition: .centered, animated: false)
             }
 
-            .frame(maxWidth: 375, maxHeight: .infinity)
     }
 
     // MARK: Private
@@ -179,8 +173,4 @@ public struct CalendarView: View {
     CalendarView(calendar: Calendar.current, monthsLayout: .vertical)
 }
 
-//#Preview("horizontal") {
-//    CalendarView(calendar: Calendar.current, monthsLayout: .horizontal, markedDates: [.init(year: 2024, month: 4, day: 2, weekday: 0), .init(year: 2024, month: 4, day: 3, weekday: 0), .init(year: 2024, month: 4, day: 4, weekday: 0),
-//        ], selectedDate: .constant(YearMonthDay.fromDate(.now))
-//    )
-//}
+

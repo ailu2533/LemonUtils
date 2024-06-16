@@ -37,3 +37,35 @@ extension View {
         return modifier(ReadSizeViewModifier(callback: callback))
     }
 }
+
+struct MaxWidthPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = .zero
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
+struct MaxWidthViewModifier: ViewModifier {
+    let callback: (CGFloat) -> Void
+
+    func body(content: Content) -> some View {
+        return content.background(content: {
+            GeometryReader(content: { geometry in
+                Color.clear.onAppear(perform: {
+                    callback(geometry.size.width)
+                })
+                .preference(key: SizePreferenceKey.self, value: geometry.size)
+                .onPreferenceChange(SizePreferenceKey.self, perform: { size in
+                    callback(size.width)
+                })
+            })
+        })
+    }
+}
+
+extension View {
+    public func maxWidth(callback: @escaping (CGFloat) -> Void) -> some View {
+        return modifier(MaxWidthViewModifier(callback: callback))
+    }
+}

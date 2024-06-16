@@ -32,14 +32,28 @@ public struct DateShifter: View {
             DateShiftButton(direction: .backward, shiftType: shiftType, inputDate: $inputDate)
 
             Spacer().overlay {
-                Text(inputDate.formatted(date: .abbreviated, time: .omitted))
+                Text(formattedDate(inputDate: inputDate, shiftType: shiftType))
             }
-
             DateShiftButton(direction: .forward, shiftType: shiftType, inputDate: $inputDate)
-        }.padding()
-            .background(.yellow)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-            .padding()
+        }
+        .padding()
+        .background(Color(.systemGray6))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    /// 根据 shiftType 格式化日期
+    private func formattedDate(inputDate: Date, shiftType: DateShiftType) -> String {
+        let dateFormatter = DateFormatter()
+        switch shiftType {
+        case .month:
+            dateFormatter.dateFormat = "yyyy-MM"  // 年-月 格式
+        case .week:
+            dateFormatter.dateFormat = "yyyy-'W'ww"  // 年-第几周 格式
+        default:
+            dateFormatter.dateStyle = .medium  // 默认使用中等长度的日期格式
+            dateFormatter.timeStyle = .none
+        }
+        return dateFormatter.string(from: inputDate)
     }
 }
 
