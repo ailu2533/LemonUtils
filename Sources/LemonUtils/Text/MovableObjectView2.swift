@@ -50,7 +50,7 @@ public struct MovableObjectViewConfig {
 
 public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     var item: Item
-    @Binding var selection: MovableObject?
+    @Binding var selection: UUID?
     private var config: MovableObjectViewConfig
     var content: (Item) -> Content
 
@@ -62,20 +62,18 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     private let id = UUID()
 
     var selected: Bool {
-        selection?.id == item.id
+        selection == item.id
     }
 
     var showControl: Bool {
         return selected && config.enable
     }
 
-    public init(item: Item, selection: Binding<MovableObject?>, config: MovableObjectViewConfig, content: @escaping (Item) -> Content) {
+    public init(item: Item, selection: Binding<UUID?>, config: MovableObjectViewConfig, content: @escaping (Item) -> Content) {
         self.item = item
         self.config = config
         self.content = content
         _selection = selection
-
-//        LoggingUtils.movable.debug("\(item.debugText)")
     }
 
     public func calculateRotation(value: DragGesture.Value) -> Angle {
@@ -200,13 +198,13 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             .coordinateSpace(name: id)
             .position(x: item.pos.x, y: item.pos.y)
             .offset(x: item.offset.x, y: item.offset.y)
-            .if(config.enable && selection == item) { view in
+            .if(config.enable && selection == item.id) { view in
                 view.gesture(dragGesture)
             }
             .onTapGesture {
                 config.tapCallback(item)
-                selection = item
+                selection = item.id
             }
-            .zIndex(selection == item ? 1 : 0)
+            .zIndex(selection == item.id ? 1 : 0)
     }
 }

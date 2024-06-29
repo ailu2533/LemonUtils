@@ -10,9 +10,9 @@ import Foundation
 import HorizonCalendar
 
 public struct YearMonthDay: Hashable, Equatable {
-    let year: Int
-    let month: Int
-    let day: Int
+    public let year: Int
+    public let month: Int
+    public let day: Int
 //    public let weekday: Int
 
     public init(date: Date) {
@@ -34,6 +34,10 @@ public struct YearMonthDay: Hashable, Equatable {
         hasher.combine(year)
         hasher.combine(month)
         hasher.combine(day)
+    }
+
+    public func toString() -> String {
+        return "\(year)-\(month)-\(day)"
     }
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -121,6 +125,18 @@ public extension Date {
         return calendar.date(byAdding: .month, value: 1, to: self)
     }
 
+    // 获取上个月日期
+    var prevYear: Date? {
+        let calendar = Calendar.current
+        return calendar.date(byAdding: .year, value: -1, to: self)
+    }
+
+    // 获取下个月日期
+    var nextYear: Date? {
+        let calendar = Calendar.current
+        return calendar.date(byAdding: .year, value: 1, to: self)
+    }
+
     // 获取上周日期
     var prevWeek: Date? {
         let calendar = Calendar.current
@@ -147,6 +163,14 @@ public extension Date {
         let calendar = Calendar.current
         let range = calendar.range(of: .day, in: .month, for: self)
         return range?.count ?? 30 // 如果无法获取到天数，默认返回30天
+    }
+
+    var startOfYear: Date? {
+        return adjust(for: .startOfYear)?.adjust(for: .startOfDay)
+    }
+
+    var endOfYear: Date? {
+        return adjust(for: .endOfYear)?.adjust(for: .endOfDay)
     }
 }
 

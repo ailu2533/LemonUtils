@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 
 @Observable
-open class MovableObject: Identifiable, Codable {
-    @ObservationIgnored public var id: UUID = UUID()
+open class MovableObject: Identifiable, Codable, Hashable {
+    @ObservationIgnored public var id: UUID
     public var offset: CGPoint = .zero
     public var pos: CGPoint = .zero
     public var rotationDegree: CGFloat = .zero
@@ -26,7 +26,8 @@ open class MovableObject: Identifiable, Codable {
         case scale
     }
 
-    public init(pos: CGPoint, rotationDegree: CGFloat = .zero) {
+    public init(id: UUID = UUID(), pos: CGPoint, rotationDegree: CGFloat = .zero) {
+        self.id = id
         self.pos = pos
         self.rotationDegree = rotationDegree
     }
@@ -60,14 +61,12 @@ open class MovableObject: Identifiable, Codable {
         pos = .init(x: pos.x + offset.x, y: pos.y + offset.y)
         offset = .zero
     }
-}
 
-extension MovableObject: Hashable {
     public static func == (lhs: MovableObject, rhs: MovableObject) -> Bool {
         return lhs.id == rhs.id && lhs.pos == rhs.pos && lhs.rotationDegree == rhs.rotationDegree && lhs.zIndex == rhs.zIndex && lhs.scale == rhs.scale
     }
 
-    public func hash(into hasher: inout Hasher) {
+    open func hash(into hasher: inout Hasher) {
         hasher.combine(id)
         hasher.combine(pos.x)
         hasher.combine(pos.y)
@@ -77,14 +76,28 @@ extension MovableObject: Hashable {
     }
 }
 
+// extension MovableObject: Hashable {
+//    public static func == (lhs: MovableObject, rhs: MovableObject) -> Bool {
+//        return lhs.id == rhs.id && lhs.pos == rhs.pos && lhs.rotationDegree == rhs.rotationDegree && lhs.zIndex == rhs.zIndex && lhs.scale == rhs.scale
+//    }
+//
+//    public func hash(into hasher: inout Hasher) {
+//        hasher.combine(id)
+//        hasher.combine(pos.x)
+//        hasher.combine(pos.y)
+//        hasher.combine(rotationDegree)
+//        hasher.combine(zIndex)
+//        hasher.combine(scale)
+//    }
+// }
+
 extension MovableObject {
     public var debugText: String {
         return "MovableObject(id: \(id), position: (\(pos.x), \(pos.y)), rotationDegree: \(rotationDegree), zIndex: \(zIndex), scale: \(scale))"
     }
 }
 
-
-//extension MovableObject {
+// extension MovableObject {
 //    func deepCopy() -> MovableObject {
 //        let copy = MovableObject(pos: self.pos, rotationDegree: self.rotationDegree)
 //        copy.id = self.id  // UUID 是结构体，自动进行值拷贝
@@ -95,4 +108,4 @@ extension MovableObject {
 //
 //        return copy
 //    }
-//}
+// }

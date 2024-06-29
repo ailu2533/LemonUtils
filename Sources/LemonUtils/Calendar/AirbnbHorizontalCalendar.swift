@@ -12,7 +12,7 @@ public struct SwiftUIDayView: View {
     public var body: some View {
         ZStack(alignment: .center) {
             Circle()
-                .fill(isMarked ? Color.blue.opacity(0.2) : .clear)
+                .fill(isMarked ? Color(.buttonOrange) : .clear)
                 .strokeBorder(isSelected ? Color.accentColor : .clear, lineWidth: 2)
                 .background {
                     Circle()
@@ -20,6 +20,7 @@ public struct SwiftUIDayView: View {
                 }
                 .aspectRatio(1, contentMode: .fill)
             Text("\(dayNumber)").foregroundColor(Color(UIColor.label))
+                .fontWeight(.medium)
         }
         .accessibilityAddTraits(.isButton)
     }
@@ -111,7 +112,8 @@ public struct CalendarView: View {
 
     private func configureCalendarView(_ view: CalendarViewRepresentable) -> CalendarViewRepresentable {
         view
-            .interMonthSpacing(8)
+//            .interMonthSpacing(8)
+            .monthDayInsets(.init(top: 0, leading: 20, bottom: 0, trailing: 20))
             .verticalDayMargin(8)
             .horizontalDayMargin(8)
             .backgroundColor(UIColor.clear)

@@ -15,6 +15,7 @@ public enum DateShiftType: String, CaseIterable, Identifiable {
     case day
     case week
     case month
+    case year
 }
 
 public struct DateShifter: View {
@@ -44,14 +45,16 @@ public struct DateShifter: View {
     /// 根据 shiftType 格式化日期
     private func formattedDate(inputDate: Date, shiftType: DateShiftType) -> String {
         let dateFormatter = DateFormatter()
+        dateFormatter.locale = .current // 设置为中文环境
         switch shiftType {
         case .month:
-            dateFormatter.dateFormat = "yyyy-MM"  // 年-月 格式
+            dateFormatter.setLocalizedDateFormatFromTemplate("yyyyMM")  // 年-月 格式
         case .week:
-            dateFormatter.dateFormat = "yyyy-'W'ww"  // 年-第几周 格式
+            dateFormatter.setLocalizedDateFormatFromTemplate("yyyy'W'ww")  // 年-第几周 格式
+        case .year:
+            dateFormatter.setLocalizedDateFormatFromTemplate("yyyy") // 使用本地化的年份格式
         default:
-            dateFormatter.dateStyle = .medium  // 默认使用中等长度的日期格式
-            dateFormatter.timeStyle = .none
+            dateFormatter.setLocalizedDateFormatFromTemplate("Md")  // 月日格式，如 "6 月 25 日"
         }
         return dateFormatter.string(from: inputDate)
     }
@@ -71,6 +74,8 @@ struct DateShiftButton: View {
                 inputDate = (direction == .backward ? inputDate.prevWeek! : inputDate.nextWeek!)
             case .month:
                 inputDate = (direction == .backward ? inputDate.prevMonth! : inputDate.nextMonth!)
+            case .year:
+                inputDate = (direction == .backward ? inputDate.prevYear! : inputDate.nextYear!)
             }
         }, label: {
             Image(systemName: direction == .backward ? "chevron.backward" : "chevron.forward")
