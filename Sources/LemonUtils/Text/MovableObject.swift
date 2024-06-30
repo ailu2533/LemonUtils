@@ -8,8 +8,38 @@
 import Foundation
 import SwiftUI
 
+protocol MovableObjectProtocol: Identifiable, Codable {
+    var id: UUID { get set }
+    var offset: CGPoint { get set }
+    var pos: CGPoint { get set }
+    var rotationDegree: CGFloat { get set }
+    var zIndex: Double { get set }
+    var scale: CGFloat { get set }
+
+    func onDragChanged(translation: CGSize)
+    func onDragEnd()
+    static func == (lhs: Self, rhs: Self) -> Bool
+    func hash(into hasher: inout Hasher)
+    var debugText: String { get }
+}
+
+extension MovableObjectProtocol where Self: Hashable {
+    static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.id == rhs.id && lhs.pos == rhs.pos && lhs.rotationDegree == rhs.rotationDegree && lhs.zIndex == rhs.zIndex && lhs.scale == rhs.scale
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(pos.x)
+        hasher.combine(pos.y)
+        hasher.combine(rotationDegree)
+        hasher.combine(zIndex)
+        hasher.combine(scale)
+    }
+}
+
 @Observable
-open class MovableObject: Identifiable, Codable, Hashable {
+open class MovableObject: MovableObjectProtocol {
     @ObservationIgnored public var id: UUID
     public var offset: CGPoint = .zero
     public var pos: CGPoint = .zero
@@ -74,38 +104,8 @@ open class MovableObject: Identifiable, Codable, Hashable {
         hasher.combine(zIndex)
         hasher.combine(scale)
     }
-}
 
-// extension MovableObject: Hashable {
-//    public static func == (lhs: MovableObject, rhs: MovableObject) -> Bool {
-//        return lhs.id == rhs.id && lhs.pos == rhs.pos && lhs.rotationDegree == rhs.rotationDegree && lhs.zIndex == rhs.zIndex && lhs.scale == rhs.scale
-//    }
-//
-//    public func hash(into hasher: inout Hasher) {
-//        hasher.combine(id)
-//        hasher.combine(pos.x)
-//        hasher.combine(pos.y)
-//        hasher.combine(rotationDegree)
-//        hasher.combine(zIndex)
-//        hasher.combine(scale)
-//    }
-// }
-
-extension MovableObject {
     public var debugText: String {
         return "MovableObject(id: \(id), position: (\(pos.x), \(pos.y)), rotationDegree: \(rotationDegree), zIndex: \(zIndex), scale: \(scale))"
     }
 }
-
-// extension MovableObject {
-//    func deepCopy() -> MovableObject {
-//        let copy = MovableObject(pos: self.pos, rotationDegree: self.rotationDegree)
-//        copy.id = self.id  // UUID 是结构体，自动进行值拷贝
-//        copy.offset = self.offset  // CGPoint 是结构体，自动进行值拷贝
-//        copy.rotationDegree = self.rotationDegree  // CGFloat 是基本数据类型，自动进行值拷贝
-//        copy.zIndex = self.zIndex  // Double 是基本数据类型，自动进行值拷贝
-//        copy.scale = self.scale  // CGFloat 是基本数据类型，自动进行值拷贝
-//
-//        return copy
-//    }
-// }
