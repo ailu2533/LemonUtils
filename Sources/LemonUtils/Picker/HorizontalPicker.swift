@@ -45,9 +45,12 @@ public struct HorizontalPickerButtonStyle: ButtonStyle {
     }
 }
 
-public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View {
+public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View, SelectedValue: Hashable>: View {
     var items: [ItemType]
-    @Binding private var selectedItem: ItemType
+    @Binding private var selectedItem: SelectedValue
+
+    // 添加一个转换函数，将 ItemType 转换为 SelectedValue
+    var itemToSelectedValue: (ItemType) -> SelectedValue
 
     var backgroundColor: Color
 
@@ -57,14 +60,27 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
 
     var feedback: SensoryFeedback?
 
-    public init(items: [ItemType], selectedItem: Binding<ItemType>, backgroundColor: Color = Color(.clear), shouldEmbedInScrollView: Bool = true, feedback: SensoryFeedback? = nil,
-                itemViewBuilder: @escaping (ItemType) -> Content) {
+    // 初始化方法，当 SelectedValue 和 ItemType 相同时
+    public init(items: [ItemType], selectedItem: Binding<SelectedValue>, backgroundColor: Color = Color(.clear), shouldEmbedInScrollView: Bool = true, feedback: SensoryFeedback? = nil,
+                itemViewBuilder: @escaping (ItemType) -> Content) where SelectedValue == ItemType {
         self.items = items
         _selectedItem = selectedItem
         self.backgroundColor = backgroundColor
         self.itemViewBuilder = itemViewBuilder
         self.shouldEmbedInScrollView = shouldEmbedInScrollView
         self.feedback = feedback
+        itemToSelectedValue = { $0 as! SelectedValue }
+    }
+
+    public init(items: [ItemType], selectedItem: Binding<SelectedValue>, backgroundColor: Color = Color(.clear), shouldEmbedInScrollView: Bool = true, feedback: SensoryFeedback? = nil,
+                itemViewBuilder: @escaping (ItemType) -> Content, itemToSelectedValue: @escaping (ItemType) -> SelectedValue) {
+        self.items = items
+        _selectedItem = selectedItem
+        self.backgroundColor = backgroundColor
+        self.itemViewBuilder = itemViewBuilder
+        self.shouldEmbedInScrollView = shouldEmbedInScrollView
+        self.feedback = feedback
+        self.itemToSelectedValue = itemToSelectedValue
     }
 
     public var body: some View {
@@ -85,13 +101,14 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View>: View
         HStack {
             ForEach(items, id: \.self) { dataItem in
                 Button(action: {
-                    selectedItem = dataItem
+                    // 使用转换函数来更新 selectedItem
+                    selectedItem = itemToSelectedValue(dataItem)
                 }, label: {
                     itemViewBuilder(dataItem)
                         .frame(minWidth: 30)
                         .contentShape(Rectangle())
                 })
-                .buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == dataItem))
+                .buttonStyle(HorizontalPickerButtonStyle(isSelected: selectedItem == itemToSelectedValue(dataItem)))
                 .modifier(FeedbackViewModifier(feedback: feedback, trigger: selectedItem))
                 .animation(.default, value: selectedItem)
             }
@@ -123,7 +140,7 @@ struct WeekdaySelectionView: View {
     var body: some View {
         HorizontalSelectionPicker(items: WeekdaySelectionView.weekdays, selectedItem: $selectedWeekday, backgroundColor: .gray.opacity(0.1)) { weekday in
             Text(weekday)
-        }
+        } itemToSelectedValue: { $0 }
     }
 }
 

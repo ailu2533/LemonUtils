@@ -61,9 +61,9 @@ public struct IconPickerView: View {
         VStack {
             HorizontalSelectionPicker(items: iconSets.keys.elements, selectedItem: $selectedIconSetName) {
                 Text($0)
-            }
-            .padding(.horizontal)
-            .padding(.top, 40)
+            } itemToSelectedValue: { $0 }
+                .padding(.horizontal)
+                .padding(.top, 40)
 
             SingleIconSetIconPickerView(selectedImg: $selectedIcon, icons: iconSets[selectedIconSetName] ?? [])
                 .padding(.horizontal)
@@ -91,6 +91,8 @@ public struct IconPickerViewNew: View {
         VStack {
             HorizontalSelectionPicker(items: iconSets.keys.elements, selectedItem: $selectedIconSetName) {
                 Text($0)
+            } itemToSelectedValue: {
+                $0
             }
             .padding(.horizontal)
 
