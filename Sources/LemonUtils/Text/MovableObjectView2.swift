@@ -97,7 +97,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     }
 
     func updateRotation(value: DragGesture.Value) -> Angle {
-        let snapThreshold: Double = 1 // 吸附阈值，单位为度
+        let snapThreshold: Double = 2 // 吸附阈值，单位为度
         let smallRotationThreshold: Double = 5 // 小角度旋转阈值，单位为度
 
         // 本次旋转角度
@@ -156,8 +156,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                 
                 let now = Date()
                 let timeInterval = now.timeIntervalSince(lastRotationUpdateTime)
-                guard timeInterval > 0.02 else {
-//                    Logging.shared.debug("节流: \(timeInterval)")
+                guard timeInterval > 0.017 else {
                     return
                 }
 
@@ -168,13 +167,14 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             }
             .onEnded { value in
                 // 直接使用最终旋转角度，不进行吸附
-                item.rotationDegree += calculateRotation(value: value).degrees
+                item.rotationDegree += currentAngle.degrees
+                currentAngle = .zero
 
                 if abs(item.rotationDegree - 0) <= 1 {
                     item.rotationDegree = .zero
                 }
 
-                currentAngle = .zero
+                
             }
 
         return Image(systemName: "arrow.triangle.2.circlepath")
