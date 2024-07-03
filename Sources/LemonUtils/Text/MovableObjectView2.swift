@@ -127,27 +127,23 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                 let degrees = totalRotation.degrees.truncatingRemainder(dividingBy: 360)
                 let normalizedAngle = degrees < 0 ? degrees + 360 : degrees
                 
-                // 检查是否接近任何吸附角度
-                if let closestSnapAngle = snapAngles.min(by: { abs($0 - normalizedAngle) < abs($1 - normalizedAngle) }) {
-                    let difference = abs(closestSnapAngle - normalizedAngle)
-                    
-                    if difference <= snapThreshold {
-                        // 如果接近吸附角度，吸附到该角度
-                        currentAngle = Angle(degrees: closestSnapAngle) - Angle(degrees: item.rotationDegree)
-                    } else {
-                        // 否则，使用实际旋转角度
-                        currentAngle = totalRotation
+                // 检查是否接近 0 度
+                if abs(normalizedAngle - 0) <= snapThreshold || abs(normalizedAngle - 360) <= snapThreshold {
+                    // 如果接近 0 度且旋转量小，保持当前角度
+                    if abs(rotation.degrees) <= smallRotationThreshold {
+                        return
                     }
+                    // 否则，吸附到 0 度
+                    currentAngle = Angle(degrees: 0) - Angle(degrees: item.rotationDegree)
                 } else {
+                    // 不接近 0 度，使用实际旋转角度
                     currentAngle = totalRotation
                 }
                 
                 // 触感反馈逻辑
-                if abs(normalizedAngle - 0) <= 0.5 || abs(normalizedAngle - 360) <= 0.5 {
-                    if abs(lastFeedbackAngle - normalizedAngle) > 10 {
-                        rotateTrigger += 1
-                        lastFeedbackAngle = normalizedAngle
-                    }
+                if abs(normalizedAngle - 0) <= 2 {
+                    rotateTrigger += 1
+//                    lastFeedbackAngle = normalizedAngle
                 }
             }
             .onEnded { value in
@@ -217,8 +213,8 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     @State private var width = 100.0
     @State private var height = 100.0
 
-    let snapAngles: [Double] = [0, 90, 180, 270]
-    let snapThreshold: Double = 1 // 吸附阈值，单位为度
+    let snapThreshold: Double = 5 // 吸附阈值，单位为度
+    let smallRotationThreshold: Double = 2 // 小角度旋转阈值，单位为度
 
     public var body: some View {
         content(item)
