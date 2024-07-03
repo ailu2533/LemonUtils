@@ -39,7 +39,7 @@ extension MovableObjectProtocol where Self: Hashable {
 }
 
 @Observable
-open class MovableObject: MovableObjectProtocol {
+open class MovableObject: MovableObjectProtocol, Equatable {
     @ObservationIgnored public var id: UUID
     public var offset: CGPoint = .zero
     public var pos: CGPoint = .zero

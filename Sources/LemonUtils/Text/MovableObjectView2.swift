@@ -55,10 +55,13 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     var content: (Item) -> Content
 
     @State private var viewSize: CGSize = .zero
-    @GestureState private var angle: Angle = .zero
+    @State private var lastFeedbackAngle: Double = 0
+    @State private var rotateTrigger = 0
+    @State private var currentAngle: Angle = .zero
+    @State private var snapAngle: Angle = .zero
     let offset: CGFloat = 20
 
-    @GestureState private var isDragging = false
+    @State private var isDragging = false
     private let id = UUID()
 
     var selected: Bool {
@@ -117,16 +120,43 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
     var rotationHandler: some View {
         let dragGesture = DragGesture(coordinateSpace: .named(id))
-            .updating($angle, body: { value, state, _ in
-                state = calculateRotation(value: value)
-            })
-            .updating($isDragging, body: { _, state, _ in
-                state = true
-            })
-
-            .onEnded({ value in
-                item.rotationDegree = item.rotationDegree + calculateRotation(value: value).degrees
-            })
+            .onChanged { value in
+                let rotation = calculateRotation(value: value)
+                let totalRotation = snapAngle + rotation
+                
+                let degrees = totalRotation.degrees.truncatingRemainder(dividingBy: 360)
+                let normalizedAngle = degrees < 0 ? degrees + 360 : degrees
+                
+                // 检查是否接近任何吸附角度
+                if let closestSnapAngle = snapAngles.min(by: { abs($0 - normalizedAngle) < abs($1 - normalizedAngle) }) {
+                    let difference = abs(closestSnapAngle - normalizedAngle)
+                    
+                    if difference <= snapThreshold {
+                        // 如果接近吸附角度，吸附到该角度
+                        currentAngle = Angle(degrees: closestSnapAngle) - Angle(degrees: item.rotationDegree)
+                    } else {
+                        // 否则，使用实际旋转角度
+                        currentAngle = totalRotation
+                    }
+                } else {
+                    currentAngle = totalRotation
+                }
+                
+                // 触感反馈逻辑
+                if abs(normalizedAngle - 0) <= 0.5 || abs(normalizedAngle - 360) <= 0.5 {
+                    if abs(lastFeedbackAngle - normalizedAngle) > 10 {
+                        rotateTrigger += 1
+                        lastFeedbackAngle = normalizedAngle
+                    }
+                }
+            }
+            .onEnded { value in
+                // 直接使用最终旋转角度，不进行吸附
+                let finalRotation = snapAngle + calculateRotation(value: value)
+                item.rotationDegree += finalRotation.degrees
+                currentAngle = .zero
+                snapAngle = .zero
+            }
 
         return Image(systemName: "arrow.triangle.2.circlepath")
             .resizable()
@@ -166,7 +196,6 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             }
     }
 
-
     private var dragGesture: some Gesture {
         DragGesture()
             .onChanged({ value in
@@ -185,8 +214,17 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             })
     }
 
+    @State private var width = 100.0
+    @State private var height = 100.0
+
+    let snapAngles: [Double] = [0, 90, 180, 270]
+    let snapThreshold: Double = 1 // 吸附阈值，单位为度
+
     public var body: some View {
         content(item)
+            .frame(width: width, height: height)
+            .padding()
+            .modifier(DraggableModifier(width: $width, height: $height, hasBorder: true))
             .anchorPreference(key: ViewSizeKey.self, value: .center, transform: { $0 })
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
@@ -194,7 +232,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             .background {
                 topCorner
             }
-            .rotationEffect(angle + Angle(degrees: item.rotationDegree))
+            .rotationEffect(currentAngle + Angle(degrees: item.rotationDegree))
             .coordinateSpace(name: id)
             .position(x: item.pos.x, y: item.pos.y)
             .offset(x: item.offset.x, y: item.offset.y)
@@ -206,5 +244,6 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                 selection = item.id
             }
             .zIndex(selection == item.id ? 1 : 0)
+            .sensoryFeedback(.impact(weight: .light), trigger: rotateTrigger)
     }
 }
