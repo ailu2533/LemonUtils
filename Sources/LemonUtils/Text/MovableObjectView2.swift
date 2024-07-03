@@ -56,9 +56,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
     @State private var viewSize: CGSize = .zero
     @State private var lastFeedbackAngle: Double = 0
-    @State private var rotateTrigger = 0
     @State private var currentAngle: Angle = .zero
-    @State private var snapAngle: Angle = .zero
     let offset: CGFloat = 20
 
     @State private var isDragging = false
@@ -66,9 +64,10 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
     @State private var width = 100.0
     @State private var height = 100.0
-    
+
     @State private var lastRotationUpdateTime: Date = Date()
 
+    @State private var rotationDegrees = 0.0
 
     var selected: Bool {
         selection == item.id
@@ -96,9 +95,11 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         return rotation
     }
 
+    let snapThreshold: Double = 2 // 吸附阈值，单位为度
+    let smallRotationThreshold: Double = 5 // 小角度旋转阈值，单位为度
+
+
     func updateRotation(value: DragGesture.Value) -> Angle {
-        let snapThreshold: Double = 2 // 吸附阈值，单位为度
-        let smallRotationThreshold: Double = 5 // 小角度旋转阈值，单位为度
 
         // 本次旋转角度
         let rotation = calculateRotation(value: value)
@@ -106,20 +107,19 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         // 原来旋转角度
         let originRotation = item.rotationDegree + currentAngle.degrees
 
+        // 新旋转角度
+        let newRotation = item.rotationDegree + rotation.degrees
+
         // 检查是否接近 0 度
-        if abs(originRotation - 0) <= snapThreshold && abs(rotation.degrees) <= smallRotationThreshold {
+        if abs(originRotation - 0) <= snapThreshold
+            && abs(newRotation - 0) > snapThreshold
+            && abs(rotation.degrees) <= smallRotationThreshold {
             // 否则，吸附到 0 度
             return .zero
         }
 
         // 不接近 0 度，使用实际旋转角度
         return rotation
-    }
-
-    func checkFeedback(normalizedAngle: Double) {
-        if abs(normalizedAngle - 0) <= 2 {
-            rotateTrigger += 1
-        }
     }
 
     var editButton: some View {
@@ -153,28 +153,27 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     var rotationHandler: some View {
         let dragGesture = DragGesture(coordinateSpace: .named(id))
             .onChanged { value in
-                
+
                 let now = Date()
                 let timeInterval = now.timeIntervalSince(lastRotationUpdateTime)
-                guard timeInterval > 0.017 else {
+                guard timeInterval > 0.016 else {
                     return
                 }
 
                 lastRotationUpdateTime = now
-                
-                
+
                 currentAngle = updateRotation(value: value)
+
+                rotationDegrees = item.rotationDegree + currentAngle.degrees
             }
-            .onEnded { value in
+            .onEnded { _ in
                 // 直接使用最终旋转角度，不进行吸附
                 item.rotationDegree += currentAngle.degrees
                 currentAngle = .zero
 
-                if abs(item.rotationDegree - 0) <= 1 {
+                if abs(item.rotationDegree - 0) <= snapThreshold {
                     item.rotationDegree = .zero
                 }
-
-                
             }
 
         return Image(systemName: "arrow.triangle.2.circlepath")
@@ -237,6 +236,9 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         content(item)
             .frame(width: width, height: height)
             .padding()
+            .overlay(alignment: .topLeading) {
+                Text("\(item.rotationDegree + currentAngle.degrees)")
+            }
             .modifier(DraggableModifier(width: $width, height: $height, hasBorder: true))
             .anchorPreference(key: ViewSizeKey.self, value: .center, transform: { $0 })
             .padding(.vertical, 8)
@@ -257,6 +259,8 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                 selection = item.id
             }
             .zIndex(selection == item.id ? 1 : 0)
-            .sensoryFeedback(.impact(weight: .light), trigger: rotateTrigger)
+            .sensoryFeedback(.impact(flexibility: .solid, intensity: 0.8), trigger: rotationDegrees) { oldValue, newValue in
+                abs(oldValue) >= snapThreshold && abs(newValue) < snapThreshold
+            }
     }
 }
