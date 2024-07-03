@@ -66,6 +66,9 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
     @State private var width = 100.0
     @State private var height = 100.0
+    
+    @State private var lastRotationUpdateTime: Date = Date()
+
 
     var selected: Bool {
         selection == item.id
@@ -150,14 +153,28 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     var rotationHandler: some View {
         let dragGesture = DragGesture(coordinateSpace: .named(id))
             .onChanged { value in
+                
+                let now = Date()
+                let timeInterval = now.timeIntervalSince(lastRotationUpdateTime)
+                guard timeInterval > 0.02 else {
+//                    Logging.shared.debug("节流: \(timeInterval)")
+                    return
+                }
+
+                lastRotationUpdateTime = now
+                
+                
                 currentAngle = updateRotation(value: value)
             }
             .onEnded { value in
                 // 直接使用最终旋转角度，不进行吸附
-                let finalRotation = snapAngle + calculateRotation(value: value)
-                item.rotationDegree += finalRotation.degrees
+                item.rotationDegree += calculateRotation(value: value).degrees
+
+                if abs(item.rotationDegree - 0) <= 1 {
+                    item.rotationDegree = .zero
+                }
+
                 currentAngle = .zero
-                snapAngle = .zero
             }
 
         return Image(systemName: "arrow.triangle.2.circlepath")
