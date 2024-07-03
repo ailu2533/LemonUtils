@@ -64,6 +64,9 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     @State private var isDragging = false
     private let id = UUID()
 
+    @State private var width = 100.0
+    @State private var height = 100.0
+
     var selected: Bool {
         selection == item.id
     }
@@ -88,6 +91,32 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         let rotation = Angle(radians: Double(angleDifference))
 
         return rotation
+    }
+
+    func updateRotation(value: DragGesture.Value) -> Angle {
+        let snapThreshold: Double = 1 // 吸附阈值，单位为度
+        let smallRotationThreshold: Double = 5 // 小角度旋转阈值，单位为度
+
+        // 本次旋转角度
+        let rotation = calculateRotation(value: value)
+
+        // 原来旋转角度
+        let originRotation = item.rotationDegree + currentAngle.degrees
+
+        // 检查是否接近 0 度
+        if abs(originRotation - 0) <= snapThreshold && abs(rotation.degrees) <= smallRotationThreshold {
+            // 否则，吸附到 0 度
+            return .zero
+        }
+
+        // 不接近 0 度，使用实际旋转角度
+        return rotation
+    }
+
+    func checkFeedback(normalizedAngle: Double) {
+        if abs(normalizedAngle - 0) <= 2 {
+            rotateTrigger += 1
+        }
     }
 
     var editButton: some View {
@@ -121,30 +150,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     var rotationHandler: some View {
         let dragGesture = DragGesture(coordinateSpace: .named(id))
             .onChanged { value in
-                let rotation = calculateRotation(value: value)
-                let totalRotation = snapAngle + rotation
-                
-                let degrees = totalRotation.degrees.truncatingRemainder(dividingBy: 360)
-                let normalizedAngle = degrees < 0 ? degrees + 360 : degrees
-                
-                // 检查是否接近 0 度
-                if abs(normalizedAngle - 0) <= snapThreshold || abs(normalizedAngle - 360) <= snapThreshold {
-                    // 如果接近 0 度且旋转量小，保持当前角度
-                    if abs(rotation.degrees) <= smallRotationThreshold {
-                        return
-                    }
-                    // 否则，吸附到 0 度
-                    currentAngle = Angle(degrees: 0) - Angle(degrees: item.rotationDegree)
-                } else {
-                    // 不接近 0 度，使用实际旋转角度
-                    currentAngle = totalRotation
-                }
-                
-                // 触感反馈逻辑
-                if abs(normalizedAngle - 0) <= 2 {
-                    rotateTrigger += 1
-//                    lastFeedbackAngle = normalizedAngle
-                }
+                currentAngle = updateRotation(value: value)
             }
             .onEnded { value in
                 // 直接使用最终旋转角度，不进行吸附
@@ -209,12 +215,6 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                 item.onDragEnd()
             })
     }
-
-    @State private var width = 100.0
-    @State private var height = 100.0
-
-    let snapThreshold: Double = 5 // 吸附阈值，单位为度
-    let smallRotationThreshold: Double = 2 // 小角度旋转阈值，单位为度
 
     public var body: some View {
         content(item)
