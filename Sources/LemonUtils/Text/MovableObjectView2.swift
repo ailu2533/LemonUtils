@@ -95,12 +95,10 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         return rotation
     }
 
-    let snapThreshold: Double = 2 // 吸附阈值，单位为度
+    let snapThreshold: Double = 1 // 吸附阈值，单位为度
     let smallRotationThreshold: Double = 5 // 小角度旋转阈值，单位为度
 
-
     func updateRotation(value: DragGesture.Value) -> Angle {
-
         // 本次旋转角度
         let rotation = calculateRotation(value: value)
 
@@ -110,11 +108,9 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         // 新旋转角度
         let newRotation = item.rotationDegree + rotation.degrees
 
-        // 检查是否接近 0 度
         if abs(originRotation - 0) <= snapThreshold
             && abs(newRotation - 0) > snapThreshold
             && abs(rotation.degrees) <= smallRotationThreshold {
-            // 否则，吸附到 0 度
             return .zero
         }
 
@@ -164,6 +160,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
                 currentAngle = updateRotation(value: value)
 
+                // 当前旋转角度
                 rotationDegrees = item.rotationDegree + currentAngle.degrees
             }
             .onEnded { _ in
@@ -195,7 +192,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
     var topCorner: some View {
         return Rectangle()
-            .stroke(style: StrokeStyle(lineWidth: 2, dash: [4]))
+            .stroke(Color.cyan, style: StrokeStyle(lineWidth: 1))
             .shadow(color: Color(.black), radius: 0.1)
             .foregroundStyle(Color(.systemBackground))
             .shadow(radius: 10)
@@ -209,6 +206,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             .overlay(alignment: .topLeading) {
                 deleteButton
             }
+            .modifier(DraggableModifier(width: $width, height: $height, hasBorder: false))
             .background(alignment: .bottom) {
                 rotationHandler
             }
@@ -235,16 +233,10 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     public var body: some View {
         content(item)
             .frame(width: width, height: height)
-            .padding()
-            .overlay(alignment: .topLeading) {
-                Text("\(item.rotationDegree + currentAngle.degrees)")
-            }
-            .modifier(DraggableModifier(width: $width, height: $height, hasBorder: true))
+            .padding(4)
             .anchorPreference(key: ViewSizeKey.self, value: .center, transform: { $0 })
-            .padding(.vertical, 8)
-            .padding(.horizontal, 16)
             .contentShape(Rectangle())
-            .background {
+            .overlay {
                 topCorner
             }
             .rotationEffect(currentAngle + Angle(degrees: item.rotationDegree))
