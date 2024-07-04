@@ -22,11 +22,17 @@ struct DraggableNode: View {
     let aspectRatio: CGFloat
 
     var body: some View {
-        Circle()
-            .fill(Color.white)
-            .stroke(Color.gray, style: .init(lineWidth: 1))
-            .shadow(radius: 2)
-            .frame(width: 10, height: 10)
+        Image(systemName: "arrow.up.left.and.arrow.down.right")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 12, height: 12)
+
+            .padding(5)
+            .background(Color.white)
+            .clipShape(Circle())
+            .shadow(radius: 1)
+            .offset(x: 40, y: 40)
+
             .gesture(
                 DragGesture()
                     .onChanged { value in
@@ -77,26 +83,6 @@ struct DraggableModifier: ViewModifier {
             .readSize(callback: { size in
                 aspectRatio = size.width / size.height
             })
-
-            .overlay {
-                if hasBorder {
-                    Rectangle()
-                        .stroke(Color.cyan, style: StrokeStyle(lineWidth: 2))
-                }
-            }
-//            .overlay {
-//                DraggableNode(width: $width, height: $height, nodeType: .TopLeft, aspectRatio: aspectRatio)
-//                    .position(CGPoint(x: 0, y: 0))
-//
-//                DraggableNode(width: $width, height: $height, nodeType: .TopRight, aspectRatio: aspectRatio)
-//                    .position(CGPoint(x: width, y: 0))
-//
-//                DraggableNode(width: $width, height: $height, nodeType: .BottomLeft, aspectRatio: aspectRatio)
-//                    .position(CGPoint(x: 0, y: height))
-//
-//                DraggableNode(width: $width, height: $height, nodeType: .BottomRight, aspectRatio: aspectRatio)
-//                    .position(CGPoint(x: width, y: height))
-//            }
             .overlay(alignment: .bottomTrailing) {
                 DraggableNode(width: $width, height: $height, nodeType: .BottomRight, aspectRatio: aspectRatio)
             }

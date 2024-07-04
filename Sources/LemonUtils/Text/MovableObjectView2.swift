@@ -192,17 +192,17 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
     var topCorner: some View {
         return Rectangle()
-            .stroke(Color.cyan, style: StrokeStyle(lineWidth: 1))
-            .shadow(color: Color(.black), radius: 0.1)
-            .foregroundStyle(Color(.systemBackground))
-            .shadow(radius: 10)
+            .stroke(Color.cyan, style: StrokeStyle(lineWidth: 1.5))
+//            .shadow(color: Color(.black), radius: 0.1)
+//            .foregroundStyle(Color(.systemBackground))
+//            .shadow(radius: 10)
             .opacity(showControl ? 1 : 0)
             .readSize(callback: {
                 viewSize = $0
             })
-            .overlay(alignment: .topTrailing) {
-                editButton
-            }
+//            .overlay(alignment: .topTrailing) {
+//                editButton
+//            }
             .overlay(alignment: .topLeading) {
                 deleteButton
             }
@@ -251,7 +251,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
                 selection = item.id
             }
             .zIndex(selection == item.id ? 1 : 0)
-            .sensoryFeedback(.impact(flexibility: .solid, intensity: 0.8), trigger: rotationDegrees) { oldValue, newValue in
+            .sensoryFeedback(.impact(flexibility: .solid, intensity: 0.6), trigger: rotationDegrees) { oldValue, newValue in
                 abs(oldValue) >= snapThreshold && abs(newValue) < snapThreshold
             }
     }
