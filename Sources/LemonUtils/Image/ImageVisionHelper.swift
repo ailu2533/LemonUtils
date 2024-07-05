@@ -37,7 +37,7 @@ public struct ImageVisionHelper {
 
             let maskImage = CIImage(cvPixelBuffer: mask)
 
-            return addBorder(to: CIImage(cvPixelBuffer: maskedImage), mask: maskImage, width: 5, color: UIColor.red.cgColor)
+            return CIImage(cvPixelBuffer: maskedImage)
         } catch {
             print("Failed to generate masked image")
             return nil
