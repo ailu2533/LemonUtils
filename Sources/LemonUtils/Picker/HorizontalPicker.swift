@@ -187,20 +187,19 @@ public struct ComparableHorizontalSelectionPicker<ItemType: Hashable, Content: V
     }
 
     private func itemsStackView() -> some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 0) {
             ForEach(items, id: \.self) { dataItem in
                 Button(action: {
                     selectedItem = dataItem
                 }, label: {
                     itemViewBuilder(dataItem)
-                        .frame(minWidth: 30)
                         .contentShape(Circle())
                 })
+                .containerRelativeFrame(.horizontal, count: 6, spacing: 0)
                 .scrollTargetLayout()
                 .buttonStyle(HorizontalPickerButtonStyle2(isSelected: selectedItem == dataItem, backgroundColor: backgroundColor))
             }
         }.scrollTargetLayout()
-//        .padding(.trailing)
     }
 }
 
@@ -212,7 +211,8 @@ struct HorizontalPickerButtonStyle2: ButtonStyle {
 
     func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
-            .padding(.horizontal, 12)
+            .frame(width: 30)
+            .padding(.horizontal, 8)
             .padding(.vertical, 6)
             .background(isSelected ? Color.white : backgroundColor)
             .foregroundColor(isSelected ? .black : .gray)
