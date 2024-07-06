@@ -49,7 +49,7 @@ public struct MovableObjectViewConfig {
 }
 
 public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
-    var item: Item
+    @Bindable var item: Item
     @Binding var selection: UUID?
     private var config: MovableObjectViewConfig
     var content: (Item) -> Content
@@ -62,8 +62,8 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     @State private var isDragging = false
     private let id = UUID()
 
-    @State private var width = 100.0
-    @State private var height = 100.0
+//    @State private var width = 100.0
+//    @State private var height = 100.0
 
     @State private var lastRotationUpdateTime: Date = Date()
 
@@ -95,7 +95,7 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         return rotation
     }
 
-    let snapThreshold: Double = 1 // 吸附阈值，单位为度
+    let snapThreshold: Double = 2 // 吸附阈值，单位为度
     let smallRotationThreshold: Double = 5 // 小角度旋转阈值，单位为度
 
     func updateRotation(value: DragGesture.Value) -> Angle {
@@ -108,11 +108,14 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
         // 新旋转角度
         let newRotation = item.rotationDegree + rotation.degrees
 
-        if abs(originRotation - 0) <= snapThreshold
-            && abs(newRotation - 0) > snapThreshold
-            && abs(rotation.degrees) <= smallRotationThreshold {
-            return .zero
-        }
+//        let v = value.velocity.width * value.velocity.width + value.velocity.height * value.velocity.height
+//        print("v: \(v)")
+
+//        if v < 200 && abs(originRotation - 0) <= snapThreshold
+//            && abs(newRotation - 0) > snapThreshold
+//            && abs(rotation.degrees) <= smallRotationThreshold {
+//            return .zero
+//        }
 
         // 不接近 0 度，使用实际旋转角度
         return rotation
@@ -200,13 +203,13 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             .readSize(callback: {
                 viewSize = $0
             })
-//            .overlay(alignment: .topTrailing) {
-//                editButton
-//            }
+            .overlay(alignment: .topTrailing) {
+                editButton
+            }
             .overlay(alignment: .topLeading) {
                 deleteButton
             }
-            .modifier(DraggableModifier(width: $width, height: $height, hasBorder: false))
+            .modifier(DraggableModifier(width: $item.width, height: $item.height, hasBorder: false))
             .background(alignment: .bottom) {
                 rotationHandler
             }
@@ -232,7 +235,9 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
 
     public var body: some View {
         content(item)
-            .frame(width: width, height: height)
+            .if(item.width > 0 && item.height > 0, transform: { view in
+                view.frame(width: item.width, height: item.height)
+            })
             .padding(4)
             .anchorPreference(key: ViewSizeKey.self, value: .center, transform: { $0 })
             .contentShape(Rectangle())

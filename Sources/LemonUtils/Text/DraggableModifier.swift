@@ -16,8 +16,8 @@ enum nodePosition {
 }
 
 struct DraggableNode: View {
-    @Binding var width: Double
-    @Binding var height: Double
+    @Binding var width: CGFloat
+    @Binding var height: CGFloat
     let nodeType: nodePosition
     let aspectRatio: CGFloat
 
@@ -71,8 +71,8 @@ struct DraggableNode: View {
 }
 
 struct DraggableModifier: ViewModifier {
-    @Binding var width: Double
-    @Binding var height: Double
+    @Binding var width: CGFloat
+    @Binding var height: CGFloat
 
     @State private var aspectRatio: CGFloat = 1.0
 

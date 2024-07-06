@@ -15,6 +15,8 @@ protocol MovableObjectProtocol: Identifiable, Codable {
     var rotationDegree: CGFloat { get set }
     var zIndex: Double { get set }
     var scale: CGFloat { get set }
+    var width: CGFloat { get set }
+    var height: CGFloat { get set }
 
     func onDragChanged(translation: CGSize)
     func onDragEnd()
@@ -25,7 +27,13 @@ protocol MovableObjectProtocol: Identifiable, Codable {
 
 extension MovableObjectProtocol where Self: Hashable {
     static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.id == rhs.id && lhs.pos == rhs.pos && lhs.rotationDegree == rhs.rotationDegree && lhs.zIndex == rhs.zIndex && lhs.scale == rhs.scale
+        return lhs.id == rhs.id
+            && lhs.pos == rhs.pos
+            && lhs.rotationDegree == rhs.rotationDegree
+            && lhs.zIndex == rhs.zIndex
+            && lhs.scale == rhs.scale
+            && lhs.width == rhs.width
+            && lhs.height == rhs.height
     }
 
     func hash(into hasher: inout Hasher) {
@@ -35,6 +43,8 @@ extension MovableObjectProtocol where Self: Hashable {
         hasher.combine(rotationDegree)
         hasher.combine(zIndex)
         hasher.combine(scale)
+        hasher.combine(width)
+        hasher.combine(height)
     }
 }
 
@@ -47,6 +57,9 @@ open class MovableObject: MovableObjectProtocol, Equatable {
     public var zIndex: Double = 1.0
     public var scale: CGFloat = 1.0
 
+    public var width: CGFloat = 0
+    public var height: CGFloat = 0
+
     enum CodingKeys: String, CodingKey {
         case id
         case posX
@@ -54,6 +67,8 @@ open class MovableObject: MovableObjectProtocol, Equatable {
         case rotationDegree
         case zIndex
         case scale
+        case width
+        case height
     }
 
     public init(id: UUID = UUID(), pos: CGPoint, rotationDegree: CGFloat = .zero) {
@@ -71,6 +86,8 @@ open class MovableObject: MovableObjectProtocol, Equatable {
         rotationDegree = try container.decode(CGFloat.self, forKey: .rotationDegree)
         zIndex = try container.decode(Double.self, forKey: .zIndex)
         scale = try container.decode(CGFloat.self, forKey: .scale)
+        width = try container.decode(CGFloat.self, forKey: .width)
+        height = try container.decode(CGFloat.self, forKey: .height)
     }
 
     open func encode(to encoder: Encoder) throws {
@@ -81,6 +98,8 @@ open class MovableObject: MovableObjectProtocol, Equatable {
         try container.encode(rotationDegree, forKey: .rotationDegree)
         try container.encode(zIndex, forKey: .zIndex)
         try container.encode(scale, forKey: .scale)
+        try container.encode(width, forKey: .width)
+        try container.encode(height, forKey: .height)
     }
 
     public func onDragChanged(translation: CGSize) {
@@ -93,7 +112,13 @@ open class MovableObject: MovableObjectProtocol, Equatable {
     }
 
     public static func == (lhs: MovableObject, rhs: MovableObject) -> Bool {
-        return lhs.id == rhs.id && lhs.pos == rhs.pos && lhs.rotationDegree == rhs.rotationDegree && lhs.zIndex == rhs.zIndex && lhs.scale == rhs.scale
+        return lhs.id == rhs.id
+            && lhs.pos == rhs.pos
+            && lhs.rotationDegree == rhs.rotationDegree
+            && lhs.zIndex == rhs.zIndex
+            && lhs.scale == rhs.scale
+            && lhs.width == rhs.width
+            && lhs.height == rhs.height
     }
 
     open func hash(into hasher: inout Hasher) {
@@ -103,6 +128,8 @@ open class MovableObject: MovableObjectProtocol, Equatable {
         hasher.combine(rotationDegree)
         hasher.combine(zIndex)
         hasher.combine(scale)
+        hasher.combine(width)
+        hasher.combine(height)
     }
 
     public var debugText: String {
