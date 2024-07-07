@@ -62,9 +62,6 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     @State private var isDragging = false
     private let id = UUID()
 
-//    @State private var width = 100.0
-//    @State private var height = 100.0
-
     @State private var lastRotationUpdateTime: Date = Date()
 
     @State private var rotationDegrees = 0.0
@@ -196,9 +193,6 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
     var topCorner: some View {
         return Rectangle()
             .stroke(Color.cyan, style: StrokeStyle(lineWidth: 1.5))
-//            .shadow(color: Color(.black), radius: 0.1)
-//            .foregroundStyle(Color(.systemBackground))
-//            .shadow(radius: 10)
             .opacity(showControl ? 1 : 0)
             .readSize(callback: {
                 viewSize = $0
@@ -209,7 +203,9 @@ public struct MovableObjectView2<Item: MovableObject, Content: View>: View {
             .overlay(alignment: .topLeading) {
                 deleteButton
             }
-            .modifier(DraggableModifier(width: $item.width, height: $item.height, hasBorder: false))
+            .if(showControl, transform: { view in
+                view.modifier(DraggableModifier(width: $item.width, height: $item.height, hasBorder: false))
+            })
             .background(alignment: .bottom) {
                 rotationHandler
             }

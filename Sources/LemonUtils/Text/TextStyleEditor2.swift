@@ -1,7 +1,7 @@
 
 import SwiftUI
 
-struct TextStyleEditor2: View {
+struct TextStyleEditor5: View {
     @Binding var textItem: Stylable?
     @Binding var selectedFontName: String?
     @Binding var fontSize: CGFloat

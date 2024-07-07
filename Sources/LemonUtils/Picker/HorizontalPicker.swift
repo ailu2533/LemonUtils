@@ -183,7 +183,7 @@ public struct ComparableHorizontalSelectionPicker<ItemType: Hashable, Content: V
             }
         }
         .contentMargins(.vertical, 2)
-        .contentMargins(.horizontal, 10)
+//        .contentMargins(.horizontal, 10)
     }
 
     private func itemsStackView() -> some View {
