@@ -94,7 +94,7 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View, Selec
                 itemsStackView()
             }
         }.contentMargins(.vertical, 4)
-            .contentMargins(.horizontal, 12)
+            .contentMargins(.horizontal, 16)
     }
 
     private func itemsStackView() -> some View {
@@ -113,7 +113,7 @@ public struct HorizontalSelectionPicker<ItemType: Hashable, Content: View, Selec
                 .animation(.default, value: selectedItem)
             }
         }
-        .padding(.trailing)
+//        .padding(.trailing)
     }
 }
 
