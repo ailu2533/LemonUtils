@@ -15,8 +15,8 @@ public struct HorizontalPickerButtonStyle: ButtonStyle {
     public func makeBody(configuration: Self.Configuration) -> some View {
         configuration.label
             .foregroundStyle(.secondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
 //            .frame(minWidth: 40)
             .background(backgroundView(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: 8))
