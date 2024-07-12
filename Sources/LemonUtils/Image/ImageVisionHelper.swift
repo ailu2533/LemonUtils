@@ -30,11 +30,7 @@ public struct ImageVisionHelper {
         }
 
         do {
-            let mask = try result.generateMask(forInstances: result.allInstances)
-
             let maskedImage = try result.generateMaskedImage(ofInstances: result.allInstances, from: handler, croppedToInstancesExtent: croppedToInstanceExtent)
-
-            let maskImage = CIImage(cvPixelBuffer: mask)
 
             return CIImage(cvPixelBuffer: maskedImage)
         } catch {
@@ -108,7 +104,7 @@ public struct ImageVisionHelper {
         return image.composited(over: coloredBorder
             .cropped(to: image.extent)
             .applyingFilter("CIBlendWithMask", parameters: [
-                kCIInputMaskImageKey: borderOnly
+                kCIInputMaskImageKey: borderOnly,
             ])
         )
     }
