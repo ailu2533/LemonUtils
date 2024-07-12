@@ -61,7 +61,7 @@ public struct LemonTimelineView<Data, Card: View>: View {
             ForEach(items) { habit in
                 TimelineItemCardView(item: habit, cardBuilder: cardBuilder)
             }
-        } 
+        }
         .box()
     }
 }

@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-private let dayToChinese: Dictionary<Int, String> = [
+private let dayToChinese: [Int: String] = [
     1: "一",
     2: "二",
     3: "三",
     4: "四",
     5: "五",
     6: "六",
-    7: "日",
+    7: "日"
 ]
 
 private let daysOfWeek = 1 ... 7
@@ -28,14 +28,14 @@ public struct GridViewItem: Identifiable {
     let color: Color
     // Dictionary mapping day of the week to a statistic value.
     public let sortValue: Double
-    public let stat: Dictionary<Int, Double>
+    public let stat: [Int: Double]
     // 数据的时间。
     // 如果是周数据，传入的是一周内的任意时间
     // 如果是月数据，传入的是一个月内的任意时间
     // 如果是年数据，传入的是一年内的任意时间
     public var date: Date?
 
-    public init(id: UUID, title: String, color: Color, date: Date? = nil, sortValue: Double = 0, stat: Dictionary<Int, Double>) {
+    public init(id: UUID, title: String, color: Color, date: Date? = nil, sortValue: Double = 0, stat: [Int: Double]) {
         self.id = id
         self.title = title
         self.color = color
@@ -54,12 +54,12 @@ public struct YearGridViewItem: Identifiable {
     let color: Color
     // Dictionary mapping day of the week to a statistic value.
     public let sortValue: Double
-    public let stat: Dictionary<YearMonthDay, Double>
+    public let stat: [YearMonthDay: Double]
 
     public var date: Date
     public var year: Int
 
-    public init(id: UUID, title: String, color: Color, date: Date, sortValue: Double = 0, stat: Dictionary<YearMonthDay, Double>) {
+    public init(id: UUID, title: String, color: Color, date: Date, sortValue: Double = 0, stat: [YearMonthDay: Double]) {
         self.id = id
         self.title = title
         self.color = color
@@ -83,7 +83,7 @@ public struct WeekGridView: View {
     ///   - rowTitle: The title to display in the row.
     ///   - rowColor: The color to use for filled cells.
     ///   - weekStats: Dictionary containing statistics for each day of the week.
-    fileprivate func createRowView(rowTitle: String, rowColor: Color, weekStats: Dictionary<Int, Double>) -> some View {
+    fileprivate func createRowView(rowTitle: String, rowColor: Color, weekStats: [Int: Double]) -> some View {
         GridRow {
             HStack {
                 Text(rowTitle).font(.subheadline).lineLimit(1)

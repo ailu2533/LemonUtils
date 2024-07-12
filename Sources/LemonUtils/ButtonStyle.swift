@@ -93,15 +93,13 @@ public struct CircleButtonStyle: ButtonStyle {
             Image(systemName: "xmark")
         })
         .buttonStyle(CircleButtonStyle())
-        
+
         Button(role: .none) {
-            
+
         } label: {
             Image(systemName: "pencil")
         } .buttonStyle(CircleButtonStyle())
 
-        
     }
-    
-    
+
 }

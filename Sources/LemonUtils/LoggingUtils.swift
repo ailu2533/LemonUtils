@@ -10,7 +10,6 @@ import OSLog
 
 class LoggingUtils {
 
-    
 //    static let widgetMeta = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "widgetMeta")
 
     static let movable = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "movable")

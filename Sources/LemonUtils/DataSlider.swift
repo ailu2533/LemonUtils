@@ -5,10 +5,10 @@
 //  Created by ailu on 2024/3/31.
 //
 //
-//import CompactSlider
-//import SwiftUI
+// import CompactSlider
+// import SwiftUI
 //
-//public struct CustomCompactSliderStyle: CompactSliderStyle {
+// public struct CustomCompactSliderStyle: CompactSliderStyle {
 //    public func makeBody(configuration: Configuration) -> some View {
 //        configuration.label
 //            .foregroundColor(
@@ -38,9 +38,9 @@
 //                // TODO
 //            }
 //    }
-//}
+// }
 //
-//struct DataSlider: View {
+// struct DataSlider: View {
 //    @State private var value = 0.0
 //
 //    var body: some View {
@@ -54,8 +54,8 @@
 //        .shadow(radius: 10)
 //        .padding()
 //    }
-//}
+// }
 //
-//#Preview {
+// #Preview {
 //    DataSlider().padding()
-//}
+// }

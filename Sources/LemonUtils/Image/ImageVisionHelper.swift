@@ -1,5 +1,4 @@
 import CoreImage
-import CoreImage.CIFilterBuiltins
 import Foundation
 import Vision
 import VisionKit
@@ -109,7 +108,7 @@ public struct ImageVisionHelper {
         return image.composited(over: coloredBorder
             .cropped(to: image.extent)
             .applyingFilter("CIBlendWithMask", parameters: [
-                kCIInputMaskImageKey: borderOnly,
+                kCIInputMaskImageKey: borderOnly
             ])
         )
     }

@@ -39,9 +39,6 @@ public enum RepeatPeriod: Int, CaseIterable, Identifiable, Codable {
     }
 }
 
-import Foundation
-
-// 计算距离最近的目标日期还有多少天
 public func calculateNearestRepeatDate(startDate: Date, currentDate: Date, repeatPeriod: RepeatPeriod, n: Int, recurrenceType: RecurrenceType, customWeek: UInt8) -> Int {
     switch recurrenceType {
     case .customWeekly:
@@ -138,7 +135,6 @@ private func calculateYearsDifference(st: Date, ct: Date, n: Int, calendar: Cale
     return calendar.dateComponents([.day], from: ct, to: nextDate).day!
 }
 
-
 public struct RepeatPeriodPickerView: View {
     @Binding var repeatPeriod: RepeatPeriod
     @Binding var repeatN: Int
@@ -181,4 +177,3 @@ struct P: View {
 #Preview(body: {
     P()
 })
-

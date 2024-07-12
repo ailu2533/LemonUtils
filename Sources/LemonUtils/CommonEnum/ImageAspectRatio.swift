@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 enum ImageAspectRatio: Int16 {
     case square = 1
     case widescreen = 2

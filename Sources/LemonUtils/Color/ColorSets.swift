@@ -19,7 +19,7 @@ public struct ColorSets {
         "#bae1ff",
         "#130c0e",
         "#F8F8FF",
-        "#DC143C",
+        "#DC143C"
     ]
 
     // 莫兰迪色
@@ -48,7 +48,7 @@ public struct ColorSets {
         "#D6E19C", "#C199E0",
         "#A0D0DC", "#D9939B",
         "#D7B399", "#B2D1D3",
-        "#DA949C",
+        "#DA949C"
     ]
 
     // 彩虹色
@@ -68,7 +68,7 @@ public struct ColorSets {
         "#00bfff",
         "#088743",
         "#876c94",
-        "#ff7e38",
+        "#ff7e38"
     ]
 }
 
@@ -133,7 +133,7 @@ public struct CommonColors {
         "khaki": "#F0E68C",
         "plum": "#DDA0DD",
         "crimson": "#DC143C",
-        "royalBlue": "#4169E1",
+        "royalBlue": "#4169E1"
     ]
 
     static func getHexString(for colorName: String) -> String? {

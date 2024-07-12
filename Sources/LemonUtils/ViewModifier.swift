@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct BoxModifier: ViewModifier {
-    
+
     public func body(content: Content) -> some View {
         content
             .padding(4)
