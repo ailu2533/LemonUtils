@@ -1,5 +1,5 @@
 {
-  "originHash" : "862e8c14b031824a02579e6b3c0d6d1917f9baad5002129558ccca9119a12564",
+  "originHash" : "0ab67858266b12b62dd47022e15140db448f16173dd9bbc29eaee2d73bef05ed",
   "pins" : [
     {
       "identity" : "datehelper",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "a360d71a1255f0b24e378f2ee31a7a7d674a49b6",
         "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "lemondateutils",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ailu2533/LemonDateUtils.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "65d01211bd8113e63beee39590839824582db69e"
       }
     },
     {

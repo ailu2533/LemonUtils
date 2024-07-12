@@ -6,6 +6,7 @@
 //
 
 import CoreImage
+import CoreImage.CIFilterBuiltins
 import Foundation
 import UIKit
 

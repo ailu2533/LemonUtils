@@ -1,8 +1,18 @@
 import Combine
 import HorizonCalendar
+import LemonDateUtils
 import SwiftUI
-
 import UIKit
+
+extension YearMonthDay {
+    public static func fromDayComponents(_ date: DayComponents) -> YearMonthDay {
+        let year = date.month.year
+        let month = date.month.month
+        let day = date.day
+
+        return .init(year: year, month: month, day: day)
+    }
+}
 
 public struct SwiftUIDayView: View {
     let dayNumber: Int
