@@ -104,7 +104,7 @@ public struct ImageVisionHelper {
         return image.composited(over: coloredBorder
             .cropped(to: image.extent)
             .applyingFilter("CIBlendWithMask", parameters: [
-                kCIInputMaskImageKey: borderOnly,
+                kCIInputMaskImageKey: borderOnly
             ])
         )
     }
