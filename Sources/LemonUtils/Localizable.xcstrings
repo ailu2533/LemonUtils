@@ -7,12 +7,6 @@
     "%lld" : {
 
     },
-    "00:45" : {
-
-    },
-    "Button" : {
-
-    },
     "Checked" : {
 
     },
@@ -121,12 +115,6 @@
           }
         }
       }
-    },
-    "hello" : {
-
-    },
-    "hhhh" : {
-
     },
     "month" : {
       "extractionState" : "manual",
@@ -401,9 +389,6 @@
           }
         }
       }
-    },
-    "world" : {
-
     },
     "year" : {
       "extractionState" : "manual",
