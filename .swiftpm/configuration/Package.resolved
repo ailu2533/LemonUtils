@@ -1,0 +1,42 @@
+{
+  "originHash" : "ee63f5a1ef03b0f678316f3445876a010f4a09f32591420e0eef19be83b31d14",
+  "pins" : [
+    {
+      "identity" : "datehelper",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/melvitax/DateHelper",
+      "state" : {
+        "revision" : "76d0840daab7288fc99b04a4c23d504f0394e083",
+        "version" : "5.0.1"
+      }
+    },
+    {
+      "identity" : "horizoncalendar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/airbnb/HorizonCalendar",
+      "state" : {
+        "revision" : "a360d71a1255f0b24e378f2ee31a7a7d674a49b6",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "lemondateutils",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ailu2533/LemonDateUtils.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "8cfb561a03db187f5d78b0e4818c2dade61eed62"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections.git",
+      "state" : {
+        "revision" : "3d2dc41a01f9e49d84f0a3925fb858bed64f702d",
+        "version" : "1.1.2"
+      }
+    }
+  ],
+  "version" : 3
+}
