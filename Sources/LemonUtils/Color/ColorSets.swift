@@ -50,6 +50,24 @@ public struct ColorSets {
         "#D7B399", "#B2D1D3",
         "#DA949C"
     ]
+    
+    
+    public static let habitMacaronColors = [
+        "#FB6571",
+        "#F4B0A5",
+        "#B8F0D3",
+        "#A8EFE9",
+        "#DD8DB0",
+        "#A2BFE1",
+        "#D8979B",
+        "#CBDF9A",
+        "#D194A3",
+        "#DC95BF",
+        "#D6E19C",
+        "#C199E0",
+        "#A0D0DC",
+    ]
+    
 
     // 彩虹色
     public static let textColors = [

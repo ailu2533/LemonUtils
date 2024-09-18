@@ -81,8 +81,8 @@ struct ColorPicker_Preview: View {
 
     var body: some View {
         VStack {
-            DisclosureGroup {
-                ColorPickerView(selection: $selectedColor, colorSet: ColorSets.morandiColors)
+            DisclosureGroup(isExpanded: .constant(true)) {
+                ColorPickerView2(selection: $selectedColor, colorSet: ColorSets.habitMacaronColors)
                     .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
             } label: {
                 Circle()

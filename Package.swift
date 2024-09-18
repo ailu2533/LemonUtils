@@ -19,8 +19,7 @@ let package = Package(
             .package(url: "https://github.com/apple/swift-collections.git", .upToNextMajor(from: "1.1.0")),
 //            .package(url: "https://github.com/melvitax/DateHelper", .upToNextMajor(from: "5.0.1")),
 //            .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", from: "0.55.1"),
-            .package(url: "https://github.com/ailu2533/LemonDateUtils.git", branch: "main")
-
+                .package(url: "https://github.com/ailu2533/LemonDateUtils.git", branch: "main"),
         ],
         targets: [
             // Targets are the basic building blocks of a package, defining a module or a test suite.
