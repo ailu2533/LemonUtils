@@ -5,8 +5,8 @@
 //  Created by ailu on 2024/4/17.
 //
 
-import SwiftUI
 import LemonDateUtils
+import SwiftUI
 
 private let dayToChinese: [Int: String] = [
     1: "一",
@@ -15,7 +15,7 @@ private let dayToChinese: [Int: String] = [
     4: "四",
     5: "五",
     6: "六",
-    7: "日"
+    7: "日",
 ]
 
 private let daysOfWeek = 1 ... 7
@@ -72,61 +72,64 @@ public struct YearGridViewItem: Identifiable {
 }
 
 public struct WeekGridView: View {
-    // Data array containing all items to be displayed in the grid.
-    private var data: [GridViewItem]
+    private let data: [GridViewItem]
+    private let cellSize: CGFloat = 24
+    private let headerHeight: CGFloat = 60
 
     public init(data: [GridViewItem]) {
         self.data = data
     }
 
-    /// Creates a view for a single row in the grid.
-    /// - Parameters:
-    ///   - rowTitle: The title to display in the row.
-    ///   - rowColor: The color to use for filled cells.
-    ///   - weekStats: Dictionary containing statistics for each day of the week.
-    fileprivate func createRowView(rowTitle: String, rowColor: Color, weekStats: [Int: Double]) -> some View {
-        GridRow {
-            HStack {
-                Text(rowTitle).font(.subheadline).lineLimit(1)
-                Spacer()
-            }.frame(maxWidth: 86)
-
-            ForEach(daysOfWeek, id: \.self) { dayIndex in
-                if weekStats[dayIndex] != nil {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(rowColor)
-                        .frame(width: 24, height: 24)
-                } else {
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color(.systemGray6))
-                        .frame(width: 24, height: 24)
-                }
-            }
-        }
-    }
-
-    /// Creates the header row for the grid, displaying days of the week.
-    fileprivate func createHeaderView() -> some View {
-        GridRow {
-            HStack {
-                Spacer()
-            }.frame(maxWidth: 60)
-            ForEach(daysOfWeek, id: \.self) { dayIndex in
-                Text(dayToChinese[dayIndex]!)
-            }
-        }
-    }
-
     public var body: some View {
         ScrollView {
-            VStack {
-                Grid {
-                    createHeaderView()
-                    ForEach(data) { item in
-                        createRowView(rowTitle: item.title, rowColor: item.color, weekStats: item.stat)
-                    }
+            Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 8) {
+                headerRow
+                ForEach(data) { item in
+                    rowView(for: item)
                 }
+            }
+            .padding()
+        }
+    }
+
+    private var headerRow: some View {
+        GridRow {
+            Color.clear.frame(width: headerHeight)
+            ForEach(daysOfWeek, id: \.self) { dayIndex in
+                Text(dayToChinese[dayIndex] ?? "")
+                    .font(.caption)
+                    .frame(width: cellSize)
             }
         }
     }
+
+    private func rowView(for item: GridViewItem) -> some View {
+        GridRow {
+            Text(item.title)
+                .font(.caption)
+                .lineLimit(1)
+                .frame(width: headerHeight, alignment: .leading)
+            ForEach(daysOfWeek, id: \.self) { dayIndex in
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(item.stat[dayIndex] != nil ? item.color : Color(.systemGray6))
+                    .frame(width: cellSize, height: cellSize)
+            }
+        }
+    }
+}
+
+#Preview {
+    WeekGridView(data: [
+        GridViewItem(id: UUID(), title: "测试 1", color: .blue, stat: [:]),
+        GridViewItem(id: UUID(), title: "测试 2", color: .blue, stat: [:]),
+        GridViewItem(id: UUID(), title: "测试 3", color: .blue, stat: [:]),
+        GridViewItem(id: UUID(), title: "测试 4", color: .blue, stat: [:]),
+        GridViewItem(id: UUID(), title: "测试 5", color: .blue, stat: [:]),
+        GridViewItem(id: UUID(), title: "测试 6", color: .blue, stat: [:]),
+        GridViewItem(id: UUID(), title: "测试 7", color: .blue, stat: [:]),
+        GridViewItem(id: UUID(), title: "测试 8", color: .blue, stat: [:]),
+        GridViewItem(id: UUID(), title: "测试超级长", color: .blue, stat: [:]),
+
+    ])
+    .padding(.horizontal, 32)
 }
