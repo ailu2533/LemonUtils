@@ -88,7 +88,7 @@ public struct WeekGridView: View {
                     GridRowView(item: item, cellSize: cellSize)
                 }
             }
-            .padding()
+//            .padding()
         }
     }
 
