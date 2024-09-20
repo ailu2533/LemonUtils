@@ -81,14 +81,11 @@ public struct WeekGridView: View {
     }
 
     public var body: some View {
-        ScrollView {
-            Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 8) {
-                headerRow
-                ForEach(data) { item in
-                    GridRowView(item: item, cellSize: cellSize)
-                }
+        Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 8) {
+            headerRow
+            ForEach(data) { item in
+                GridRowView(item: item, cellSize: cellSize)
             }
-//            .padding()
         }
     }
 
