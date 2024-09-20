@@ -85,7 +85,7 @@ public struct WeekGridView: View {
             Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 8) {
                 headerRow
                 ForEach(data) { item in
-                    rowView(for: item)
+                    GridRowView(item: item, cellSize: cellSize)
                 }
             }
             .padding()
@@ -94,21 +94,31 @@ public struct WeekGridView: View {
 
     private var headerRow: some View {
         GridRow {
-            Color.clear.frame(width: headerHeight)
+            Text(verbatim: "")
             ForEach(daysOfWeek, id: \.self) { dayIndex in
                 Text(dayToChinese[dayIndex] ?? "")
-                    .font(.caption)
                     .frame(width: cellSize)
             }
         }
     }
+}
 
-    private func rowView(for item: GridViewItem) -> some View {
+struct GridRowView: View {
+    let item: GridViewItem
+    let cellSize: CGFloat
+
+    
+
+    init(item: GridViewItem, cellSize: CGFloat) {
+        self.item = item
+        self.cellSize = cellSize
+    }
+
+    var body: some View {
         GridRow {
             Text(item.title)
-                .font(.caption)
                 .lineLimit(1)
-                .frame(width: headerHeight, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
             ForEach(daysOfWeek, id: \.self) { dayIndex in
                 RoundedRectangle(cornerRadius: 4)
                     .fill(item.stat[dayIndex] != nil ? item.color : Color(.systemGray6))
@@ -131,5 +141,5 @@ public struct WeekGridView: View {
         GridViewItem(id: UUID(), title: "测试超级长", color: .blue, stat: [:]),
 
     ])
-    .padding(.horizontal, 32)
+    .padding(.horizontal, 16)
 }
