@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension UUID: RawRepresentable {
+extension UUID: @retroactive RawRepresentable {
     public var rawValue: String {
         uuidString
     }
